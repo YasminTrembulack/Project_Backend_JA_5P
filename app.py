@@ -1,12 +1,7 @@
-from http import HTTPStatus
-
 from fastapi import FastAPI
 
-from core.models.schemas import Message
+from core.routes.ping import router as ping_route
 
 app = FastAPI()
 
-
-@app.get('/', status_code=HTTPStatus.OK, response_model=Message)
-def read_root():
-    return {'message': 'Olá Mundo!'}
+app.include_router(ping_route)
