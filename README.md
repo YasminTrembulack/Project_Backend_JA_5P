@@ -8,3 +8,9 @@ Comando para desativar: `deactivate`
 
 ## Instalando pacotes
 `pip install -r requirements.txt`
+
+## Migrations LOCAL
+* Caso uma migration já tenha sido iniciada apenas APLIQUE as migrações.
+Iniciar migrações: `alembic init migrations`
+Gerar migrações: `alembic revision --autogenerate -m "first migration"`
+Aplicar migrações: `alembic upgrade head`
