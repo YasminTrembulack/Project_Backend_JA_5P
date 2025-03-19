@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import func
+from sqlalchemy import Enum, func
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -19,6 +19,9 @@ class User(BaseModel):
     full_name: Mapped[str]
     password: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True)
+    role: Mapped[str] = mapped_column(
+        Enum('user', 'admin', name='user_roles'), default='user'
+    )
     created_at: Mapped[datetime] = mapped_column(
         server_default=func.now()
     )
