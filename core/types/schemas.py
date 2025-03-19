@@ -21,6 +21,7 @@ class UserSchema(BaseModel):
     password: str
     role: Literal['user', 'admin'] = 'user'
 
+
 class UserPublic(BaseModel):
     id: UUID
     full_name: str
