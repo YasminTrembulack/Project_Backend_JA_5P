@@ -19,6 +19,7 @@ class UserSchema(BaseModel):
     full_name: str
     email: str
     password: str
+    registration_number: str
     role: Optional[str] = 'User'
 
 

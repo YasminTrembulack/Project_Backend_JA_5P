@@ -16,9 +16,14 @@ class UserService:
         user_found = self.user_repo.get_user_by_email(
             user.email
         )
+        user_found = self.user_repo.get_user_by_registration_number(
+            user.registration_number
+        )
         if user_found:
             raise HTTPException(
                 HTTPStatus.BAD_REQUEST,
                 detail='Email alredy exists.'
+                if user.email == user_found.email
+                else 'Registration number alredy exists.'
             )
         return self.user_repo.create_user(user)

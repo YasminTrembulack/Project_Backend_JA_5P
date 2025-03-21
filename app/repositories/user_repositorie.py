@@ -18,6 +18,7 @@ class UserRepository(IUserRepository):
             full_name=user.full_name,
             password=hashed_password,
             email=user.email,
+            registration_number=user.registration_number,
             role=user.role
         )
         self.db.add(db_user)
@@ -27,6 +28,14 @@ class UserRepository(IUserRepository):
 
     def get_user_by_email(self, email: str) -> User | None:
         return self.db.query(User).filter(User.email == email).first()
+
+    def get_user_by_registration_number(self, re: str) -> User | None:
+        return (
+            self.db
+            .query(User)
+            .filter(User.registration_number == re)
+            .first()
+        )
 
     def get_user_by_id(self, user_id: str) -> User | None:
         return self.db.query(User).filter(User.id == UUID(user_id)).first()
