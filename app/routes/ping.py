@@ -2,11 +2,15 @@ from http import HTTPStatus
 
 from fastapi import APIRouter
 
-from app.types.schemas import Message
+from app.core.settings import Settings
+from app.types.schemas import Health
 
 router = APIRouter()
 
 
-@router.get('/', status_code=HTTPStatus.OK, response_model=Message)
+@router.get('/', status_code=HTTPStatus.OK, response_model=Health)
 def read_root():
-    return {'message': 'Pong'}
+    return {
+        'project_name': Settings().PROJECT_NAME,
+        'version': Settings().VERSION
+    }

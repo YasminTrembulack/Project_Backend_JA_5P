@@ -11,8 +11,9 @@ class ResponseCreate(BaseModel, Generic[T]):
     data: T
 
 
-class Message(BaseModel):
-    message: str
+class Health(BaseModel):
+    project_name: str
+    version: str
 
 
 class UserSchema(BaseModel):
