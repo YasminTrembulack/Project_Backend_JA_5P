@@ -9,7 +9,6 @@ from app.core.settings import Settings
 from app.models.base_model import BaseModel
 from app.models.user import User
 
-
 config = context.config
 config.set_main_option('sqlalchemy.url', Settings().DATABASE_URL)
 
