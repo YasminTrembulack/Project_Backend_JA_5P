@@ -38,4 +38,4 @@ class UserRepository(IUserRepository):
         )
 
     def get_user_by_id(self, user_id: str) -> User | None:
-        return self.db.query(User).filter(User.id == UUID(user_id)).first()
+        return self.db.query(User).filter(User.id == user_id).first()
