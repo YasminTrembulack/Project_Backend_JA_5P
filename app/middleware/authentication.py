@@ -25,10 +25,10 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         try:
             payload = security.verify_access_token(token)
             user_id = payload.get("user_id")
-        except Exception as e:
+        except Exception:
             return JSONResponse(
                 status_code=401,
-                content={"detail": f"Invalid or expired token"}
+                content={"detail": "Invalid or expired token"}
             )
 
         with next(get_session()) as db:
