@@ -1,4 +1,3 @@
-from uuid import UUID
 
 from requests import Session
 
