@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter
 
-from core.types.schemas import Message
+from app.types.schemas import Message
 
 router = APIRouter()
 

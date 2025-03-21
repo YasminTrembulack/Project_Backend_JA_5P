@@ -1,0 +1,32 @@
+from uuid import UUID
+
+from requests import Session
+
+from app.core.security import security
+from app.interfaces.user_repository_interface import IUserRepository
+from app.models.user import User
+from app.types.schemas import UserSchema
+
+
+class UserRepository(IUserRepository):
+    def __init__(self, db: Session):
+        self.db = db
+
+    def create_user(self, user: UserSchema) -> User:
+        hashed_password = security.hash_password(user.password)
+        db_user = User(
+            full_name=user.full_name,
+            password=hashed_password,
+            email=user.email,
+            role=user.role
+        )
+        self.db.add(db_user)
+        self.db.commit()
+        self.db.refresh(db_user)
+        return db_user
+
+    def get_user_by_email(self, email: str) -> User | None:
+        return self.db.query(User).filter(User.email == email).first()
+
+    def get_user_by_id(self, user_id: str) -> User | None:
+        return self.db.query(User).filter(User.id == UUID(user_id)).first()

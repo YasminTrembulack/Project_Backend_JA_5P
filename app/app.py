@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 
-from core.middleware.authentication import AuthenticationMiddleware
-from core.routes.auth_route import router as auth_router
-from core.routes.ping import router as ping_route
-from core.routes.user_route import router as user_router
+from app.middleware.authentication import AuthenticationMiddleware
+from app.routes.auth_route import router as auth_router
+from app.routes.ping import router as ping_route
+from app.routes.user_route import router as user_router
 
 app = FastAPI()
 PREFIX = '/api'
