@@ -1,4 +1,4 @@
-from typing import Generic, Literal, TypeVar
+from typing import Generic, Optional, TypeVar
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -19,7 +19,7 @@ class UserSchema(BaseModel):
     full_name: str
     email: str
     password: str
-    role: Literal['user', 'admin'] = 'user'
+    role: Optional[str] = 'User'
 
 
 class UserPublic(BaseModel):
