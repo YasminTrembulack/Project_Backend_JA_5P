@@ -3,8 +3,8 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.services.auth_service import AuthService
 from app.db.database import get_session
+from app.services.auth_service import AuthService
 from app.types.schemas import LoginPayload, LoginResponse, UserPublic
 
 router = APIRouter()

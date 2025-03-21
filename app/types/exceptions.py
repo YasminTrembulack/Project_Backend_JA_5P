@@ -7,6 +7,7 @@ class InvalidTokenError(APIException):
     """User has provided an invalid or expired token"""
     pass
 
+
 class ExpiredSignatureError(APIException):
     """Token has expired and needs re-authentication."""
     pass

@@ -5,7 +5,11 @@ from fastapi.responses import JSONResponse
 
 # from loguru import logger
 from app import app
-from app.types.exceptions import APIException, ExpiredSignatureError, InvalidTokenError
+from app.types.exceptions import (
+    APIException,
+    ExpiredSignatureError,
+    InvalidTokenError,
+)
 
 
 def create_exception_handler(

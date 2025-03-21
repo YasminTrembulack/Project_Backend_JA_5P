@@ -5,10 +5,7 @@ import jwt
 from passlib.context import CryptContext
 
 from app.core.settings import Settings
-from app.types.exceptions import (
-    InvalidTokenError,
-    ExpiredSignatureError
-)
+from app.types.exceptions import ExpiredSignatureError, InvalidTokenError
 
 
 class SecurityManager:
@@ -37,13 +34,13 @@ class SecurityManager:
         try:
             payload = jwt.decode(
                 token,
-                Settings().SECRET_KEY,
-                algorithms=[Settings().ALGORITHM]
+                self.secret_key,
+                algorithms=[self.algorithm]
             )
         except jwt.ExpiredSignatureError:
             raise ExpiredSignatureError()
         except jwt.InvalidTokenError:
-            raise InvalidTokenError() 
+            raise InvalidTokenError()
         return payload
 
 

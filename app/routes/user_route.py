@@ -3,8 +3,8 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.services.user_service import UserService
 from app.db.database import get_session
+from app.services.user_service import UserService
 from app.types.schemas import ResponseCreate, UserPublic, UserSchema
 
 router = APIRouter(prefix='/user')
