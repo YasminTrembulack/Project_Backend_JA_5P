@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     DATABASE_TYPE: str
     SECRET_KEY: str
     ALGORITHM: str
-    DEBUG: bool = False
+    LOCAL_ENV: bool = False
     VERSION: str = "0.1.0"
     API_PREFIX: str = "/api"
     PROJECT_NAME: str = "ja5p"
