@@ -4,7 +4,7 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
 # from loguru import logger
-from app import app
+from app.main import app
 from app.types.exceptions import (
     APIException,
     ExpiredSignatureError,
