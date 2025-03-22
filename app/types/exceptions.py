@@ -5,9 +5,11 @@ class APIException(Exception):
 
 class InvalidTokenError(APIException):
     """User has provided an invalid or expired token"""
-    pass
+    def __init__(self):
+        super().__init__("Invalid token, please re-authenticate again.")
 
 
 class ExpiredSignatureError(APIException):
     """Token has expired and needs re-authentication."""
-    pass
+    def __init__(self):
+        super().__init__("Token has expired. Please log in again.")

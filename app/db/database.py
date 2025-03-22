@@ -2,7 +2,7 @@ from alembic import command
 from alembic.config import Config
 from loguru import logger
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
 from app.core.settings import Settings
 
