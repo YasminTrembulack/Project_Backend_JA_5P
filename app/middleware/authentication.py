@@ -5,6 +5,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.core.security import security
 from app.db.database import get_session
 from app.repositories.user_repositorie import UserRepository
+from app.types.exceptions import APIException
 
 
 class AuthenticationMiddleware(BaseHTTPMiddleware):
@@ -25,10 +26,15 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         try:
             payload = security.verify_access_token(token)
             user_id = payload.get("user_id")
+        except APIException as e:
+            return JSONResponse(
+                status_code=401,
+                content={"detail": str(e)}
+            )
         except Exception:
             return JSONResponse(
                 status_code=401,
-                content={"detail": "Invalid or expired token"}
+                content={"detail": "Unexpected error while verifying token."}
             )
 
         with next(get_session()) as db:
