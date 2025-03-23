@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     LOCAL_ENV: bool = False
     VERSION: str = "0.1.0"
     API_PREFIX: str = "/api"
-    PROJECT_NAME: str = "ja5p"
+    PROJECT_NAME: str = "API_JA_5P"
 
 
 # # logging configuration
