@@ -1,5 +1,5 @@
 
-from requests import Session
+from sqlalchemy.orm import Session
 
 from app.core.security import security
 from app.interfaces.user_repository_interface import IUserRepository
