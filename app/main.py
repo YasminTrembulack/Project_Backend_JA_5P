@@ -5,6 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.core.settings import Settings
 from app.db.database import run_migrations, test_connection
+from app.middleware.authentication import AuthenticationMiddleware
 from app.middleware.erro_handling import create_exception_handler
 from app.routes.auth_route import router as auth_router
 from app.routes.ping import router as ping_route
@@ -31,7 +32,7 @@ app.include_router(user_router, prefix=Settings().API_PREFIX)
 app.include_router(ping_route, prefix=Settings().API_PREFIX)
 app.include_router(auth_router, prefix=Settings().API_PREFIX)
 
-# app.add_middleware(AuthenticationMiddleware)
+app.add_middleware(AuthenticationMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
