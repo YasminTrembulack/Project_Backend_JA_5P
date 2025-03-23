@@ -1,6 +1,4 @@
-from http import HTTPStatus
-
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_session
@@ -12,7 +10,7 @@ router = APIRouter()
 
 @router.post(
     '/login',
-    status_code=HTTPStatus.OK,
+    status_code=status.HTTP_200_OK,
     response_model=LoginResponse
 )
 def login(user: LoginPayload, session: Session = Depends(get_session)):
