@@ -1,16 +1,17 @@
-from http import HTTPStatus
+import datetime
 
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 
 from app.core.settings import Settings
-from app.types.schemas import Health
+from app.types.schemas import PingResponse
 
 router = APIRouter()
 
 
-@router.get('/', status_code=HTTPStatus.OK, response_model=Health)
+@router.get('/ping', status_code=status.HTTP_200_OK, response_model=PingResponse)
 def read_root():
     return {
         'project_name': Settings().PROJECT_NAME,
-        'version': Settings().VERSION
+        'version': Settings().VERSION,
+        'timestamp': datetime.utcnow().isoformat()
     }
