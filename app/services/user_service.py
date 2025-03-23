@@ -1,10 +1,9 @@
-from http import HTTPStatus
 
-from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.models.user import User
 from app.repositories.user_repositorie import UserRepository
+from app.types.exceptions import DataConflictError
 from app.types.schemas import UserSchema
 
 
@@ -20,10 +19,9 @@ class UserService:
             user.registration_number
         )
         if user_found:
-            raise HTTPException(
-                HTTPStatus.BAD_REQUEST,
-                detail='Email alredy exists.'
+            raise DataConflictError(
+                'Email alredy in use.'
                 if user.email == user_found.email
-                else 'Registration number alredy exists.'
+                else 'Registration number alredy in use.'
             )
         return self.user_repo.create_user(user)
