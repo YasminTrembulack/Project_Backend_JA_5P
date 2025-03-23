@@ -12,9 +12,9 @@ class ResponseCreate(BaseModel, Generic[T]):
 
 
 class PingResponse(BaseModel):
+    timestamp_br: str
     project_name: str
     version: str
-    timestamp: str
 
 
 class UserSchema(BaseModel):
