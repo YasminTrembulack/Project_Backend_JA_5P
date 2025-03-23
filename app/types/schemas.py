@@ -11,9 +11,10 @@ class ResponseCreate(BaseModel, Generic[T]):
     data: T
 
 
-class Health(BaseModel):
+class PingResponse(BaseModel):
     project_name: str
     version: str
+    timestamp: str
 
 
 class UserSchema(BaseModel):
