@@ -18,7 +18,7 @@ router = APIRouter(prefix='/user')
 def create_user(
     user: UserSchema,
     session: Session = Depends(get_session),
-    _: None = Depends(check_roles(["Admin"]))
+    # _: None = Depends(check_roles(["Admin"]))
 ):
     service = UserService(session)
     db_user = service.user_register(user)

@@ -31,7 +31,7 @@ app.include_router(user_router, prefix=Settings().API_PREFIX)
 app.include_router(ping_route, prefix=Settings().API_PREFIX)
 app.include_router(auth_router, prefix=Settings().API_PREFIX)
 
-app.add_middleware(AuthenticationMiddleware)
+# app.add_middleware(AuthenticationMiddleware)
 
 app.add_exception_handler(
     exc_class_or_status_code=PermissionDeniedError,
