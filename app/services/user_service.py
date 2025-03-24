@@ -3,14 +3,14 @@ from sqlalchemy.orm import Session
 from app.models.user import User
 from app.repositories.user_repositorie import UserRepository
 from app.types.exceptions import DataConflictError
-from app.types.schemas import UserSchema
+from app.types.schemas import UserPayload
 
 
 class UserService:
     def __init__(self, db: Session):
         self.user_repo = UserRepository(db)
 
-    def user_register(self, user: UserSchema) -> User:
+    def user_register(self, user: UserPayload) -> User:
         user_found = self.user_repo.get_user_by_email(user.email)
         user_found = self.user_repo.get_user_by_registration_number(
             user.registration_number
