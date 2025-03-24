@@ -42,21 +42,6 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
 
         except APIException as e:
             logger.error(f'{e.__class__.__name__}: {e.message}')
-            user_id = payload.get('user_id')
-
-            session: Session = next(get_session())
-            try:
-                repo = UserRepository(session)
-                user = repo.get_user_by_id(user_id)
-            finally:
-                session.close()
-
-            if user is None:
-                raise InvalidTokenError()
-            request.state.user = user
-
-        except APIException as e:
-            logger.error(f'{e.__class__.__name__}: {e.message}')
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={'detail': f'{e.message}'},
