@@ -10,7 +10,6 @@ router = APIRouter()
 
 
 @router.get('/ping', status_code=status.HTTP_200_OK, response_model=PingResponse)
-@router.get('/ping', status_code=status.HTTP_200_OK, response_model=PingResponse)
 def read_root():
     br_tz = pytz.timezone('America/Sao_Paulo')
     timestamp = datetime.now(timezone.utc).isoformat()
