@@ -17,5 +17,4 @@ def check_roles(required_roles: list):
                 f'Permission denied, only {", ".join(required_roles)} allowed.'
             )
         return user
-
     return role_dependency
