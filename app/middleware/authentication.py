@@ -1,4 +1,3 @@
-
 from fastapi import status
 from fastapi.responses import JSONResponse
 from loguru import logger
@@ -23,7 +22,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         try:
             auth_header = request.headers.get('Authorization')
             if not auth_header or not auth_header.startswith('Bearer '):
-                raise AuthTokenMissingError("Authentication token is missing")
+                raise AuthTokenMissingError('Authentication token is missing')
 
             token = auth_header.split(' ')[1].strip()
 
@@ -45,12 +44,12 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
             logger.error(f'{e.__class__.__name__}: {e.message}')
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                content={'detail': f'{e.message}'}
+                content={'detail': f'{e.message}'},
             )
         except Exception as e:
             logger.error(f'{e.__class__.__name__}: {e.message}')
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                content={'detail': 'Unexpected error while verifying token.'}
+                content={'detail': 'Unexpected error while verifying token.'},
             )
         return await call_next(request)
