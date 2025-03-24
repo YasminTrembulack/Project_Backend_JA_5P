@@ -4,6 +4,7 @@ from app.core.settings import Settings
 
 
 def test_settings(mocker):
+    # mocker = pip install pytest-mock  
     mocker.patch.dict(
         os.environ,
         {
