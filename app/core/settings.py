@@ -1,4 +1,8 @@
+import logging
+import sys
+
 from dotenv import load_dotenv
+from loguru import logger
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
@@ -17,9 +21,15 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = 'API_JA_5P'
 
 
-# # logging configuration
-# LOGGING_LEVEL = logging.DEBUG if DEBUG else logging.INFO
-# logging.basicConfig(
-#     handlers=[InterceptHandler(level=LOGGING_LEVEL)], level=LOGGING_LEVEL
-# )
-# logger.configure(handlers=[{"sink": sys.stderr, "level": LOGGING_LEVEL}])
+class InterceptHandler(logging.Handler):
+    @staticmethod
+    def emit(record: logging.LogRecord) -> None:
+        logger_opt = logger.opt(depth=7, exception=record.exc_info)
+        logger_opt.log(record.levelname, record.getMessage())
+
+
+LOGGING_LEVEL = logging.DEBUG if Settings().LOCAL_ENV else logging.INFO
+logging.basicConfig(
+    handlers=[InterceptHandler(level=LOGGING_LEVEL)], level=LOGGING_LEVEL
+)
+logger.configure(handlers=[{'sink': sys.stderr, 'level': LOGGING_LEVEL}])
