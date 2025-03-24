@@ -1,4 +1,3 @@
-
 from sqlalchemy.orm import Session
 
 from app.models.user import User
@@ -12,9 +11,7 @@ class UserService:
         self.user_repo = UserRepository(db)
 
     def user_register(self, user: UserSchema) -> User:
-        user_found = self.user_repo.get_user_by_email(
-            user.email
-        )
+        user_found = self.user_repo.get_user_by_email(user.email)
         user_found = self.user_repo.get_user_by_registration_number(
             user.registration_number
         )

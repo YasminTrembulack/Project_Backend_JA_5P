@@ -1,4 +1,3 @@
-
 from sqlalchemy.orm import Session
 
 from app.core.security import security
@@ -18,7 +17,7 @@ class UserRepository(IUserRepository):
             password=hashed_password,
             email=user.email,
             registration_number=user.registration_number,
-            role=user.role
+            role=user.role,
         )
         self.db.add(db_user)
         self.db.commit()
@@ -29,12 +28,7 @@ class UserRepository(IUserRepository):
         return self.db.query(User).filter(User.email == email).first()
 
     def get_user_by_registration_number(self, re: str) -> User | None:
-        return (
-            self.db
-            .query(User)
-            .filter(User.registration_number == re)
-            .first()
-        )
+        return self.db.query(User).filter(User.registration_number == re).first()
 
     def get_user_by_id(self, user_id: str) -> User | None:
         return self.db.query(User).filter(User.id == user_id).first()

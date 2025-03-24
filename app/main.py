@@ -35,28 +35,26 @@ app.add_middleware(AuthenticationMiddleware)
 
 app.add_exception_handler(
     exc_class_or_status_code=PermissionDeniedError,
-    handler=create_exception_handler(
-        status.HTTP_403_FORBIDDEN, "Permission denied"
-    ),
+    handler=create_exception_handler(status.HTTP_403_FORBIDDEN, 'Permission denied'),
 )
 
 app.add_exception_handler(
     exc_class_or_status_code=NotAuthenticatedError,
     handler=create_exception_handler(
-        status.HTTP_401_UNAUTHORIZED, "Not authenticated"
+        status.HTTP_401_UNAUTHORIZED, 'Not authenticated'
     ),
 )
 
 app.add_exception_handler(
     exc_class_or_status_code=DataConflictError,
     handler=create_exception_handler(
-        status.HTTP_400_BAD_REQUEST, "Data conflict error"
+        status.HTTP_400_BAD_REQUEST, 'Data conflict error'
     ),
 )
 
 app.add_exception_handler(
     exc_class_or_status_code=InvalidCredentialsError,
     handler=create_exception_handler(
-        status.HTTP_401_UNAUTHORIZED, "Invalid credentials"
+        status.HTTP_401_UNAUTHORIZED, 'Invalid credentials'
     ),
 )

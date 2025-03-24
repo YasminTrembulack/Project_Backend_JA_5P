@@ -13,9 +13,7 @@ from app.models.base_model import BaseModel
 class User(BaseModel):
     __tablename__ = 'users'
 
-    id: Mapped[UUID] = mapped_column(
-        CHAR(36), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     full_name: Mapped[str] = mapped_column(String(255))
     password: Mapped[str] = mapped_column(String(100))
     email: Mapped[str] = mapped_column(String(255), unique=True)
@@ -23,9 +21,7 @@ class User(BaseModel):
     role: Mapped[str] = mapped_column(
         Enum('User', 'Editor', 'Admin', name='user_roles'), default='User'
     )
-    created_at: Mapped[datetime] = mapped_column(
-        server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         server_default=func.now(), onupdate=func.now()
     )

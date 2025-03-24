@@ -22,23 +22,15 @@ class SecurityManager:
 
     def create_access_token(self, data: dict, expires_in: int = 60) -> str:
         to_encode = data.copy()
-        expire = datetime.now(timezone.utc) + timedelta(
-            minutes=expires_in
-        )
+        expire = datetime.now(timezone.utc) + timedelta(minutes=expires_in)
         to_encode.update({'exp': expire})
-        return jwt.encode(
-            to_encode, self.secret_key, self.algorithm
-        )
+        return jwt.encode(to_encode, self.secret_key, self.algorithm)
 
     def verify_access_token(self, token: str) -> Dict:
         try:
-            payload = jwt.decode(
-                token,
-                self.secret_key,
-                algorithms=[self.algorithm]
-            )
+            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
         except jwt.ExpiredSignatureError:
-            raise ExpiredSignatureError("Token has expired. Please log in again.")
+            raise ExpiredSignatureError('Token has expired. Please log in again.')
         except jwt.InvalidTokenError:
             raise InvalidTokenError()
         return payload
