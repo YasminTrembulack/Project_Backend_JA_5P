@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_session
 from app.services.auth_service import AuthService
-from app.types.schemas import LoginPayload, LoginResponse, UserPublic
+from app.types.schemas import LoginPayload, LoginResponse, UserResponse
 
 router = APIRouter()
 
@@ -15,5 +15,5 @@ def login(user: LoginPayload, session: Session = Depends(get_session)):
     return LoginResponse(
         message='Login successful!',
         token=token,
-        user=UserPublic.model_validate(_user.to_dict()),
+        user=UserResponse.model_validate(_user.to_dict()),
     )

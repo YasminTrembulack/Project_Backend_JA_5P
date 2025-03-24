@@ -17,7 +17,7 @@ class PingResponse(BaseModel):
     version: str
 
 
-class UserSchema(BaseModel):
+class UserPayload(BaseModel):
     full_name: str
     email: str
     password: str
@@ -25,7 +25,7 @@ class UserSchema(BaseModel):
     role: Optional[str] = 'User'
 
 
-class UserPublic(BaseModel):
+class UserResponse(BaseModel):
     id: UUID
     full_name: str
     email: str
@@ -41,5 +41,5 @@ class LoginPayload(BaseModel):
 
 class LoginResponse(BaseModel):
     message: str
-    user: UserPublic
+    user: UserResponse
     token: str
