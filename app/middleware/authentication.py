@@ -2,18 +2,11 @@ from fastapi import status
 from fastapi.responses import JSONResponse
 from loguru import logger
 from sqlalchemy.orm import Session
-from loguru import logger
-from sqlalchemy.orm import Session
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.security import security
 from app.db.database import get_session
 from app.repositories.user_repositorie import UserRepository
-from app.types.exceptions import (
-    APIException,
-    AuthTokenMissingError,
-    InvalidTokenError,
-)
 from app.types.exceptions import (
     APIException,
     AuthTokenMissingError,

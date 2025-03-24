@@ -45,27 +45,3 @@ class DataConflictError(APIException):
 
 class InvalidCredentialsError(APIException):
     pass
-
-
-class AuthTokenMissingError(APIException):
-    pass
-
-
-class DatabaseConnectionError(APIException):
-    pass
-
-
-class MigrationExecutionError(APIException):
-    pass
-
-
-class NotAuthenticatedError(APIException):
-    pass
-
-
-class DataConflictError(APIException):
-    pass
-
-
-class InvalidCredentialsError(APIException):
-    pass
