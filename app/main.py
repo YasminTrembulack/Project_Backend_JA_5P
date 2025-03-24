@@ -36,10 +36,7 @@ app.add_middleware(AuthenticationMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
-    allow_origins=['*'],
     allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
     allow_methods=['*'],
     allow_headers=['*'],
 )
@@ -54,11 +51,6 @@ app.add_exception_handler(
     handler=create_exception_handler(
         status.HTTP_401_UNAUTHORIZED, 'Invalid credentials'
     ),
-)
-
-app.add_exception_handler(
-    exc_class_or_status_code=PermissionDeniedError,
-    handler=create_exception_handler(status.HTTP_403_FORBIDDEN, 'Permission denied'),
 )
 
 app.add_exception_handler(
@@ -72,12 +64,5 @@ app.add_exception_handler(
     exc_class_or_status_code=DataConflictError,
     handler=create_exception_handler(
         status.HTTP_400_BAD_REQUEST, 'Data conflict error'
-    ),
-)
-
-app.add_exception_handler(
-    exc_class_or_status_code=InvalidCredentialsError,
-    handler=create_exception_handler(
-        status.HTTP_401_UNAUTHORIZED, 'Invalid credentials'
     ),
 )
