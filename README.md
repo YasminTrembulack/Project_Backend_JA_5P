@@ -1,21 +1,34 @@
 # Project_Backend_JA_5P
 Backend project for the Learning Journey course in the 5th semester of Software Engineering in 2025.
 
-## Ambiente virtual
-Criando o ambiente: `python -m venv .venv`\
-Ativando o ambiente: `.\.venv\Scripts\activate`\
-Comando para desativar: `deactivate`
+## Tecnologias Utilizadas
+- **Backend:** Python, FastAPI
+- **Banco de Dados:** MySQL
+- **Outras tecnologias relevantes:** SQLAlchemy, Alembic, PyMySQL, pydantic, ruff, loguru, etc.
 
-## Instalando pacotes
-`pip install -r requirements.txt`
+## Requisitos
+Antes de rodar o projeto, você precisa instalar o MySQL no seu ambiente local.
 
-## Migrations LOCAL
+### Instalar MySQL
+1.  Clique no link abaixo para acessar um tutorial de instalação do MySQL: [Tutorial de Instalação do MySQL](https://www.youtube.com/watch?v=v8i2NgiM5pE)
+2.  Siga as instruções do tutorial para instalar o MySQL no seu sistema.
+3.  Após a instalação, verifique se o MySQL está funcionando corretamente executando o seguinte comando no terminal: `mysql --version`
+
+
+### Configurando ambiente virtual
+1.  Criando o ambiente: `python -m venv .venv`\
+2.  Ativando o ambiente: `.\.venv\Scripts\activate`\
+3.  Comando para desativar: `deactivate`
+4.  Instalando pacotes: `pip install -r requirements.txt`
+
+### Migrations Local
 > [!IMPORTANT]
-> Caso uma migration já tenha sido iniciada apenas APLIQUE as migrações.\
+> Caso uma migration já tenha sido iniciada apenas APLIQUE as migrações.
 
-Iniciar migrações: `alembic init migrations`\
-Gerar migrações: `alembic revision --autogenerate -m "first migration"`\
-Aplicar migrações: `alembic upgrade head`\
+1.  Iniciar migrações: `alembic init migrations`
+2.  Gerar migrações: `alembic revision --autogenerate -m "first migration"`
+3.  Aplicar migrações: `alembic upgrade head`
+
 > Sempre que uma mudança relacionada ao banco de dados for realizada é necessario realizar as migrações.
 
 ## Tasks
