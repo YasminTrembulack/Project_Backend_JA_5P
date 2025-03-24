@@ -41,8 +41,7 @@ docker-compose.override.yml
 docker-compose.yml
 
 # Arquivos de configuração sensíveis
-.env
-
+/.env
 # Outros #
 # Arquivos criados pelo sistema operacional
 .DS_Store
