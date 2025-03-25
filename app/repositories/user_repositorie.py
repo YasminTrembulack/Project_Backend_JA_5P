@@ -3,11 +3,10 @@ from typing import List, Optional, Tuple
 from sqlalchemy import UnaryExpression
 from sqlalchemy.orm import Session
 
-from app.core.security import security
 from app.interfaces.user_repository_interface import IUserRepository
 from app.models.user import User
-from app.types.exceptions import InvalidFieldError, NotFoundError
-from app.types.schemas import UserPayload
+from app.types.exceptions import InvalidFieldError
+from app.types.schemas import UserPayload, UserUpdatePayload
 
 
 class UserRepository(IUserRepository):
@@ -15,10 +14,9 @@ class UserRepository(IUserRepository):
         self.db = db
 
     def create_user(self, user: UserPayload) -> User:
-        hashed_password = security.hash_password(user.password)
         db_user = User(
             full_name=user.full_name,
-            password=hashed_password,
+            password=user.password,
             email=user.email,
             registration_number=user.registration_number,
             role=user.role,
@@ -43,9 +41,13 @@ class UserRepository(IUserRepository):
         total_users = self.db.query(User).count()
         return users, total_users
 
-    def delete_user(self, id: str) -> None:
-        user = self.db.query(User).filter(User.id == id).first()
-        if not user:
-            raise NotFoundError('User not found')
+    def delete_user(self, user: User) -> None:
         self.db.delete(user)
         self.db.commit()
+
+    def update_user(self, user: User, payload: UserUpdatePayload) -> User:
+        for key, value in payload.items():
+            setattr(user, key, value)
+        self.db.commit()
+        self.db.refresh(user)
+        return user
