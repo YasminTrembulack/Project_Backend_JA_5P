@@ -1,4 +1,3 @@
-
 name: Unit tests with Coveralls
 
 on:
@@ -12,7 +11,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -32,8 +30,16 @@ jobs:
       
     - name: Test with pytest
       run: |
-        pytest --cov=app --cov-report=xml
+        pytest --cov=app --cov-report=xml:coverage.xml
         
+    - name: Check if coverage.xml exists
+      run: |
+        ls -l coverage.xml
+
+    - name: Show contents of coverage.xml
+      run: |
+        cat coverage.xml
+
     - name: Coveralls
       uses: coverallsapp/github-action@v2
       env:
