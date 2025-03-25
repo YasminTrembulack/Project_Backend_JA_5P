@@ -24,9 +24,12 @@ class Metadata(BaseModel):
 
 class GetAllResponse(BaseModel, Generic[T]):
     message: str
-    # TODO: verificar se caso nao tenha nada cadastrado na tabela da entidade retornar []
     data: List[T]
     metadata: Metadata
+
+
+class DeleteResponse(BaseModel):
+    message: str
 
 
 class PingResponse(BaseModel):

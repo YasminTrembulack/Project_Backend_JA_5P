@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.security import security
 from app.interfaces.user_repository_interface import IUserRepository
 from app.models.user import User
-from app.types.exceptions import InvalidFieldError
+from app.types.exceptions import InvalidFieldError, NotFoundError
 from app.types.schemas import UserPayload
 
 
@@ -42,3 +42,10 @@ class UserRepository(IUserRepository):
         users = self.db.query(User).order_by(order).offset(offset).limit(limit).all()
         total_users = self.db.query(User).count()
         return users, total_users
+
+    def delete_user(self, id: str) -> None:
+        user = self.db.query(User).filter(User.id == id).first()
+        if not user:
+            raise NotFoundError('User not found')
+        self.db.delete(user)
+        self.db.commit()

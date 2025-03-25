@@ -21,3 +21,7 @@ class IUserRepository(ABC):
         self, offset: int, limit: int, order: UnaryExpression
     ) -> Tuple[List[User], int]:
         pass
+
+    @abstractmethod
+    def delete_user(self, id: str) -> None:
+        pass

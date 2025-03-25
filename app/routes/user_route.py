@@ -6,6 +6,7 @@ from app.middlewares.check_roles import check_roles
 from app.services.user_service import UserService
 from app.types.schemas import (
     CreateResponse,
+    DeleteResponse,
     GetAllResponse,
     Metadata,
     UserPayload,
@@ -42,7 +43,7 @@ def get_all_users(
     order_by: str = Query('full_name'),
     desc_order: bool = Query(False),
     session: Session = Depends(get_session),
-    _: None = Depends(check_roles(['Admin'])),
+    _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = UserService(session)
     users, total_users = service.get_all_users(page, limit, order_by, desc_order)
@@ -61,3 +62,18 @@ def get_all_users(
     return GetAllResponse(
         message='Users found successfully.', data=users, metadata=meta
     )
+
+
+@router.delete(
+    '/delete',
+    status_code=status.HTTP_200_OK,
+    response_model=DeleteResponse,
+)
+def delete_user(
+    id: str,
+    session: Session = Depends(get_session),
+    _: None = Depends(check_roles(['Admin'])),
+):
+    service = UserService(session)
+    service.delete_user(id)
+    return DeleteResponse(message='User deleted successfully.')

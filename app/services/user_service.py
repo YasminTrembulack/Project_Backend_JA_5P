@@ -34,3 +34,6 @@ class UserService:
             desc(getattr(User, order_by)) if desc_order else getattr(User, order_by)
         )
         return self.user_repo.get_all_users_paginated(offset, limit, order)
+
+    def delete_user(self, id: str) -> None:
+        return self.user_repo.delete_user(id)

@@ -49,3 +49,7 @@ class InvalidCredentialsError(APIException):
 
 class InvalidFieldError(APIException):
     pass
+
+
+class NotFoundError(APIException):
+    pass
