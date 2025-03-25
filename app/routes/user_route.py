@@ -5,12 +5,13 @@ from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.user_service import UserService
 from app.types.schemas import (
-    CreateResponse,
     DeleteResponse,
+    EntityResponse,
     GetAllResponse,
     Metadata,
     UserPayload,
     UserResponse,
+    UserUpdatePayload,
 )
 
 router = APIRouter(prefix='/user')
@@ -19,7 +20,7 @@ router = APIRouter(prefix='/user')
 @router.post(
     '/register',
     status_code=status.HTTP_201_CREATED,
-    response_model=CreateResponse[UserResponse],
+    response_model=EntityResponse[UserResponse],
 )
 def create_user(
     user: UserPayload,
@@ -28,8 +29,8 @@ def create_user(
 ):
     service = UserService(session)
     db_user = service.user_register(user)
-    public_user = UserResponse.model_validate(db_user.to_dict())
-    return CreateResponse(message='User created with success.', data=public_user)
+    user_response = UserResponse.model_validate(db_user.to_dict())
+    return EntityResponse(message='User created with success.', data=user_response)
 
 
 @router.get(
@@ -77,3 +78,20 @@ def delete_user(
     service = UserService(session)
     service.delete_user(id)
     return DeleteResponse(message='User deleted successfully.')
+
+
+@router.patch(
+    '/update',
+    status_code=status.HTTP_200_OK,
+    response_model=EntityResponse[UserResponse],
+)
+def update_user(
+    id: str,
+    user: UserUpdatePayload,
+    session: Session = Depends(get_session),
+    _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
+):
+    service = UserService(session)
+    user = service.update_user(id, user)
+    user_response = UserResponse.model_validate(user.to_dict())
+    return EntityResponse(message='User updated successfully.', data=user_response)
