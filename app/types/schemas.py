@@ -1,12 +1,12 @@
 from typing import Generic, List, Optional, TypeVar
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 T = TypeVar('T')
 
 
-class CreateResponse(BaseModel, Generic[T]):
+class EntityResponse(BaseModel, Generic[T]):
     message: str
     data: T
 
@@ -40,10 +40,18 @@ class PingResponse(BaseModel):
 
 class UserPayload(BaseModel):
     full_name: str
-    email: str
+    email: EmailStr
     password: str
     registration_number: str
     role: Optional[str] = 'User'
+
+
+class UserUpdatePayload(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+    registration_number: Optional[str] = None
+    role: Optional[str] = None
 
 
 class UserResponse(BaseModel):
@@ -56,7 +64,7 @@ class UserResponse(BaseModel):
 
 
 class LoginPayload(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
 
