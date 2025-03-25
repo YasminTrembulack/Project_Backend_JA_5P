@@ -1,6 +1,5 @@
 # Project_Backend_JA_5P [![Coverage Status](https://coveralls.io/repos/github/YasminTrembulack/Project_Backend_JA_5P/badge.svg?branch=main)](https://coveralls.io/github/YasminTrembulack/Project_Backend_JA_5P?branch=main)
 Backend project for the Learning Journey course in the 5th semester of Software Engineering in 2025.\
-
 ## Tecnologias Utilizadas
 - **Backend:** Python, FastAPI
 - **Banco de Dados:** MySQL
