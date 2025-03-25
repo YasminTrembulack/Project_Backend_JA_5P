@@ -32,7 +32,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
             session: Session = next(get_session())
             try:
                 repo = UserRepository(session)
-                user = repo.get_user_by_id(user_id)
+                user = repo.get_user_by_field('id', user_id)
             finally:
                 session.close()
 
@@ -47,7 +47,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                 content={'detail': f'{e.message}'},
             )
         except Exception as e:
-            logger.error(f'{e.__class__.__name__}: {e.message}')
+            logger.error(f'{e.__class__.__name__}: {str(e)}')
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={'detail': 'Unexpected error while verifying token.'},
