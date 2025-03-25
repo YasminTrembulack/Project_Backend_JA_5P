@@ -13,7 +13,9 @@ from app.routes.user_route import router as user_router
 from app.types.exceptions import (
     DataConflictError,
     InvalidCredentialsError,
+    InvalidFieldError,
     NotAuthenticatedError,
+    NotFoundError,
     PermissionDeniedError,
 )
 
@@ -33,7 +35,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
     allow_credentials=True,
-    allow_methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allow_methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     allow_headers=['Authorization', 'Content-Type'],
 )
 
@@ -68,4 +70,16 @@ app.add_exception_handler(
     handler=create_exception_handler(
         status.HTTP_400_BAD_REQUEST, 'Data conflict error'
     ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=InvalidFieldError,
+    handler=create_exception_handler(
+        status.HTTP_400_BAD_REQUEST, 'Field does not exist in entity'
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=NotFoundError,
+    handler=create_exception_handler(status.HTTP_404_NOT_FOUND, 'Entity not found'),
 )
