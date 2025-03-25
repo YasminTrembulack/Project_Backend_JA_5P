@@ -45,3 +45,7 @@ class DataConflictError(APIException):
 
 class InvalidCredentialsError(APIException):
     pass
+
+
+class InvalidFieldError(APIException):
+    pass
