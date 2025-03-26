@@ -8,7 +8,7 @@ from app.db.database import run_migrations, test_connection
 from app.middlewares.authentication import AuthenticationMiddleware
 from app.middlewares.erro_handling import create_exception_handler
 from app.routes.auth_route import router as auth_router
-from app.routes.ping import router as ping_route
+from app.routes.ping_route import router as ping_route
 from app.routes.user_route import router as user_router
 from app.types.exceptions import (
     DataConflictError,
