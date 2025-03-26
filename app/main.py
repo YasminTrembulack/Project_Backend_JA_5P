@@ -8,7 +8,8 @@ from app.db.database import run_migrations, test_connection
 from app.middlewares.authentication import AuthenticationMiddleware
 from app.middlewares.erro_handling import create_exception_handler
 from app.routes.auth_route import router as auth_router
-from app.routes.ping_route import router as ping_route
+from app.routes.customer_route import router as customer_router
+from app.routes.ping_route import router as ping_router
 from app.routes.user_route import router as user_router
 from app.types.exceptions import (
     DataConflictError,
@@ -42,7 +43,8 @@ app.add_middleware(
 app.add_middleware(AuthenticationMiddleware)
 
 app.include_router(user_router, prefix=Settings().API_PREFIX)
-app.include_router(ping_route, prefix=Settings().API_PREFIX)
+app.include_router(customer_router, prefix=Settings().API_PREFIX)
+app.include_router(ping_router, prefix=Settings().API_PREFIX)
 app.include_router(auth_router, prefix=Settings().API_PREFIX)
 
 
