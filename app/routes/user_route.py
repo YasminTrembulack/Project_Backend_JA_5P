@@ -59,21 +59,21 @@ def get_all_users(
         order_by=order_by,
         desc_order=desc_order,
     )
-    users = (user.to_dict() for user in users)
+    users = [UserResponse.model_validate(user.to_dict()) for user in users]
     return GetAllResponse(
         message='Users found successfully.', data=users, metadata=meta
     )
 
 
 @router.delete(
-    '/delete',
+    '/delete/{id}',
     status_code=status.HTTP_200_OK,
     response_model=DeleteResponse,
 )
 def delete_user(
     id: str,
     session: Session = Depends(get_session),
-    _: None = Depends(check_roles(['Admin'])),
+    _: None = Depends(check_roles(['Admin'], True)),
 ):
     service = UserService(session)
     service.delete_user(id)
@@ -81,7 +81,7 @@ def delete_user(
 
 
 @router.patch(
-    '/update',
+    '/update/{id}',
     status_code=status.HTTP_200_OK,
     response_model=EntityResponse[UserResponse],
 )
@@ -89,9 +89,25 @@ def update_user(
     id: str,
     user: UserUpdatePayload,
     session: Session = Depends(get_session),
-    _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
+    _: None = Depends(check_roles(['Admin'], True)),
 ):
     service = UserService(session)
     user = service.update_user(id, user)
     user_response = UserResponse.model_validate(user.to_dict())
     return EntityResponse(message='User updated successfully.', data=user_response)
+
+
+@router.get(
+    '/{id}',
+    status_code=status.HTTP_200_OK,
+    response_model=EntityResponse[UserResponse],
+)
+def get_user(
+    id: str,
+    session: Session = Depends(get_session),
+    _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
+):
+    service = UserService(session)
+    user = service.get_user(id)
+    user_response = UserResponse.model_validate(user.to_dict())
+    return EntityResponse(message='User found successfully.', data=user_response)
