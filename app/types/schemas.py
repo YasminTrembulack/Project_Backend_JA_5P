@@ -6,26 +6,17 @@ from pydantic import BaseModel, EmailStr
 T = TypeVar('T')
 
 
+# --- RESPONSE CLASSES --- #
+
 class EntityResponse(BaseModel, Generic[T]):
     message: str
     data: T
 
 
-class Metadata(BaseModel):
-    total: int  # Total de itens disponíveis no banco de dados
-    limit: int  # Número de itens por página
-    page: int  # Página atual
-    total_pages: int  # Total de páginas
-    has_next: bool  # Se existe uma próxima página
-    has_previous: bool  # Se existe uma página anterior
-    order_by: str
-    desc_order: bool
-
-
 class GetAllResponse(BaseModel, Generic[T]):
     message: str
     data: List[T]
-    metadata: Metadata
+    metadata: 'Metadata'
 
 
 class DeleteResponse(BaseModel):
@@ -37,6 +28,8 @@ class PingResponse(BaseModel):
     project_name: str
     version: str
 
+
+# --- USER CLASSES --- #
 
 class UserPayload(BaseModel):
     full_name: str
@@ -63,6 +56,26 @@ class UserResponse(BaseModel):
     updated_at: str
 
 
+# --- CUSTOMER CLASSES --- #
+
+class CustomerPayload(BaseModel):
+    full_name: str
+
+
+class CustomerUpdatePayload(BaseModel):
+    full_name: Optional[str] = None
+
+
+class CustomerResponse(BaseModel):
+    id: UUID
+    full_name: str
+    created_at: str
+    updated_at: str
+
+
+# --- AUTHENTICATION CLASSES --- #
+
+
 class LoginPayload(BaseModel):
     email: EmailStr
     password: str
@@ -72,3 +85,16 @@ class LoginResponse(BaseModel):
     message: str
     user: UserResponse
     token: str
+
+
+# --- METADATA CLASS --- #
+
+class Metadata(BaseModel):
+    total: int  # Total de itens disponíveis no banco de dados
+    limit: int  # Número de itens por página
+    page: int  # Página atual
+    total_pages: int  # Total de páginas
+    has_next: bool  # Se existe uma próxima página
+    has_previous: bool  # Se existe uma página anterior
+    order_by: str
+    desc_order: bool
