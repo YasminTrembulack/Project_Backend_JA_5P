@@ -63,15 +63,19 @@ class UserResponse(BaseModel):
 
 class CustomerPayload(BaseModel):
     full_name: str
+    country_name: str
 
 
 class CustomerUpdatePayload(BaseModel):
     full_name: Optional[str] = None
+    country_name: Optional[str] = None
 
 
 class CustomerResponse(BaseModel):
     id: UUID
     full_name: str
+    country_name: str
+    country_code: str
     created_at: str
     updated_at: str
 
