@@ -19,7 +19,7 @@ class ICustomerRepository(ABC):
         pass
 
     @abstractmethod
-    def get_all_customer_paginated(
+    def get_all_customers_paginated(
         self, offset: int, limit: int, order: UnaryExpression
     ) -> Tuple[List[Customer], int]:
         pass
