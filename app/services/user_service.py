@@ -60,7 +60,9 @@ class UserService:
             raise DataConflictError('Email already in use.')
 
         if payload.get('registration_number', False) and self._is_field_in_use(
-            'registration_number', payload.get('registration_number'), user_id,
+            'registration_number',
+            payload.get('registration_number'),
+            user_id,
         ):
             raise DataConflictError('Registration number already in use.')
 

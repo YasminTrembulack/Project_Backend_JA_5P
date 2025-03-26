@@ -24,23 +24,23 @@ class Customer(BaseModel):
     )
 
 
-class CountryEnum(str, Enum):    
-    CN = "China"
-    US = "United States"
-    JP = "Japan"
-    DE = "Germany"
-    KR = "South Korea"
-    IN = "India"
-    FR = "France"
-    IT = "Italy"
-    GB = "United Kingdom"
-    ES = "Spain"
-    MX = "Mexico"
-    BR = "Brazil"
-    TH = "Thailand"
-    RU = "Russia"
-    CZ = "Czech Republic"
-    TR = "Turkey"
+class CountryEnum(str, Enum):
+    CN = 'China'
+    US = 'United States'
+    JP = 'Japan'
+    DE = 'Germany'
+    KR = 'South Korea'
+    IN = 'India'
+    FR = 'France'
+    IT = 'Italy'
+    GB = 'United Kingdom'
+    ES = 'Spain'
+    MX = 'Mexico'
+    BR = 'Brazil'
+    TH = 'Thailand'
+    RU = 'Russia'
+    CZ = 'Czech Republic'
+    TR = 'Turkey'
 
     @classmethod
     def get_country_code(cls, name: str) -> str:
@@ -48,4 +48,4 @@ class CountryEnum(str, Enum):
         for code, country in cls.__members__.items():
             if country.value.lower() == name_lower:
                 return code
-        raise ValueError(f"Country not found: {name}")
+        raise ValueError(f'Country not found: {name}')
