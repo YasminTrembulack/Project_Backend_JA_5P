@@ -3,7 +3,7 @@ from typing import List, Tuple
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
-from app.core import security
+from app.core.security import security
 from app.models.user import User
 from app.repositories.user_repositorie import UserRepository
 from app.types.exceptions import DataConflictError, NotFoundError
@@ -15,7 +15,7 @@ class UserService:
         self.user_repo = UserRepository(db)
 
     def user_register(self, user: UserPayload) -> User:
-        self._validate_unique_fields(user)
+        self._validate_unique_fields(user.to_dict())
         user.password = security.hash_password(user.password)
         return self.user_repo.create_user(user)
 
@@ -35,17 +35,16 @@ class UserService:
         return self.user_repo.delete_user(user)
 
     def update_user(self, id: str, payload: UserUpdatePayload) -> User:
-        payload = payload.model_dump(exclude_unset=True)
-
         user = self.user_repo.get_user_by_field('id', id)
         if not user:
             raise NotFoundError('User not found')
 
-        self._validate_unique_fields(payload, user.id)
+        self._validate_unique_fields(payload.to_dict(), user.id)
 
-        if 'password' in payload:
+        if payload.password:
             payload.password = security.hash_password(payload.password)
 
+        payload = payload.model_dump(exclude_unset=True)
         return self.user_repo.update_user(user, payload)
 
     def get_user(self, id: str) -> User:
@@ -55,15 +54,13 @@ class UserService:
         return user
 
     def _validate_unique_fields(self, payload: dict, user_id: str = None):
-        if 'email' in payload and self._is_field_in_use(
-            'email', payload['email'], user_id
+        if payload.get('email', False) and self._is_field_in_use(
+            'email', payload.get('email'), user_id
         ):
             raise DataConflictError('Email already in use.')
 
-        if 'registration_number' in payload and self._is_field_in_use(
-            'registration_number',
-            payload['registration_number'],
-            user_id,
+        if payload.get('registration_number', False) and self._is_field_in_use(
+            'registration_number', payload.get('registration_number'), user_id,
         ):
             raise DataConflictError('Registration number already in use.')
 
