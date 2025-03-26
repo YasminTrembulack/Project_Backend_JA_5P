@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import Depends, Request
 
 from app.models.user import User
@@ -10,12 +12,16 @@ def get_current_user(request: Request):
     return request.state.user
 
 
-def check_roles(required_roles: list):
-    def role_dependency(user: User = Depends(get_current_user)):
-        if user.role not in required_roles:
-            raise PermissionDeniedError(
-                f'Permission denied, only {", ".join(required_roles)} allowed.'
-            )
-        return user
+def check_roles(required_roles: List[str], self_action: bool = False):
+    def role_dependency(id: str = None, user: User = Depends(get_current_user)):
+        if user.role in required_roles:
+            return user
+        if self_action and user.id == id:
+            return user
+        raise PermissionDeniedError(
+            f'Permission denied, only {", ".join(required_roles)} '
+            f'{("or the user with the corresponding ID " if self_action else "")}'
+            'allowed.'
+        )
 
     return role_dependency
