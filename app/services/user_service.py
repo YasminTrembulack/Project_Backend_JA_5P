@@ -73,3 +73,9 @@ class UserService:
     def _is_field_in_use(self, field: str, value: str, user_id: str) -> bool:
         existing_user = self.user_repo.get_user_by_field(field, value)
         return existing_user is not None and existing_user.id != user_id
+
+    def get_user(self, id: str) -> User:
+        user = self.user_repo.get_user_by_field('id', id)
+        if not user:
+            raise NotFoundError('User not found')
+        return user
