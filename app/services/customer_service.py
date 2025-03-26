@@ -14,7 +14,7 @@ class CustomerService:
         self.customer_repo = CustomerRepository(db)
 
     def customer_register(self, customer: CustomerPayload) -> Customer:
-        self._validate_unique_fields(customer.to_dict())
+        self._validate_unique_fields(customer.model_dump())
         return self.customer_repo.create_customer(customer)
 
     def get_all_customers(
@@ -39,7 +39,7 @@ class CustomerService:
         if not customer:
             raise NotFoundError('Customer not found')
 
-        self._validate_unique_fields(payload.to_dict(), customer.id)
+        self._validate_unique_fields(payload.model_dump(), customer.id)
         payload = payload.model_dump(exclude_unset=True)
         return self.customer_repo.update_customer(customer, payload)
 

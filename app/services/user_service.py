@@ -15,7 +15,7 @@ class UserService:
         self.user_repo = UserRepository(db)
 
     def user_register(self, user: UserPayload) -> User:
-        self._validate_unique_fields(user.to_dict())
+        self._validate_unique_fields(user.model_dump())
         user.password = security.hash_password(user.password)
         return self.user_repo.create_user(user)
 
@@ -39,7 +39,7 @@ class UserService:
         if not user:
             raise NotFoundError('User not found')
 
-        self._validate_unique_fields(payload.to_dict(), user.id)
+        self._validate_unique_fields(payload.model_dump(), user.id)
 
         if payload.password:
             payload.password = security.hash_password(payload.password)
