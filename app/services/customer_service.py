@@ -14,7 +14,7 @@ class CustomerService:
         self.customer_repo = CustomerRepository(db)
 
     def customer_register(self, customer: CustomerPayload) -> Customer:
-        self._validate_unique_fields(customer)
+        self._validate_unique_fields(customer.to_dict())
         return self.customer_repo.create_customer(customer)
 
     def get_all_customers(
@@ -35,12 +35,12 @@ class CustomerService:
         return self.customer_repo.delete_customer(customer)
 
     def update_customer(self, id: str, payload: CustomerUpdatePayload) -> Customer:
-        payload = payload.model_dump(exclude_unset=True)
         customer = self.customer_repo.get_user_by_field('id', id)
         if not customer:
             raise NotFoundError('Customer not found')
 
-        self._validate_unique_fields(payload, customer.id)
+        self._validate_unique_fields(payload.to_dict(), customer.id)
+        payload = payload.model_dump(exclude_unset=True)
         return self.customer_repo.update_customer(customer, payload)
 
     def get_customer(self, id: str) -> Customer:
@@ -50,8 +50,8 @@ class CustomerService:
         return customer
 
     def _validate_unique_fields(self, payload: dict, customer_id: str = None):
-        if 'full_name' in payload and self._is_field_in_use(
-            'full_name', payload['full_name'], customer_id
+        if payload.get('full_name', False) and self._is_field_in_use(
+            'full_name', payload.get('full_name'), customer_id
         ):
             raise DataConflictError('Full name already in use.')
 
