@@ -22,7 +22,8 @@ class CustomerService:
     ) -> Tuple[List[Customer], int]:
         offset = (page - 1) * limit
         order = (
-            desc(getattr(Customer, order_by)) if desc_order
+            desc(getattr(Customer, order_by))
+            if desc_order
             else getattr(Customer, order_by)
         )
         return self.customer_repo.get_all_customers_paginated(offset, limit, order)

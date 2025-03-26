@@ -36,11 +36,7 @@ class CustomerRepository(ICustomerRepository):
         self, offset: int, limit: int, order: UnaryExpression
     ) -> Tuple[List[Customer], int]:
         customers = (
-            self.db.query(Customer)
-            .order_by(order)
-            .offset(offset)
-            .limit(limit)
-            .all()
+            self.db.query(Customer).order_by(order).offset(offset).limit(limit).all()
         )
         total_customers = self.db.query(Customer).count()
         return customers, total_customers

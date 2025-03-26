@@ -8,6 +8,7 @@ T = TypeVar('T')
 
 # --- RESPONSE CLASSES --- #
 
+
 class EntityResponse(BaseModel, Generic[T]):
     message: str
     data: T
@@ -30,6 +31,7 @@ class PingResponse(BaseModel):
 
 
 # --- USER CLASSES --- #
+
 
 class UserPayload(BaseModel):
     full_name: str
@@ -57,6 +59,7 @@ class UserResponse(BaseModel):
 
 
 # --- CUSTOMER CLASSES --- #
+
 
 class CustomerPayload(BaseModel):
     full_name: str
@@ -88,6 +91,7 @@ class LoginResponse(BaseModel):
 
 
 # --- METADATA CLASS --- #
+
 
 class Metadata(BaseModel):
     total: int  # Total de itens disponíveis no banco de dados
