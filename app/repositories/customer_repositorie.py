@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.interfaces.customer_repository_interface import ICustomerRepository
 from app.models.customer import CountryEnum, Customer
 from app.types.exceptions import InvalidFieldError
-from app.types.schemas import CustomerPayload, CustomerUpdatePayload
+from app.types.schemas import CustomerPayload
 
 
 class CustomerRepository(ICustomerRepository):
@@ -26,7 +26,11 @@ class CustomerRepository(ICustomerRepository):
         return db_customer
 
     def get_customer_by_field(
-        self, field_name: str, value: str, include_inactive: bool = False
+        self, 
+        field_name: str, 
+        value: str, 
+        include_inactive: bool = False, 
+        exclude_id: Optional[str] = None
     ) -> Optional[Customer]:
         user_field = getattr(Customer, field_name, None)
         if not user_field:
@@ -35,24 +39,26 @@ class CustomerRepository(ICustomerRepository):
             )
         query = self.db.query(Customer).filter(user_field == value)
         if not include_inactive:
-            query = query.filter(Customer.is_active == True)
+            query = query.filter(Customer.is_active.is_(True))
+        if exclude_id:
+            query = query.filter(Customer.id != exclude_id)
         return query.first()
 
     def get_all_customers_paginated(
-        self, 
-        offset: int, 
-        limit: int, 
-        order: UnaryExpression, 
-        include_inactive: bool = False
+        self,
+        offset: int,
+        limit: int,
+        order: UnaryExpression,
+        include_inactive: bool = False,
     ) -> Tuple[List[Customer], int]:
         query = self.db.query(Customer)
-        
+
         if not include_inactive:
-            query = query.filter(Customer.is_active == True)
-        
+            query = query.filter(Customer.is_active.is_(True))
+
         customers = query.order_by(order).offset(offset).limit(limit).all()
         total_customers = query.count()
-        
+
         return customers, total_customers
 
     def delete_customer(self, customer: Customer) -> None:
@@ -60,11 +66,28 @@ class CustomerRepository(ICustomerRepository):
         customer.disabled_at = datetime.now(timezone.utc)
         self.db.commit()
 
-    def update_customer(
-        self, customer: Customer, payload: CustomerUpdatePayload
-    ) -> Customer:
-        for key, value in payload.items():
-            setattr(customer, key, value)
+    def update_customer(self, customer: Customer) -> Customer:
         self.db.commit()
         self.db.refresh(customer)
         return customer
+
+    def restore_customer(self, customer: Customer) -> Customer:
+        customer.is_active = True
+        customer.archived_at = None
+        self.db.commit()
+        self.db.refresh(customer)
+        return customer
+
+    def exists_by_fullname_and_country(
+        self, full_name: str, country_name: str, exclude_id: Optional[str] = None, include_inactive: bool = False,
+    ) -> Customer:
+        query = self.db.query(Customer).filter(
+            Customer.full_name == full_name,
+            Customer.country_name == country_name
+        )
+        if exclude_id:
+            query = query.filter(Customer.id != exclude_id)
+            
+        if not include_inactive:
+            query = query.filter(Customer.is_active.is_(True))
+        return query.first()

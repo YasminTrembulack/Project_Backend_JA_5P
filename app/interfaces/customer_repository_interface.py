@@ -20,11 +20,11 @@ class ICustomerRepository(ABC):
 
     @abstractmethod
     def get_all_customers_paginated(
-        self, 
-        offset: int, 
-        limit: int, 
-        order: UnaryExpression, 
-        include_inactive: bool = False
+        self,
+        offset: int,
+        limit: int,
+        order: UnaryExpression,
+        include_inactive: bool = False,
     ) -> Tuple[List[Customer], int]:
         pass
 
@@ -35,5 +35,15 @@ class ICustomerRepository(ABC):
     @abstractmethod
     def update_customer(
         self, customer: Customer, payload: CustomerUpdatePayload
+    ) -> Customer:
+        pass
+
+    @abstractmethod
+    def restore_customer(self, customer: Customer) -> Customer:
+        pass
+    
+    @abstractmethod
+    def exists_by_fullname_and_country(
+        self, full_name: str, country_name: str, exclude_id: Optional[str] = None, include_inactive: bool = False,
     ) -> Customer:
         pass
