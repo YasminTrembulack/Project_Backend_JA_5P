@@ -11,7 +11,7 @@ from app.models.base_model import BaseModel
 class Customer(BaseModel):
     __tablename__ = 'customers'
 
-    full_name: Mapped[str] = mapped_column(String(255), unique=True)
+    full_name: Mapped[str] = mapped_column(String(255))
     country_code: Mapped[str] = mapped_column(String(2))
     country_name: Mapped[str] = mapped_column(String(50))
 
