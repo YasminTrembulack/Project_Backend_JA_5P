@@ -14,13 +14,17 @@ class ICustomerRepository(ABC):
 
     @abstractmethod
     def get_customer_by_field(
-        self, field_name: str, value: str
+        self, field_name: str, value: str, include_inactive: bool = False
     ) -> Optional[Customer]:
         pass
 
     @abstractmethod
     def get_all_customers_paginated(
-        self, offset: int, limit: int, order: UnaryExpression
+        self, 
+        offset: int, 
+        limit: int, 
+        order: UnaryExpression, 
+        include_inactive: bool = False
     ) -> Tuple[List[Customer], int]:
         pass
 
