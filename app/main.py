@@ -43,6 +43,8 @@ app.add_middleware(
 
 app.add_middleware(AuthenticationMiddleware)
 
+# TODO: realizar verificação de senha forte
+
 app.include_router(user_router, prefix=Settings().API_PREFIX)
 app.include_router(customer_router, prefix=Settings().API_PREFIX)
 app.include_router(ping_router, prefix=Settings().API_PREFIX)
