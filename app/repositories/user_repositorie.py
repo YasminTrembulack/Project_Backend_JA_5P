@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.interfaces.user_repository_interface import IUserRepository
 from app.models.user import User
 from app.types.exceptions import InvalidFieldError
-from app.types.schemas import UserPayload, UserUpdatePayload
+from app.types.schemas import UserPayload
 
 
 class UserRepository(IUserRepository):
@@ -27,7 +27,8 @@ class UserRepository(IUserRepository):
         self.db.refresh(db_user)
         return db_user
 
-    def get_user_by_field(self,
+    def get_user_by_field(
+        self,
         field_name: str,
         value: str,
         include_inactive: Optional[bool] = False,
@@ -53,13 +54,13 @@ class UserRepository(IUserRepository):
         include_inactive: Optional[bool] = False,
     ) -> Tuple[List[User], int]:
         query = self.db.query(User)
-        
+
         if not include_inactive:
             query = query.filter(User.is_active.is_(True))
-            
+
         users = query.order_by(order).offset(offset).limit(limit).all()
-        total_users = query.query(User).count()
-        
+        total_users = query.count()
+
         return users, total_users
 
     def delete_user(self, user: User) -> None:

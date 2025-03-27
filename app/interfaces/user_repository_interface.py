@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 from sqlalchemy import UnaryExpression
 
 from app.models.user import User
-from app.types.schemas import UserPayload, UserUpdatePayload
+from app.types.schemas import UserPayload
 
 
 class IUserRepository(ABC):
@@ -39,7 +39,7 @@ class IUserRepository(ABC):
     @abstractmethod
     def update_user(self, user: User) -> User:
         pass
-    
+
     @abstractmethod
     def restore_user(self, user: User) -> User:
         pass

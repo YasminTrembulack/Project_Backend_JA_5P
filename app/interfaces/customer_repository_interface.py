@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 from sqlalchemy import UnaryExpression
 
 from app.models.customer import Customer
-from app.types.schemas import CustomerPayload, CustomerUpdatePayload
+from app.types.schemas import CustomerPayload
 
 
 class ICustomerRepository(ABC):
