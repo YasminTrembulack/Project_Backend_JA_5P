@@ -3,9 +3,13 @@ from typing import List, Tuple
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
-from app.models.customer import Customer
+from app.models.customer import CountryEnum, Customer
 from app.repositories.customer_repositorie import CustomerRepository
-from app.types.exceptions import DataConflictError, NotFoundError
+from app.types.exceptions import (
+    DataConflictError,
+    InvalidCountryError,
+    NotFoundError,
+)
 from app.types.schemas import CustomerPayload, CustomerUpdatePayload
 
 
@@ -41,6 +45,10 @@ class CustomerService:
 
         self._validate_unique_fields(payload.model_dump(), customer.id)
         payload = payload.model_dump(exclude_unset=True)
+        if payload.get('country_name'):
+            payload['country_code'] = CountryEnum.get_country_code(
+                payload['country_name']
+            )
         return self.customer_repo.update_customer(customer, payload)
 
     def get_customer(self, id: str) -> Customer:
@@ -54,6 +62,13 @@ class CustomerService:
             'full_name', payload.get('full_name'), customer_id
         ):
             raise DataConflictError('Full name already in use.')
+
+        if payload.get('country_name', False):
+            valid_names = [country.value for country in CountryEnum]
+            if payload.get('country_name') not in valid_names:
+                raise InvalidCountryError(
+                    f"The country '{payload.get('country_name')}' is not supported."
+                )
 
     def _is_field_in_use(self, field: str, value: str, customer_id: str) -> bool:
         existing_customer = self.customer_repo.get_customer_by_field(field, value)
