@@ -1,7 +1,10 @@
 from typing import Generic, List, Optional, TypeVar
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, computed_field, field_validator
+
+from app.models.customer import CountryEnum
+from app.types.exceptions import InvalidCountryError
 
 T = TypeVar('T')
 
@@ -61,14 +64,33 @@ class UserResponse(BaseModel):
 # --- CUSTOMER CLASSES --- #
 
 
-class CustomerPayload(BaseModel):
+class CustomerBase(BaseModel):
+    full_name: Optional[str] = None
+    country_name: Optional[str] = None
+
+    @field_validator('country_name')
+    def validate_country(cls, v):
+        if v not in [country.value for country in CountryEnum]:
+            raise InvalidCountryError(f"Country '{v}' is not supported")
+        return v
+
+    @computed_field
+    @property
+    def country_code(self) -> str | None:
+        return (
+            CountryEnum.get_country_code(self.country_name)
+            if self.country_name
+            else None
+        )
+
+
+class CustomerPayload(CustomerBase):
     full_name: str
     country_name: str
 
 
-class CustomerUpdatePayload(BaseModel):
-    full_name: Optional[str] = None
-    country_name: Optional[str] = None
+class CustomerUpdatePayload(CustomerBase):
+    pass
 
 
 class CustomerResponse(BaseModel):
