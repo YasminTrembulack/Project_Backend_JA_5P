@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
@@ -45,14 +45,14 @@ class CustomerService:
     def update_customer(self, id: str, payload: CustomerUpdatePayload) -> Customer:
         customer = self._get_customer_or_404(id)
         updated_data = payload.model_dump(exclude_unset=True)
-        
-        new_full_name = updated_data.get("full_name", customer.full_name)
-        new_country_name = updated_data.get("country_name", customer.country_name)
+
+        new_full_name = updated_data.get('full_name', customer.full_name)
+        new_country_name = updated_data.get('country_name', customer.country_name)
 
         inactive_duplicate = self._get_or_validate_customer_uniqueness(
             new_full_name, new_country_name, customer.id
         )
-        
+
         if inactive_duplicate:
             self.customer_repo.delete_customer(customer)
             return self.customer_repo.restore_customer(inactive_duplicate)
@@ -66,12 +66,13 @@ class CustomerService:
     def _get_or_validate_customer_uniqueness(
         self, full_name: str, country_name: str, customer_id: str = None
     ) -> Customer | None:
-        if (customer := self.customer_repo.exists_by_fullname_and_country(
+        if customer := self.customer_repo.exists_by_fullname_and_country(
             full_name, country_name, exclude_id=customer_id, include_inactive=True
-        )):
+        ):
             if customer.is_active:
                 raise DataConflictError(
-                    f"A customer with name '{full_name}' in country '{country_name}' already exists"
+                    f"A customer with name '{full_name}' in country '{country_name}'\
+                    already exists"
                 )
             return customer
         return None
@@ -81,7 +82,7 @@ class CustomerService:
         if not customer:
             raise NotFoundError('Customer not found')
         return customer
-    
+
     @staticmethod
     def _update_customer_fields(payload: CustomerBase, target: Customer) -> Customer:
         for key, value in payload.model_dump(exclude_unset=True).items():

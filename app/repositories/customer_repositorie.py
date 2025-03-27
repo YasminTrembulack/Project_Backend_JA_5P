@@ -26,11 +26,11 @@ class CustomerRepository(ICustomerRepository):
         return db_customer
 
     def get_customer_by_field(
-        self, 
-        field_name: str, 
-        value: str, 
-        include_inactive: bool = False, 
-        exclude_id: Optional[str] = None
+        self,
+        field_name: str,
+        value: str,
+        include_inactive: bool = False,
+        exclude_id: Optional[str] = None,
     ) -> Optional[Customer]:
         user_field = getattr(Customer, field_name, None)
         if not user_field:
@@ -79,15 +79,18 @@ class CustomerRepository(ICustomerRepository):
         return customer
 
     def exists_by_fullname_and_country(
-        self, full_name: str, country_name: str, exclude_id: Optional[str] = None, include_inactive: bool = False,
+        self,
+        full_name: str,
+        country_name: str,
+        exclude_id: Optional[str] = None,
+        include_inactive: bool = False,
     ) -> Customer:
         query = self.db.query(Customer).filter(
-            Customer.full_name == full_name,
-            Customer.country_name == country_name
+            Customer.full_name == full_name, Customer.country_name == country_name
         )
         if exclude_id:
             query = query.filter(Customer.id != exclude_id)
-            
+
         if not include_inactive:
             query = query.filter(Customer.is_active.is_(True))
         return query.first()

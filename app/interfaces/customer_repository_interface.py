@@ -41,9 +41,13 @@ class ICustomerRepository(ABC):
     @abstractmethod
     def restore_customer(self, customer: Customer) -> Customer:
         pass
-    
+
     @abstractmethod
     def exists_by_fullname_and_country(
-        self, full_name: str, country_name: str, exclude_id: Optional[str] = None, include_inactive: bool = False,
+        self,
+        full_name: str,
+        country_name: str,
+        exclude_id: Optional[str] = None,
+        include_inactive: bool = False,
     ) -> Customer:
         pass
