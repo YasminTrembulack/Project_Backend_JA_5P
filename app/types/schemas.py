@@ -35,8 +35,14 @@ class PingResponse(BaseModel):
 
 # --- USER CLASSES --- #
 
-
-class UserPayload(BaseModel):
+class UserBase(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+    registration_number: Optional[str] = None
+    role: Optional[str] = None
+    
+class UserPayload(UserBase):
     full_name: str
     email: EmailStr
     password: str
@@ -44,12 +50,8 @@ class UserPayload(BaseModel):
     role: Optional[str] = 'User'
 
 
-class UserUpdatePayload(BaseModel):
-    full_name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
-    registration_number: Optional[str] = None
-    role: Optional[str] = None
+class UserUpdatePayload(UserBase):
+    pass
 
 
 class UserResponse(BaseModel):
