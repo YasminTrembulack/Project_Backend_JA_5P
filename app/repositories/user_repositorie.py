@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
 from sqlalchemy import UnaryExpression
@@ -26,28 +27,54 @@ class UserRepository(IUserRepository):
         self.db.refresh(db_user)
         return db_user
 
-    def get_user_by_field(self, field_name: str, value: str) -> Optional[User]:
+    def get_user_by_field(self,
+        field_name: str,
+        value: str,
+        include_inactive: Optional[bool] = False,
+        exclude_id: Optional[str] = None,
+    ) -> Optional[User]:
         user_field = getattr(User, field_name, None)
         if not user_field:
             raise InvalidFieldError(
                 f'Field {field_name} does not exist on User model'
             )
-        return self.db.query(User).filter(user_field == value).first()
+        query = self.db.query(User).filter(user_field == value)
+        if not include_inactive:
+            query = query.filter(User.is_active.is_(True))
+        if exclude_id:
+            query = query.filter(User.id != exclude_id)
+        return query.first()
 
     def get_all_users_paginated(
-        self, offset: int, limit: int, order: UnaryExpression
+        self,
+        offset: int,
+        limit: int,
+        order: UnaryExpression,
+        include_inactive: Optional[bool] = False,
     ) -> Tuple[List[User], int]:
-        users = self.db.query(User).order_by(order).offset(offset).limit(limit).all()
-        total_users = self.db.query(User).count()
+        query = self.db.query(User)
+        
+        if not include_inactive:
+            query = query.filter(User.is_active.is_(True))
+            
+        users = query.order_by(order).offset(offset).limit(limit).all()
+        total_users = query.query(User).count()
+        
         return users, total_users
 
     def delete_user(self, user: User) -> None:
-        self.db.delete(user)
+        user.is_active = False
+        user.disabled_at = datetime.now(timezone.utc)
         self.db.commit()
 
-    def update_user(self, user: User, payload: UserUpdatePayload) -> User:
-        for key, value in payload.items():
-            setattr(user, key, value)
+    def update_user(self, user: User) -> User:
+        self.db.commit()
+        self.db.refresh(user)
+        return user
+
+    def restore_user(self, user: User) -> User:
+        user.is_active = True
+        user.archived_at = None
         self.db.commit()
         self.db.refresh(user)
         return user

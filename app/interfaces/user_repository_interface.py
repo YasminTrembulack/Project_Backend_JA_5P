@@ -13,12 +13,22 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_user_by_field(self, field_name: str, value: str) -> Optional[User]:
+    def get_user_by_field(
+        self,
+        field_name: str,
+        value: str,
+        include_inactive: Optional[bool] = False,
+        exclude_id: Optional[str] = None,
+    ) -> Optional[User]:
         pass
 
     @abstractmethod
     def get_all_users_paginated(
-        self, offset: int, limit: int, order: UnaryExpression
+        self,
+        offset: int,
+        limit: int,
+        order: UnaryExpression,
+        include_inactive: Optional[bool] = False,
     ) -> Tuple[List[User], int]:
         pass
 
@@ -27,5 +37,9 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    def update_user(self, user: User, payload: UserUpdatePayload) -> User:
+    def update_user(self, user: User) -> User:
+        pass
+    
+    @abstractmethod
+    def restore_user(self, user: User) -> User:
         pass
