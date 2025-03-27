@@ -13,6 +13,7 @@ from app.routes.ping_route import router as ping_router
 from app.routes.user_route import router as user_router
 from app.types.exceptions import (
     DataConflictError,
+    InvalidCountryError,
     InvalidCredentialsError,
     InvalidFieldError,
     NotAuthenticatedError,
@@ -84,4 +85,9 @@ app.add_exception_handler(
 app.add_exception_handler(
     exc_class_or_status_code=NotFoundError,
     handler=create_exception_handler(status.HTTP_404_NOT_FOUND, 'Entity not found'),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=InvalidCountryError,
+    handler=create_exception_handler(status.HTTP_400_BAD_REQUEST, 'Invalid country'),
 )

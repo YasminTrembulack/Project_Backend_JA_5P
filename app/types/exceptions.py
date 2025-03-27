@@ -53,3 +53,7 @@ class InvalidFieldError(APIException):
 
 class NotFoundError(APIException):
     pass
+
+
+class InvalidCountryError(APIException):
+    pass
