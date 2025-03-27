@@ -35,13 +35,15 @@ class PingResponse(BaseModel):
 
 # --- USER CLASSES --- #
 
+
 class UserBase(BaseModel):
     full_name: Optional[str] = None
     email: Optional[EmailStr] = None
     password: Optional[str] = None
     registration_number: Optional[str] = None
     role: Optional[str] = None
-    
+
+
 class UserPayload(UserBase):
     full_name: str
     email: EmailStr
@@ -58,6 +60,7 @@ class UserResponse(BaseModel):
     id: UUID
     full_name: str
     email: str
+    registration_number: str
     role: str
     created_at: str
     updated_at: str
