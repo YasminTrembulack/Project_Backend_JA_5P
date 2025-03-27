@@ -1,9 +1,6 @@
 from dataclasses import dataclass
-from datetime import datetime
-from uuid import UUID, uuid4
 
-from sqlalchemy import Enum, String, func
-from sqlalchemy.dialects.mysql import CHAR
+from sqlalchemy import Enum, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base_model import BaseModel
