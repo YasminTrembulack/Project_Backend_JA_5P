@@ -95,7 +95,7 @@ def update_customer(
     id: str,
     customer: CustomerUpdatePayload,
     session: Session = Depends(get_session),
-    _: None = Depends(check_roles(['Admin'], True)),
+    _: None = Depends(check_roles(['Admin'])),
 ):
     service = CustomerService(session)
     customer = service.update_customer(id, customer)
