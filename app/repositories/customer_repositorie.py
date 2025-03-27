@@ -5,7 +5,7 @@ from sqlalchemy import UnaryExpression
 from sqlalchemy.orm import Session
 
 from app.interfaces.customer_repository_interface import ICustomerRepository
-from app.models.customer import CountryEnum, Customer
+from app.models.customer import Customer
 from app.types.exceptions import InvalidFieldError
 from app.types.schemas import CustomerPayload
 
@@ -17,7 +17,7 @@ class CustomerRepository(ICustomerRepository):
     def create_customer(self, customer: CustomerPayload) -> Customer:
         db_customer = Customer(
             full_name=customer.full_name,
-            country_code=CountryEnum.get_country_code(customer.country_name),
+            country_code=customer.country_code,
             country_name=customer.country_name,
         )
         self.db.add(db_customer)
@@ -29,7 +29,7 @@ class CustomerRepository(ICustomerRepository):
         self,
         field_name: str,
         value: str,
-        include_inactive: bool = False,
+        include_inactive: Optional[bool] = False,
         exclude_id: Optional[str] = None,
     ) -> Optional[Customer]:
         user_field = getattr(Customer, field_name, None)
@@ -49,7 +49,7 @@ class CustomerRepository(ICustomerRepository):
         offset: int,
         limit: int,
         order: UnaryExpression,
-        include_inactive: bool = False,
+        include_inactive: Optional[bool] = False,
     ) -> Tuple[List[Customer], int]:
         query = self.db.query(Customer)
 

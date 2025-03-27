@@ -14,7 +14,11 @@ class ICustomerRepository(ABC):
 
     @abstractmethod
     def get_customer_by_field(
-        self, field_name: str, value: str, include_inactive: bool = False
+        self,
+        field_name: str,
+        value: str,
+        include_inactive: Optional[bool] = False,
+        exclude_id: Optional[str] = None,
     ) -> Optional[Customer]:
         pass
 
@@ -24,7 +28,7 @@ class ICustomerRepository(ABC):
         offset: int,
         limit: int,
         order: UnaryExpression,
-        include_inactive: bool = False,
+        include_inactive: Optional[bool] = False,
     ) -> Tuple[List[Customer], int]:
         pass
 
@@ -33,9 +37,7 @@ class ICustomerRepository(ABC):
         pass
 
     @abstractmethod
-    def update_customer(
-        self, customer: Customer, payload: CustomerUpdatePayload
-    ) -> Customer:
+    def update_customer(self, customer: Customer) -> Customer:
         pass
 
     @abstractmethod
@@ -48,6 +50,6 @@ class ICustomerRepository(ABC):
         full_name: str,
         country_name: str,
         exclude_id: Optional[str] = None,
-        include_inactive: bool = False,
+        include_inactive: Optional[bool] = False,
     ) -> Customer:
         pass

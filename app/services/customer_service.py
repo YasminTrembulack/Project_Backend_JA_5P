@@ -39,7 +39,6 @@ class CustomerService:
 
     def delete_customer(self, id: str) -> None:
         customer = self._get_customer_or_404(id)
-
         return self.customer_repo.delete_customer(customer)
 
     def update_customer(self, id: str, payload: CustomerUpdatePayload) -> Customer:
