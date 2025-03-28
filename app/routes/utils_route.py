@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status
 
-from app.models.customer import CountryEnum
+from app.types.enums import CountryEnum
 from app.types.schemas import CountyResponse
 
 router = APIRouter(prefix='/utils')

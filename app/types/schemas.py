@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, computed_field, field_validator
 
-from app.models.customer import CountryEnum
+from app.types.enums import CountryEnum
 from app.types.exceptions import InvalidCountryError
 
 T = TypeVar('T')
