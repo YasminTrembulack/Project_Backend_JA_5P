@@ -43,6 +43,11 @@ def run_migrations():
         engine.dispose()
 
 
+def import_models():
+    from app.models import customer, mold, user  # noqa: F401
+
+
 def get_session():
+    import_models()
     with SessionLocal() as session:
         yield session
