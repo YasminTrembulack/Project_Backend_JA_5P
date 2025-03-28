@@ -34,8 +34,19 @@ class PriorityEnum(str, Enum):
     HIGH = 'High'
 
 
-class StatusEnum(str, Enum):
+class MoldStatusEnum(str, Enum):
     PENDING = 'Pending'
     IN_PROGRESS = 'In Progress'
     COMPLETED = 'Completed'
     SHIPPED = 'Shipped'
+
+
+class CamStatusEnum(str, Enum):
+    PENDING = 'Pending'
+    APPROVED = 'Approved'
+
+
+class PartStatusEnum(str, Enum):
+    PENDING = 'Pending'
+    IN_PROGRESS = 'In Progress'
+    COMPLETED = 'Completed'
