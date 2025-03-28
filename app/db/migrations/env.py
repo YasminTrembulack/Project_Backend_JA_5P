@@ -7,6 +7,7 @@ from alembic import context
 
 from app.core.settings import Settings
 from app.models.base_model import BaseModel
+from app.models.mold import Mold
 from app.models.user import User
 from app.models.customer import Customer
 
