@@ -4,14 +4,15 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CHAR, Enum, ForeignKey, Integer, String
+from sqlalchemy import CHAR, UUID, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
-from app.types.enums import PriorityEnum, StatusEnum
+from app.types.enums import MoldStatusEnum, PriorityEnum
 
 if TYPE_CHECKING:
     from app.models.customer import Customer
+    from app.models.part import Part
     from app.models.user import User
 
 
@@ -25,12 +26,14 @@ class Mold(BaseModel):
         Enum(PriorityEnum), nullable=False
     )
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
-    status: Mapped[StatusEnum] = mapped_column(Enum(StatusEnum), nullable=False)
+    status: Mapped[MoldStatusEnum] = mapped_column(
+        Enum(MoldStatusEnum), nullable=False
+    )
     # '200x150x50 mm'  # Comprimento x Largura x Altura
     dimensions: Mapped[str] = mapped_column(String(50), unique=True)
 
     # Referência ao usuário que criou o molde
-    created_by_id: Mapped[int] = mapped_column(
+    created_by_id: Mapped[UUID] = mapped_column(
         CHAR(36), ForeignKey('users.id', ondelete='SET NULL'), nullable=True
     )
     created_by: Mapped['User'] = relationship(
@@ -38,11 +41,15 @@ class Mold(BaseModel):
     )
 
     # Referência ao cliente associado ao molde
-    customer_id: Mapped[int] = mapped_column(
+    customer_id: Mapped[UUID] = mapped_column(
         CHAR(36), ForeignKey('customers.id', ondelete='SET NULL'), nullable=True
     )
     customer: Mapped['Customer'] = relationship(
         'Customer', back_populates='molds', passive_deletes=True
+    )
+
+    mold_parts: Mapped[list['Part']] = relationship(
+        'Part', back_populates='mold', passive_deletes=True
     )
 
 
