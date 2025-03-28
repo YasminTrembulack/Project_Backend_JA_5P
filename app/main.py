@@ -11,6 +11,7 @@ from app.routes.auth_route import router as auth_router
 from app.routes.customer_route import router as customer_router
 from app.routes.ping_route import router as ping_router
 from app.routes.user_route import router as user_router
+from app.routes.utils_route import router as utils_router
 from app.types.exceptions import (
     DataConflictError,
     InvalidCountryError,
@@ -49,6 +50,7 @@ app.include_router(user_router, prefix=Settings().API_PREFIX)
 app.include_router(customer_router, prefix=Settings().API_PREFIX)
 app.include_router(ping_router, prefix=Settings().API_PREFIX)
 app.include_router(auth_router, prefix=Settings().API_PREFIX)
+app.include_router(utils_router, prefix=Settings().API_PREFIX)
 
 
 app.add_exception_handler(
