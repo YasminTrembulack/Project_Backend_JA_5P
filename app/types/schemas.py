@@ -33,6 +33,10 @@ class PingResponse(BaseModel):
     version: str
 
 
+class CountyResponse(BaseModel):
+    countries: List[str]
+
+
 # --- USER CLASSES --- #
 
 
