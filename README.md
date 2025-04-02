@@ -39,3 +39,6 @@ Para rodar o comando basta colocar task a seguir o comando. Exemplo `task run`.
 * **pre_test:** Garante que o código passou pelo processo de linting antes de rodar os testes.
 * **test:** Executa os testes com Pytest, medindo a cobertura de código e exibindo detalhes extras.
 * **post_test:** Gera um relatório em HTML com a cobertura de código após a execução dos testes.
+
+
+# TODO: criar um metodo dentro de mold service, que quando chamado atualize as prioridades dos moldes, alem disso adicionar um atributo em parts que seja a porcetagem de conclusao da peça, facilitando na hora da conta, apos isso atualizar os metodos que calcular a prioridade ou a conclusao em %
