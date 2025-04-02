@@ -3,6 +3,7 @@ from typing import List, Tuple
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 from app.core.security import security
 from app.models.user import User
@@ -23,8 +24,12 @@ class UserService:
     def get_all_users(
         self, page: int, limit: int, order_by: str, desc_order: bool
     ) -> Tuple[List[User], int]:
-        if not hasattr(User, order_by):
-            raise InvalidFieldError(f'Field {order_by} does not exist on User model')
+        order_attr = getattr(User, order_by, None)
+
+        if not isinstance(order_attr, InstrumentedAttribute):
+            raise InvalidFieldError(
+                f'Field {order_by} does not exist or is not sortable.'
+            )
         offset = (page - 1) * limit
         order = (
             desc(getattr(User, order_by)) if desc_order else getattr(User, order_by)
@@ -36,13 +41,13 @@ class UserService:
         timestamp = int(datetime.now(timezone.utc).timestamp())
         user.email = f'deleted_{timestamp}_{user.email}'
         user.registration_number = f'deleted_{timestamp}_{user.registration_number}'
-        return self.user_repo.delete_user(user)
+        self.user_repo.delete_user(user)
 
     def update_user(self, id: str, payload: UserUpdatePayload) -> User:
         user = self._get_user_or_404(id)
         updated_data = payload.model_dump(exclude_unset=True)
 
-        new_email = updated_data.get('email', user.full_name)
+        new_email = updated_data.get('email', user.email)
         new_registration_number = updated_data.get(
             'registration_number', user.registration_number
         )
@@ -83,6 +88,6 @@ class UserService:
     @staticmethod
     def _update_user_fields(payload: UserBase, target: User) -> User:
         for key, value in payload.model_dump(exclude_unset=True).items():
-            if hasattr(target, key) and value is not None:
+            if hasattr(target, key):
                 setattr(target, key, value)
         return target
