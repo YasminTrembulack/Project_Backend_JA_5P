@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     VERSION: str = '0.1.0'
     API_PREFIX: str = '/api'
     PROJECT_NAME: str = 'API_JA_5P'
-    TZ:str = 'America/Sao_Paulo'
+    TZ: str = 'America/Sao_Paulo'
 
 
 class InterceptHandler(logging.Handler):
