@@ -12,9 +12,9 @@ from app.types.enums import MoldStatusEnum, PriorityEnum
 
 if TYPE_CHECKING:
     from app.models.customer import Customer
+    from app.models.operation import Operation
     from app.models.part import Part
     from app.models.user import User
-    from app.models.operation import Operation
 
 
 @dataclass
@@ -48,11 +48,16 @@ class Mold(BaseModel):
     customer: Mapped['Customer'] = relationship(
         'Customer', back_populates='molds', passive_deletes=True
     )
-    
-    operations: Mapped[list["Operation"]] = relationship(
-        secondary="operation_association",
-        primaryjoin="and_(Mold.id == OperationAssociation.item_id, OperationAssociation.item_type == 'Mold')",
-        back_populates="molds"
+
+    operations: Mapped[list['Operation']] = relationship(
+        secondary='operation_association',
+        primaryjoin=(
+            'and_('
+            'Mold.id == OperationAssociation.item_id, '
+            "OperationAssociation.item_type == 'Mold'"
+            ')'
+        ),
+        back_populates='molds',
     )
 
     mold_parts: Mapped[list['Part']] = relationship(

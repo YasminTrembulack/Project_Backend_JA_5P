@@ -92,7 +92,10 @@ class MoldRepository(IMoldRepository):
         self.db.refresh(mold)
         return mold
 
-    def total_molds(self, include_inactive: Optional[bool] = False,) -> int:
+    def total_molds(
+        self,
+        include_inactive: Optional[bool] = False,
+    ) -> int:
         query = self.db.query(Mold)
         if not include_inactive:
             query = query.filter(Mold.is_active.is_(True))

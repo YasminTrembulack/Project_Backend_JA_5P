@@ -14,6 +14,14 @@ from app.types.enums import PartStatusEnum, PriorityEnum
 from app.types.exceptions import InvalidFieldError, NotFoundError
 from app.types.schemas import MoldBase, MoldUpdatePayload, PartPayload
 
+URGENT_DAYS_THRESHOLD = 5
+HIGH_DAYS_THRESHOLD = 10
+MEDIUM_DAYS_THRESHOLD = 20
+
+URGENT_PRIORITY_THRESHOLD = 6
+HIGH_PRIORITY_THRESHOLD = 4
+MEDIUM_PRIORITY_THRESHOLD = 2
+
 
 class MoldService:
     def __init__(self, db: Session):
@@ -28,8 +36,6 @@ class MoldService:
     def _get_all_molds(
         self, page: int, limit: int, order_by: str, desc_order: bool
     ) -> Tuple[List[Part], int]:
-        # TODO: criar um metodo dentro de mold service, que quando chamado atualize as prioridades dos moldes, alem disso adicionar um atributo em parts que seja a porcetagem de conclusao da peça, facilitando na hora da conta, apos isso atualizar os metodos que calcular a prioridade ou a conclusao em %
-
         order_attr = getattr(Part, order_by, None)
 
         if not isinstance(order_attr, InstrumentedAttribute):
@@ -76,11 +82,11 @@ class MoldService:
         now = datetime.now()
         days_until_delivery = (delivery_date - now).days
 
-        if days_until_delivery <= 5:
+        if days_until_delivery <= URGENT_DAYS_THRESHOLD:
             priority_score = 4  # Urgente
-        elif days_until_delivery <= 10:
+        elif days_until_delivery <= HIGH_DAYS_THRESHOLD:
             priority_score = 3  # Alta
-        elif days_until_delivery <= 20:
+        elif days_until_delivery <= MEDIUM_DAYS_THRESHOLD:
             priority_score = 2  # Média
         else:
             priority_score = 1  # Baixa
@@ -90,11 +96,11 @@ class MoldService:
         parts_not_ready = len(parts) - parts_score
         priority_score += parts_not_ready
 
-        if priority_score >= 6:
+        if priority_score >= URGENT_PRIORITY_THRESHOLD:
             return PriorityEnum.URGENT
-        elif priority_score >= 4:
+        elif priority_score >= HIGH_PRIORITY_THRESHOLD:
             return PriorityEnum.HIGH
-        elif priority_score >= 2:
+        elif priority_score >= MEDIUM_PRIORITY_THRESHOLD:
             return PriorityEnum.MEDIUM
         else:
             return PriorityEnum.LOW
@@ -111,8 +117,10 @@ class MoldService:
     @staticmethod
     def _sum_parts_progress(parts: List[Part]):
         return sum(
-            1 if part.status == PartStatusEnum.COMPLETED
-            else 0.5 if part.status == PartStatusEnum.IN_PROGRESS
+            1
+            if part.status == PartStatusEnum.COMPLETED
+            else 0.5
+            if part.status == PartStatusEnum.IN_PROGRESS
             else 0.0
             for part in parts
         )

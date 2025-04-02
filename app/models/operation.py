@@ -7,24 +7,29 @@ from sqlalchemy import CHAR, UUID, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
+from app.types.enums import OpStatusEnum
 
 if TYPE_CHECKING:
     from app.models.machine import Machine
-    from app.models.part import Part
     from app.models.mold import Mold
-
+    from app.models.part import Part
 
 
 class OperationAssociation(BaseModel):
-    __tablename__ = "operation_association"
+    __tablename__ = 'operation_association'
 
-    operation_id: Mapped[int] = mapped_column(ForeignKey("operations.id"), nullable=False)
+    operation_id: Mapped[int] = mapped_column(
+        ForeignKey('operations.id'), nullable=False
+    )
     item_id: Mapped[UUID] = mapped_column(CHAR(36), nullable=False)
-    item_type: Mapped[str] = mapped_column(Enum("Part", "Mold", name="item_type_enum"), nullable=False)
-    # status: Mapped[StatusEnum] = mapped_column(Enum(StatusEnum), nullable=False) #PENDING and COMPLETED
+    item_type: Mapped[str] = mapped_column(
+        Enum('Part', 'Mold', name='item_type_enum'), nullable=False
+    )
+    status: Mapped[OpStatusEnum] = mapped_column(Enum(OpStatusEnum), nullable=False)
 
-    operation: Mapped["Operation"] = relationship(back_populates="operation_associations")
-
+    operation: Mapped['Operation'] = relationship(
+        back_populates='operation_associations'
+    )
 
 
 @dataclass
@@ -35,17 +40,16 @@ class Operation(BaseModel):
     machine_id: Mapped[UUID] = mapped_column(
         CHAR(36), ForeignKey('machines.id', ondelete='SET NULL'), nullable=True
     )
-    
-    
+
     machine: Mapped['Machine'] = relationship(
         'Machine', back_populates='machines', passive_deletes=True
     )
-    parts: Mapped[list["Part"]] = relationship(
-        secondary="operation_association",
-        back_populates="operations"
+    parts: Mapped[list['Part']] = relationship(
+        secondary='operation_association', back_populates='operations'
     )
-    molds: Mapped[list["Mold"]] = relationship(
-        secondary="operation_association",
-        back_populates="operations"
+    molds: Mapped[list['Mold']] = relationship(
+        secondary='operation_association', back_populates='operations'
     )
-    operation_associations: Mapped[list["OperationAssociation"]] = relationship(back_populates="operation")
+    operation_associations: Mapped[list['OperationAssociation']] = relationship(
+        back_populates='operation'
+    )

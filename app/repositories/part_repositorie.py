@@ -82,7 +82,10 @@ class PartRepository(IPartRepository):
         self.db.refresh(part)
         return part
 
-    def total_parts(self, include_inactive: Optional[bool] = False,) -> int:
+    def total_parts(
+        self,
+        include_inactive: Optional[bool] = False,
+    ) -> int:
         query = self.db.query(Part)
         if not include_inactive:
             query = query.filter(Part.is_active.is_(True))

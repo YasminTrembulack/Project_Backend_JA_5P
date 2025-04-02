@@ -45,6 +45,7 @@ class PingResponse(BaseModel):
 class CountyResponse(BaseModel):
     countries: List[str]
 
+
 # --- USER CLASSES --- #
 
 
@@ -76,6 +77,7 @@ class UserResponse(BaseModel):
     role: str
     created_at: str
     updated_at: str
+
 
 # --- CUSTOMER CLASSES --- #
 
@@ -120,6 +122,7 @@ class CustomerResponse(BaseModel):
 
 # --- PART CLASSES --- #
 
+
 class PartBase(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
@@ -151,6 +154,7 @@ class PartResponse(PartBase):
 class PartUpdatePayload(PartBase):
     pass
 
+
 # --- MOLD CLASSES --- #
 
 
@@ -164,7 +168,7 @@ class MoldBase(BaseModel):
     created_by_id: Optional[str] = None
     customer_id: Optional[str] = None
 
-    @field_validator("delivery_date", mode="before")
+    @field_validator('delivery_date', mode='before')
     @classmethod
     def validate_delivery_date(cls, value):
         if value is None:
@@ -173,10 +177,10 @@ class MoldBase(BaseModel):
             try:
                 value = date.fromisoformat(value)
             except ValueError:
-                raise InvalidFieldError("Invalid date format. Use YYYY-MM-DD.")
+                raise InvalidFieldError('Invalid date format. Use YYYY-MM-DD.')
         time = datetime.now(pytz.timezone(Settings().TZ))
         if value < time:
-            raise InvalidFieldError("Delivery date must be in the future.")
+            raise InvalidFieldError('Delivery date must be in the future.')
 
         return value
 
