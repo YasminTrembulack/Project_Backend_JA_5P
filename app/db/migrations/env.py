@@ -11,6 +11,11 @@ from app.models.customer import Customer
 from app.models.mold import Mold
 from app.models.part import Part
 from app.models.user import User
+from app.models.operation import Operation
+from app.models.operation import OperationAssociation
+from app.models.machine import Machine
+from app.models.material import Material
+
 
 config = context.config
 config.set_main_option('sqlalchemy.url', Settings().DATABASE_URL)

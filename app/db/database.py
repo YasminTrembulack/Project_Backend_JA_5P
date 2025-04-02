@@ -44,7 +44,15 @@ def run_migrations():
 
 
 def import_models():
-    from app.models import customer, mold, part, user  # noqa: F401, PLC0415
+    from app.models import (  # noqa: F401, PLC0415
+        customer,
+        machine,
+        material,
+        mold,
+        operation,
+        part,
+        user,
+    )
 
 
 def get_session():
