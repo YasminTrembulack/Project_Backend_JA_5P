@@ -11,7 +11,7 @@ from app.types.enums import PartStatusEnum, SimpleStatusEnum
 
 if TYPE_CHECKING:
     from app.models.mold import Mold
-    from app.models.operation import Operation
+    from app.models.operation import Operation, OperationAssociation
 
 
 @dataclass
@@ -41,11 +41,18 @@ class Part(BaseModel):
 
     operations: Mapped[list['Operation']] = relationship(
         secondary='operation_association',
-        primaryjoin=(
-            'and_('
-            'Part.id == OperationAssociation.item_id, '
-            "OperationAssociation.item_type == 'Part'"
-            ')'
+        primaryjoin='and_(Part.id == foreign(OperationAssociation.item_id), '
+        'OperationAssociation.item_type == "Part")',
+        secondaryjoin=(
+            'and_(OperationAssociation.operation_id == foreign(Operation.id), '
+            'OperationAssociation.item_type == "Part")'
         ),
-        back_populates='parts',
+        viewonly=True,
+    )
+
+    operation_associations: Mapped[list['OperationAssociation']] = relationship(
+        primaryjoin='and_(Part.id == foreign(OperationAssociation.item_id), '
+        'OperationAssociation.item_type == "Part")',
+        backref='part',
+        cascade='all, delete-orphan',
     )

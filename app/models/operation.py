@@ -11,8 +11,6 @@ from app.types.enums import OpStatusEnum
 
 if TYPE_CHECKING:
     from app.models.machine import Machine
-    from app.models.mold import Mold
-    from app.models.part import Part
 
 
 class OperationAssociation(BaseModel):
@@ -30,6 +28,10 @@ class OperationAssociation(BaseModel):
     operation: Mapped['Operation'] = relationship(
         back_populates='operation_associations'
     )
+    __mapper_args__ = {
+        'polymorphic_identity': 'operation_association',
+        'polymorphic_on': item_type,
+    }
 
 
 @dataclass
@@ -42,14 +44,9 @@ class Operation(BaseModel):
     )
 
     machine: Mapped['Machine'] = relationship(
-        'Machine', back_populates='machines', passive_deletes=True
+        'Machine', back_populates='operations', passive_deletes=True
     )
-    parts: Mapped[list['Part']] = relationship(
-        secondary='operation_association', back_populates='operations'
-    )
-    molds: Mapped[list['Mold']] = relationship(
-        secondary='operation_association', back_populates='operations'
-    )
+
     operation_associations: Mapped[list['OperationAssociation']] = relationship(
-        back_populates='operation'
+        back_populates='operation', cascade='all, delete-orphan'
     )

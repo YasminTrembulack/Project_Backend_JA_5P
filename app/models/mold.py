@@ -12,7 +12,7 @@ from app.types.enums import MoldStatusEnum, PriorityEnum
 
 if TYPE_CHECKING:
     from app.models.customer import Customer
-    from app.models.operation import Operation
+    from app.models.operation import Operation, OperationAssociation
     from app.models.part import Part
     from app.models.user import User
 
@@ -48,20 +48,26 @@ class Mold(BaseModel):
     customer: Mapped['Customer'] = relationship(
         'Customer', back_populates='molds', passive_deletes=True
     )
+    mold_parts: Mapped[list['Part']] = relationship(
+        'Part', back_populates='mold', passive_deletes=True
+    )
 
     operations: Mapped[list['Operation']] = relationship(
         secondary='operation_association',
-        primaryjoin=(
-            'and_('
-            'Mold.id == OperationAssociation.item_id, '
-            "OperationAssociation.item_type == 'Mold'"
-            ')'
+        primaryjoin='and_(Mold.id == foreign(OperationAssociation.item_id), '
+        'OperationAssociation.item_type == "Mold")',
+        secondaryjoin=(
+            'and_(OperationAssociation.operation_id == foreign(Operation.id), '
+            'OperationAssociation.item_type == "Mold")'
         ),
-        back_populates='molds',
+        viewonly=True,
     )
 
-    mold_parts: Mapped[list['Part']] = relationship(
-        'Part', back_populates='mold', passive_deletes=True
+    operation_associations: Mapped[list['OperationAssociation']] = relationship(
+        primaryjoin='and_(Mold.id == foreign(OperationAssociation.item_id), '
+        'OperationAssociation.item_type == "Mold")',
+        backref='mold',
+        cascade='all, delete-orphan',
     )
 
 
