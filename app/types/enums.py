@@ -32,7 +32,7 @@ class PriorityEnum(str, Enum):
     LOW = 'Low'
     MEDIUM = 'Medium'
     HIGH = 'High'
-    URGENT = "Urgent"
+    URGENT = 'Urgent'
 
 
 class MoldStatusEnum(str, Enum):
@@ -50,4 +50,15 @@ class SimpleStatusEnum(str, Enum):
 class PartStatusEnum(str, Enum):
     PENDING = 'Pending'
     IN_PROGRESS = 'In Progress'
+    COMPLETED = 'Completed'
+
+
+class MachineStatusEnum(str, Enum):
+    AVAILABLE = 'Available'
+    UNDER_MAINTENANCE = 'Under Maintenance'
+    OUT_OF_SERVICE = 'Out of Service'
+
+
+class OpStatusEnum(str, Enum):
+    PENDING = 'Pending'
     COMPLETED = 'Completed'
