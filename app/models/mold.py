@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class Mold(BaseModel):
     __tablename__ = 'molds'
 
-    name: Mapped[str] = mapped_column(String(255))
+    name: Mapped[str] = mapped_column(String(255), unique=True)
     delivery_date: Mapped[datetime]
     priority: Mapped[PriorityEnum] = mapped_column(
         Enum(PriorityEnum), nullable=False
@@ -30,7 +30,7 @@ class Mold(BaseModel):
         Enum(MoldStatusEnum), nullable=False
     )
     # '200x150x50 mm'  # Comprimento x Largura x Altura
-    dimensions: Mapped[str] = mapped_column(String(50), unique=True)
+    dimensions: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
     # Referência ao usuário que criou o molde
     created_by_id: Mapped[UUID] = mapped_column(
