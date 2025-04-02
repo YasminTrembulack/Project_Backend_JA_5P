@@ -16,15 +16,15 @@ if TYPE_CHECKING:
 class OperationAssociation(BaseModel):
     __tablename__ = 'operation_association'
 
-    operation_id: Mapped[int] = mapped_column(
-        ForeignKey('operations.id'), nullable=False
-    )
-    item_id: Mapped[UUID] = mapped_column(CHAR(36), nullable=False)
     item_type: Mapped[str] = mapped_column(
         Enum('Part', 'Mold', name='item_type_enum'), nullable=False
     )
     status: Mapped[OpStatusEnum] = mapped_column(Enum(OpStatusEnum), nullable=False)
 
+    operation_id: Mapped[UUID] = mapped_column(
+        CHAR(36), ForeignKey('operations.id'), nullable=False
+    )
+    item_id: Mapped[UUID] = mapped_column(CHAR(36), nullable=False)
     operation: Mapped['Operation'] = relationship(
         back_populates='operation_associations'
     )
