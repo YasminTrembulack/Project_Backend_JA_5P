@@ -32,6 +32,7 @@ class PriorityEnum(str, Enum):
     LOW = 'Low'
     MEDIUM = 'Medium'
     HIGH = 'High'
+    URGENT = "Urgent"
 
 
 class MoldStatusEnum(str, Enum):
@@ -41,7 +42,7 @@ class MoldStatusEnum(str, Enum):
     SHIPPED = 'Shipped'
 
 
-class CamStatusEnum(str, Enum):
+class SimpleStatusEnum(str, Enum):
     PENDING = 'Pending'
     APPROVED = 'Approved'
 
