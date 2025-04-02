@@ -1,10 +1,19 @@
+from datetime import date, datetime
 from typing import Generic, List, Optional, TypeVar
 from uuid import UUID
 
+import pytz
 from pydantic import BaseModel, EmailStr, computed_field, field_validator
 
-from app.types.enums import CountryEnum
-from app.types.exceptions import InvalidCountryError
+from app.core.settings import Settings
+from app.types.enums import (
+    CountryEnum,
+    MoldStatusEnum,
+    PartStatusEnum,
+    PriorityEnum,
+    SimpleStatusEnum,
+)
+from app.types.exceptions import InvalidCountryError, InvalidFieldError
 
 T = TypeVar('T')
 
@@ -28,14 +37,13 @@ class DeleteResponse(BaseModel):
 
 
 class PingResponse(BaseModel):
-    timestamp_br: str
+    timestamp: str
     project_name: str
     version: str
 
 
 class CountyResponse(BaseModel):
     countries: List[str]
-
 
 # --- USER CLASSES --- #
 
@@ -68,7 +76,6 @@ class UserResponse(BaseModel):
     role: str
     created_at: str
     updated_at: str
-
 
 # --- CUSTOMER CLASSES --- #
 
@@ -109,6 +116,93 @@ class CustomerResponse(BaseModel):
     country_code: str
     created_at: str
     updated_at: str
+
+
+# --- PART CLASSES --- #
+
+class PartBase(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    quantity: Optional[int] = 1
+    status: Optional[PartStatusEnum] = PartStatusEnum.PENDING
+    model_3d: Optional[SimpleStatusEnum] = SimpleStatusEnum.PENDING
+    nc_program: Optional[SimpleStatusEnum] = SimpleStatusEnum.PENDING
+    mold_id: Optional[str] = None
+
+
+class PartPayload(PartBase):
+    description: str
+    mold_id: str
+
+
+class PartResponse(PartBase):
+    id: UUID
+    name: str
+    description: str
+    quantity: int
+    status: PartStatusEnum
+    model_3d: SimpleStatusEnum
+    nc_program: SimpleStatusEnum
+    mold_id: str
+    created_at: str
+    updated_at: str
+
+
+class PartUpdatePayload(PartBase):
+    pass
+
+# --- MOLD CLASSES --- #
+
+
+class MoldBase(BaseModel):
+    name: Optional[str] = None
+    delivery_date: Optional[date] = None
+    priority: Optional[PriorityEnum] = PriorityEnum.LOW
+    quantity: Optional[int] = 1
+    status: Optional[MoldStatusEnum] = MoldStatusEnum.PENDING
+    dimensions: Optional[str] = None
+    created_by_id: Optional[str] = None
+    customer_id: Optional[str] = None
+
+    @field_validator("delivery_date", mode="before")
+    @classmethod
+    def validate_delivery_date(cls, value):
+        if value is None:
+            return value
+        if isinstance(value, str):
+            try:
+                value = date.fromisoformat(value)
+            except ValueError:
+                raise InvalidFieldError("Invalid date format. Use YYYY-MM-DD.")
+        time = datetime.now(pytz.timezone(Settings().TZ))
+        if value < time:
+            raise InvalidFieldError("Delivery date must be in the future.")
+
+        return value
+
+
+class MoldPayload(MoldBase):
+    delivery_date: str
+    created_by_id: str
+    customer_id: str
+
+
+class MoldResponde(MoldBase):
+    id: UUID
+    name: str
+    delivery_date: str
+    priority: PriorityEnum
+    quantity: int
+    status: MoldStatusEnum
+    dimensions: str
+    created_by: UserBase
+    customer: CustomerBase
+    created_at: str
+    updated_at: str
+
+
+class MoldUpdatePayload(MoldBase):
+    pass
 
 
 # --- AUTHENTICATION CLASSES --- #
