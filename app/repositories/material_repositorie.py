@@ -78,3 +78,12 @@ class MaterialRepository(IMaterialRepository):
         self.db.commit()
         self.db.refresh(material)
         return material
+
+    def total_material(
+        self,
+        include_inactive: Optional[bool] = False,
+    ) -> int:
+        query = self.db.query(Material)
+        if not include_inactive:
+            query = query.filter(Material.is_active.is_(True))
+        return query.count()

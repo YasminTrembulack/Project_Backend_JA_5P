@@ -43,3 +43,10 @@ class IMaterialRepository(ABC):
     @abstractmethod
     def restore_material(self, material: Material) -> Material:
         pass
+    
+    @abstractmethod
+    def total_material(
+        self,
+        include_inactive: Optional[bool] = False,
+    ) -> int:
+        pass
