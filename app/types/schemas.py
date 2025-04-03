@@ -248,7 +248,6 @@ class MaterialBase(BaseModel):
 
 
 class MaterialPayload(MaterialBase):
-    name: str
     stock_quantity: float
 
 
