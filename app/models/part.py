@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
 from sqlalchemy import CHAR, UUID, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -10,6 +11,7 @@ from app.models.base_model import BaseModel
 from app.types.enums import PartStatusEnum, SimpleStatusEnum
 
 if TYPE_CHECKING:
+    from app.models.material import Material, MaterialParts
     from app.models.mold import Mold
     from app.models.operation import Operation, OperationAssociation
 
@@ -18,6 +20,7 @@ if TYPE_CHECKING:
 class Part(BaseModel):
     __tablename__ = 'parts'
 
+    id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(255), unique=True)
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -55,4 +58,12 @@ class Part(BaseModel):
         'OperationAssociation.item_type == "Part")',
         backref='part',
         cascade='all, delete-orphan',
+    )
+
+    material_associations: Mapped[list['MaterialParts']] = relationship(
+        back_populates='part', cascade='all, delete-orphan'
+    )
+
+    materials: Mapped[list['Material']] = relationship(
+        secondary='material_parts', back_populates='parts', viewonly=True
     )

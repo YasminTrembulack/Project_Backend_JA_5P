@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
 from sqlalchemy import CHAR, UUID, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
 class Mold(BaseModel):
     __tablename__ = 'molds'
 
+    id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(255), unique=True)
     delivery_date: Mapped[datetime]
     priority: Mapped[PriorityEnum] = mapped_column(

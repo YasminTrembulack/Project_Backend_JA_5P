@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
 from sqlalchemy import CHAR, UUID, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
 class OperationAssociation(BaseModel):
     __tablename__ = 'operation_association'
 
+    id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     item_type: Mapped[str] = mapped_column(
         Enum('Part', 'Mold', name='item_type_enum'), nullable=False
     )
@@ -38,6 +40,7 @@ class OperationAssociation(BaseModel):
 class Operation(BaseModel):
     __tablename__ = 'operations'
 
+    id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     op_type: Mapped[str] = mapped_column(String(255))
     machine_id: Mapped[UUID] = mapped_column(
         CHAR(36), ForeignKey('machines.id', ondelete='SET NULL'), nullable=True

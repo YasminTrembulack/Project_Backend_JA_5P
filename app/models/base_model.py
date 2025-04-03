@@ -1,12 +1,11 @@
 from datetime import datetime
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from sqlalchemy import CHAR, func
+from sqlalchemy import func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class BaseModel(DeclarativeBase):
-    id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     disabled_at: Mapped[datetime | None] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
