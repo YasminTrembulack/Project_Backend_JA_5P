@@ -11,10 +11,10 @@ load_dotenv()
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
-    DATABASE_URL: str
-    DATABASE_TYPE: str
     SECRET_KEY: str
-    ALGORITHM: str
+    DATABASE_URL: str
+    DATABASE_TYPE: str = 'mysql'
+    ALGORITHM: str = 'HS256'
     LOCAL_ENV: bool = False
     VERSION: str = '0.1.0'
     API_PREFIX: str = '/api'
