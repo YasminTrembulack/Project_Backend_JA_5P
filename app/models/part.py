@@ -56,8 +56,9 @@ class Part(BaseModel):
     operation_associations: Mapped[list['OperationAssociation']] = relationship(
         primaryjoin='and_(Part.id == foreign(OperationAssociation.item_id), '
         'OperationAssociation.item_type == "Part")',
-        backref='part',
+        back_populates='part',
         cascade='all, delete-orphan',
+        overlaps='mold,operation_associations',
     )
 
     material_associations: Mapped[list['MaterialParts']] = relationship(

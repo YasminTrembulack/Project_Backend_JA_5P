@@ -34,6 +34,25 @@ class OperationAssociation(BaseModel):
         'polymorphic_identity': 'operation_association',
         'polymorphic_on': item_type,
     }
+    part = relationship(
+        'Part',
+        primaryjoin=(
+            'and_(foreign(OperationAssociation.item_id) == Part.id, '
+            "OperationAssociation.item_type == 'Part')"
+        ),
+        back_populates='operation_associations',
+        overlaps="mold",
+    )
+
+    mold = relationship(
+        'Mold',
+        primaryjoin=(
+            'and_(foreign(OperationAssociation.item_id) == Mold.id, '
+            "OperationAssociation.item_type == 'Mold')"
+        ),
+        back_populates='operation_associations',
+        overlaps="part",
+    )
 
 
 @dataclass
