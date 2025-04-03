@@ -23,7 +23,7 @@ class Mold(BaseModel):
     __tablename__ = 'molds'
 
     id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
-    name: Mapped[str] = mapped_column(String(255), unique=True)
+    name: Mapped[str] = mapped_column(CHAR(30), unique=True)
     delivery_date: Mapped[datetime]
     priority: Mapped[PriorityEnum] = mapped_column(
         Enum(PriorityEnum), nullable=False

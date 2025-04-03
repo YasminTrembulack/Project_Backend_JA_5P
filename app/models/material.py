@@ -37,7 +37,7 @@ class Material(BaseModel):
     __tablename__ = 'materials'
 
     id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
-    name: Mapped[str] = mapped_column(String(255), unique=True)
+    name: Mapped[str] = mapped_column(CHAR(20), unique=True)
     description: Mapped[str] = mapped_column(String(255))
     unit_of_measure: Mapped[str] = mapped_column(String(20), nullable=True)
     stock_quantity: Mapped[float] = mapped_column(Float, nullable=False)
