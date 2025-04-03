@@ -79,6 +79,34 @@ class UserResponse(BaseModel):
     updated_at: str
 
 
+# --- AUTHENTICATION CLASSES --- #
+
+
+class LoginPayload(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class LoginResponse(BaseModel):
+    message: str
+    user: UserResponse
+    token: str
+
+
+# --- METADATA CLASS --- #
+
+
+class Metadata(BaseModel):
+    total: int  # Total de itens disponíveis no banco de dados
+    limit: int  # Número de itens por página
+    page: int  # Página atual
+    total_pages: int  # Total de páginas
+    has_next: bool  # Se existe uma próxima página
+    has_previous: bool  # Se existe uma página anterior
+    order_by: str
+    desc_order: bool
+
+
 # --- CUSTOMER CLASSES --- #
 
 
@@ -209,29 +237,30 @@ class MoldUpdatePayload(MoldBase):
     pass
 
 
-# --- AUTHENTICATION CLASSES --- #
+# --- MATERIAL CLASSES --- #
 
 
-class LoginPayload(BaseModel):
-    email: EmailStr
-    password: str
+class MaterialBase(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    stock_quantity: Optional[float] = 1.0
+    unit_of_measure: Optional[str] = None
 
 
-class LoginResponse(BaseModel):
-    message: str
-    user: UserResponse
-    token: str
+class MaterialPayload(MaterialBase):
+    name: str
+    stock_quantity: float
 
 
-# --- METADATA CLASS --- #
+class MaterialResponse(MaterialBase):
+    id: UUID
+    name: str
+    description: str
+    stock_quantity: float
+    unit_of_measure: str
+    created_at: str
+    updated_at: str
 
 
-class Metadata(BaseModel):
-    total: int  # Total de itens disponíveis no banco de dados
-    limit: int  # Número de itens por página
-    page: int  # Página atual
-    total_pages: int  # Total de páginas
-    has_next: bool  # Se existe uma próxima página
-    has_previous: bool  # Se existe uma página anterior
-    order_by: str
-    desc_order: bool
+class MaterialUpdatePayload(MaterialBase):
+    pass
