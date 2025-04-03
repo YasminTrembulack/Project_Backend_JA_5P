@@ -18,9 +18,9 @@ class MaterialService:
         if payload.name:
             self._validate_name_uniqueness(payload.name)
         else:
-            new_name = self.material_repo.total_material(True)
+            new_name = self.material_repo.total_material(True) + 1
             payload.name = str(new_name)
-        return self.material_repo.create_part(payload)
+        return self.material_repo.create_material(payload)
 
     def get_all_materials(
         self, page: int, limit: int, order_by: str, desc_order: bool

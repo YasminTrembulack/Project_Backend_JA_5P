@@ -33,7 +33,7 @@ class MoldService:
         if payload.name:
             self._validate_name_uniqueness(payload.name)
         else:
-            new_name = self.mold_repo.total_molds(True)
+            new_name = self.mold_repo.total_molds(True) + 1
             payload.name = str(new_name)
         return self.mold_repo.create_mold(payload)
 

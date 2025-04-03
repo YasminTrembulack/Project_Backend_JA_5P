@@ -22,7 +22,7 @@ class PartService:
         if payload.name:
             self._validate_name_uniqueness(payload.name)
         else:
-            new_name = self.part_repo.total_parts(True)
+            new_name = self.part_repo.total_parts(True) + 1
             payload.name = str(new_name)
         return self.part_repo.create_part(payload)
 
