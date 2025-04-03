@@ -62,3 +62,8 @@ class MachineStatusEnum(str, Enum):
 class OpStatusEnum(str, Enum):
     PENDING = 'Pending'
     COMPLETED = 'Completed'
+
+
+class MaterialStatusEnum(str, Enum):
+    PENDING = 'Pending'
+    AVAILABLE = 'Available'
