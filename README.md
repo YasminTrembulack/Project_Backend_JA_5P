@@ -24,9 +24,10 @@ Antes de rodar o projeto, você precisa instalar o MySQL no seu ambiente local.
 > [!IMPORTANT]
 > Caso uma migration já tenha sido iniciada apenas APLIQUE as migrações.
 
-1.  Iniciar migrações: `alembic init migrations`
-2.  Gerar migrações: `alembic revision --autogenerate -m "first migration"`
-3.  Aplicar migrações: `alembic upgrade head`
+1.  Verificar migrações: `alembic check`
+2.  Iniciar migrações: `alembic init migrations`
+3.  Gerar migrações: `alembic revision --autogenerate -m "first migration"`
+4.  Aplicar migrações: `alembic upgrade head`
 
 > Sempre que uma mudança relacionada ao banco de dados for realizada é necessario realizar as migrações.
 
