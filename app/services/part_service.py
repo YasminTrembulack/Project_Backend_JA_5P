@@ -8,7 +8,7 @@ from app.models.mold import Mold
 from app.models.part import Part
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
-from app.types.exceptions import InvalidFieldError, NotFoundError
+from app.types.exceptions import DataConflictError, InvalidFieldError, NotFoundError
 from app.types.schemas import PartBase, PartPayload, PartUpdatePayload
 
 
@@ -19,7 +19,11 @@ class PartService:
 
     def part_register(self, payload: PartPayload) -> Part:
         self._get_mold_or_404(payload.mold_id)
-        payload.name = self.part_repo.total_parts(True)
+        if payload.name:
+            self._validate_name_uniqueness(payload.name)
+        else:
+            new_name = self.part_repo.total_parts(True)
+            payload.name = str(new_name)
         return self.part_repo.create_part(payload)
 
     def get_all_parts(
@@ -71,3 +75,7 @@ class PartService:
             if hasattr(target, key):
                 setattr(target, key, value)
         return target
+
+    def _validate_name_uniqueness(self, name: str, exclude_id: str = None) -> None:
+        if self.part_repo.get_part_by_field('name', name, exclude_id):
+            raise DataConflictError(f"A part with name '{name}' already exists.")

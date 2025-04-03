@@ -11,7 +11,7 @@ from app.models.part import Part
 from app.repositories.customer_repositorie import CustomerRepository
 from app.repositories.mold_repositorie import MoldRepository
 from app.types.enums import PartStatusEnum, PriorityEnum
-from app.types.exceptions import InvalidFieldError, NotFoundError
+from app.types.exceptions import DataConflictError, InvalidFieldError, NotFoundError
 from app.types.schemas import MoldBase, MoldUpdatePayload, PartPayload
 
 URGENT_DAYS_THRESHOLD = 5
@@ -30,7 +30,11 @@ class MoldService:
 
     def part_register(self, payload: PartPayload) -> Mold:
         self._get_customer_or_404(payload.mold_id)
-        payload.name = self.mold_repo.total_molds(True)
+        if payload.name:
+            self._validate_name_uniqueness(payload.name)
+        else:
+            new_name = self.mold_repo.total_molds(True)
+            payload.name = str(new_name)
         return self.mold_repo.create_mold(payload)
 
     def _get_all_molds(
@@ -131,3 +135,7 @@ class MoldService:
             if hasattr(target, key):
                 setattr(target, key, value)
         return target
+
+    def _validate_name_uniqueness(self, name: str, exclude_id: str = None) -> None:
+        if self.mold_repo.get_mold_by_field('name', name, exclude_id):
+            raise DataConflictError(f"A mold with name '{name}' already exists.")
