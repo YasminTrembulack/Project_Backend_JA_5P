@@ -86,4 +86,3 @@ class OperationRepository(IOperationRepository):
         if not include_inactive:
             query = query.filter(Operation.is_active.is_(True))
         return query.count()
-

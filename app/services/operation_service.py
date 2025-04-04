@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.models.machine import Machine
 from app.models.operation import Operation
-from app.repositories.operation_repositorie import OperationRepository
 from app.repositories.machine_repositorie import MachineRepository
+from app.repositories.operation_repositorie import OperationRepository
 from app.types.exceptions import DataConflictError, InvalidFieldError, NotFoundError
 from app.types.schemas import OperationBase, OperationPayload, OperationUpdatePayload
 
@@ -69,7 +69,7 @@ class OperationService:
         if not operation:
             raise NotFoundError('Operation not found')
         return operation
-    
+
     def _get_machine_or_404(self, id: str) -> Machine:
         machine = self.machine_repo.get_machine_by_field('id', id)
         if not machine:
@@ -77,7 +77,9 @@ class OperationService:
         return machine
 
     @staticmethod
-    def _update_operation_fields(payload: OperationBase, target: Operation) -> Operation:
+    def _update_operation_fields(
+        payload: OperationBase, target: Operation
+    ) -> Operation:
         for key, value in payload.model_dump(exclude_unset=True).items():
             if hasattr(target, key) and value is not None:
                 setattr(target, key, value)

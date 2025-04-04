@@ -9,6 +9,7 @@ from app.models.machine import Machine
 from app.types.exceptions import InvalidFieldError
 from app.types.schemas import MachinePayload
 
+
 class MachineRepository(IMachineRepository):
     def __init__(self, db: Session):
         self.db = db
@@ -85,4 +86,3 @@ class MachineRepository(IMachineRepository):
         if not include_inactive:
             query = query.filter(Machine.is_active.is_(True))
         return query.count()
-

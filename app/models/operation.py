@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import CHAR, UUID, Enum, ForeignKey, String, VARCHAR
+from sqlalchemy import CHAR, UUID, VARCHAR, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
