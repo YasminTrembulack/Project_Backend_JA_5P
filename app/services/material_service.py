@@ -71,5 +71,7 @@ class MaterialService:
         return target
 
     def _validate_name_uniqueness(self, name: str, exclude_id: str = None) -> None:
-        if self.material_repo.get_material_by_field('name', name, exclude_id):
+        if self.material_repo.get_material_by_field(
+            'name', name, exclude_id=exclude_id
+        ):
             raise DataConflictError(f"A material with name '{name}' already exists.")

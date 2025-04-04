@@ -137,5 +137,5 @@ class MoldService:
         return target
 
     def _validate_name_uniqueness(self, name: str, exclude_id: str = None) -> None:
-        if self.mold_repo.get_mold_by_field('name', name, exclude_id):
+        if self.mold_repo.get_mold_by_field('name', name, exclude_id=exclude_id):
             raise DataConflictError(f"A mold with name '{name}' already exists.")

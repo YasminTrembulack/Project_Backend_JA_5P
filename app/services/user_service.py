@@ -69,7 +69,7 @@ class UserService:
     def _validate_user_uniqueness(
         self, email: str, reg_number: str, exclude_id: str = None
     ) -> None:
-        if self.user_repo.get_user_by_field('email', email, exclude_id):
+        if self.user_repo.get_user_by_field('email', email, exclude_id=exclude_id):
             raise DataConflictError(f"A user with email '{email}' already exists.")
 
         if self.user_repo.get_user_by_field(
