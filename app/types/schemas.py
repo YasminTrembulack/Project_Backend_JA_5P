@@ -8,6 +8,7 @@ from pydantic import BaseModel, EmailStr, computed_field, field_validator
 from app.core.settings import Settings
 from app.types.enums import (
     CountryEnum,
+    MachineStatusEnum,
     MoldStatusEnum,
     PartStatusEnum,
     PriorityEnum,
@@ -267,23 +268,50 @@ class MaterialUpdatePayload(MaterialBase):
 # --- OPERATION CLASSES --- #
 
 
-class OperationlBase(BaseModel):
+class OperationBase(BaseModel):
     name: Optional[str] = None
     op_type: Optional[str] = None
     machine_id: Optional[str] = None
 
 
-class OperationPayload(OperationlBase):
+class OperationPayload(OperationBase):
     op_type: str
 
 
-class OperationResponse(OperationlBase):
+class OperationResponse(OperationBase):
     id: UUID
+    name: str
     op_type: str
     machine_id: str
     created_at: str
     updated_at: str
 
 
-class OperationUpdatePayload(OperationlBase):
+class OperationUpdatePayload(OperationBase):
+    pass
+
+
+# --- MACHINE CLASSES --- #
+
+
+class MachineBase(BaseModel):
+    name: Optional[str] = None
+    m_type: Optional[str] = None
+    status: Optional[MachineStatusEnum] = MachineStatusEnum.AVAILABLE
+
+
+class MachinePayload(MachineBase):
+    m_type: str
+
+
+class MachineResponse(MachineBase):
+    id: UUID
+    name: str
+    m_type: str
+    status: MachineStatusEnum
+    created_at: str
+    updated_at: str
+
+
+class MachineUpdatePayload(MachineBase):
     pass
