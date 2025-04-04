@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
-from app.services.operation_service import operationService
+from app.services.operation_service import OperationService
 from app.types.schemas import (
     DeleteResponse,
     EntityResponse,
@@ -27,7 +27,7 @@ def create_operation(
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'Editor'])),
 ):
-    service = operationService(session)
+    service = OperationService(session)
     db_operation = service.operation_register(operation)
     operation_response = OperationResponse.model_validate(db_operation.to_dict())
     return EntityResponse(
@@ -48,7 +48,7 @@ def get_all_operations(
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
-    service = operationService(session)
+    service = OperationService(session)
     operations, total_operations = service.get_all_operations(
         page, limit, order_by, desc_order
     )
@@ -79,7 +79,7 @@ def delete_operation(
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin'])),
 ):
-    service = operationService(session)
+    service = OperationService(session)
     service.delete_operation(id)
     return DeleteResponse(message='operation deleted successfully.')
 
@@ -95,7 +95,7 @@ def update_operation(
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'Editor'])),
 ):
-    service = operationService(session)
+    service = OperationService(session)
     operation = service.update_operation(id, operation)
     operation_response = OperationResponse.model_validate(operation.to_dict())
     return EntityResponse(
@@ -113,7 +113,7 @@ def get_operation(
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
-    service = operationService(session)
+    service = OperationService(session)
     operation = service.get_operation(id)
     operation_response = OperationResponse.model_validate(operation.to_dict())
     return EntityResponse(

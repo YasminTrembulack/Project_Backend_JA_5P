@@ -282,7 +282,7 @@ class OperationResponse(OperationBase):
     id: UUID
     name: str
     op_type: str
-    machine_id: str
+    machine_id: str | None
     created_at: str
     updated_at: str
 
