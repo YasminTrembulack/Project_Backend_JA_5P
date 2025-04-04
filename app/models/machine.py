@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from sqlalchemy import CHAR, Enum, String
+from sqlalchemy import CHAR, VARCHAR, Enum, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
@@ -19,7 +19,7 @@ class Machine(BaseModel):
     __tablename__ = 'machines'
 
     id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
-    name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(VARCHAR(30), unique=True, nullable=False)
     m_type: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[MachineStatusEnum] = mapped_column(
         Enum(MachineStatusEnum), nullable=False

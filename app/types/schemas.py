@@ -268,6 +268,7 @@ class MaterialUpdatePayload(MaterialBase):
 
 
 class OperationlBase(BaseModel):
+    name: Optional[str] = None
     op_type: Optional[str] = None
     machine_id: Optional[str] = None
 

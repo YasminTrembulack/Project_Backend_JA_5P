@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import CHAR, UUID, Enum, ForeignKey, Integer, String
+from sqlalchemy import CHAR, UUID, VARCHAR, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
@@ -23,7 +23,7 @@ class Mold(BaseModel):
     __tablename__ = 'molds'
 
     id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
-    name: Mapped[str] = mapped_column(CHAR(30), unique=True)
+    name: Mapped[str] = mapped_column(VARCHAR(30), unique=True)
     delivery_date: Mapped[datetime]
     priority: Mapped[PriorityEnum] = mapped_column(
         Enum(PriorityEnum), nullable=False

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import CHAR, UUID, Enum, ForeignKey, Integer, String
+from sqlalchemy import CHAR, UUID, VARCHAR, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
@@ -21,7 +21,7 @@ class Part(BaseModel):
     __tablename__ = 'parts'
 
     id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
-    name: Mapped[str] = mapped_column(CHAR(30), unique=True)
+    name: Mapped[str] = mapped_column(VARCHAR(30), unique=True)
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[PartStatusEnum] = mapped_column(
