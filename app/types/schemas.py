@@ -263,3 +263,26 @@ class MaterialResponse(MaterialBase):
 
 class MaterialUpdatePayload(MaterialBase):
     pass
+
+# --- OPERATION CLASSES --- #
+
+
+class OperationlBase(BaseModel):
+    op_type: Optional[str] = None
+    machine_id: Optional[str] = None
+
+
+class OperationPayload(OperationlBase):
+    op_type: str
+
+
+class OperationResponse(OperationlBase):
+    id: UUID
+    op_type: str
+    machine_id: str
+    created_at: str
+    updated_at: str
+
+
+class OperationUpdatePayload(OperationlBase):
+    pass
