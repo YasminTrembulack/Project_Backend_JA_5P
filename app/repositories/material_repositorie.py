@@ -36,7 +36,7 @@ class MaterialRepository(IMaterialRepository):
         user_field = getattr(Material, field_name, None)
         if not user_field:
             raise InvalidFieldError(
-                f'Field {field_name} does not exist on material model'
+                f'Field {field_name} does not exist on Material model'
             )
         query = self.db.query(Material).filter(user_field == value)
         if not include_inactive:
