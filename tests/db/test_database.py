@@ -22,8 +22,10 @@ def test_connection_failure():
 
 
 def test_run_migrations_success():
-    with patch('app.db.database.engine.connect') as mock_connect, \
-         patch('alembic.command.upgrade') as mock_upgrade:
+    with (
+        patch('app.db.database.engine.connect') as mock_connect,
+        patch('alembic.command.upgrade') as mock_upgrade,
+    ):
         mock_connect.return_value = MagicMock()
         mock_upgrade.return_value = None
 
@@ -34,23 +36,25 @@ def test_run_migrations_success():
 
 
 def test_run_migrations_failure():
-    with patch('app.db.database.engine.connect') as mock_connect, \
-         patch('alembic.command.upgrade', side_effect=Exception()):
-
+    with (
+        patch('app.db.database.engine.connect') as mock_connect,
+        patch('alembic.command.upgrade', side_effect=Exception()),
+    ):
         mock_connect.return_value = MagicMock()
 
         with pytest.raises(
             MigrationExecutionError,
-            match='An error occurred while executing database migrations.'
+            match='An error occurred while executing database migrations.',
         ):
             database.run_migrations()
 
 
 def test_get_session_yields_session():
     mock_session = MagicMock()
-    with patch('app.db.database.import_models') as mock_import_models, \
-         patch('app.db.database.SessionLocal') as mock_session_local:
-
+    with (
+        patch('app.db.database.import_models') as mock_import_models,
+        patch('app.db.database.SessionLocal') as mock_session_local,
+    ):
         mock_session_local.return_value.__enter__.return_value = mock_session
 
         session_gen = database.get_session()
