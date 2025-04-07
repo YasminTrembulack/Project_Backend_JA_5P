@@ -1,7 +1,8 @@
-from dotenv import load_dotenv  # noqa: I001
+from dotenv import load_dotenv
 
 load_dotenv()
 
-from app.db.database import import_models  # noqa: E402, I001
+from app import main  # noqa: F401, E402
+from app.db.database import import_models  # noqa: E402
 
 import_models()
