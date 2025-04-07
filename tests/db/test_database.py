@@ -9,9 +9,9 @@ from app.types.exceptions import DatabaseConnectionError, MigrationExecutionErro
 def test_connection_success():
     with patch('app.db.database.engine.connect') as mock_connect:
         mock_connect.return_value.__enter__.return_value = MagicMock()
-        
+
         database.test_connection()
-        
+
         mock_connect.assert_called()
 
 
