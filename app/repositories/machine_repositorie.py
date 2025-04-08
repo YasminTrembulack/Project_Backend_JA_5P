@@ -16,9 +16,7 @@ class MachineRepository(IMachineRepository):
 
     def create_machine(self, machine: MachinePayload) -> Machine:
         db_machine = Machine(
-            name=machine.name,
-            m_type=machine.m_type,
-            status=machine.status
+            name=machine.name, m_type=machine.m_type, status=machine.status
         )
         self.db.add(db_machine)
         self.db.commit()

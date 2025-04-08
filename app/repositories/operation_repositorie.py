@@ -18,7 +18,7 @@ class OperationRepository(IOperationRepository):
         db_operation = Operation(
             name=operation.name,
             op_type=operation.op_type,
-            machine_id=operation.machine_id
+            machine_id=operation.machine_id,
         )
         self.db.add(db_operation)
         self.db.commit()

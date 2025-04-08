@@ -41,7 +41,7 @@ class OperationAssociation(BaseModel):
             "OperationAssociation.item_type == 'Part')"
         ),
         back_populates='operation_associations',
-        overlaps="mold",
+        overlaps='mold',
     )
 
     mold = relationship(
@@ -51,7 +51,7 @@ class OperationAssociation(BaseModel):
             "OperationAssociation.item_type == 'Mold')"
         ),
         back_populates='operation_associations',
-        overlaps="part",
+        overlaps='part',
     )
 
 

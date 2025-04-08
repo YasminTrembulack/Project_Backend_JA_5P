@@ -265,6 +265,7 @@ class MaterialResponse(MaterialBase):
 class MaterialUpdatePayload(MaterialBase):
     pass
 
+
 # --- OPERATION CLASSES --- #
 
 
