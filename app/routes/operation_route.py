@@ -31,7 +31,7 @@ def create_operation(
     db_operation = service.operation_register(operation)
     operation_response = OperationResponse.model_validate(db_operation.to_dict())
     return EntityResponse(
-        message='operation created with success.', data=operation_response
+        message='Operation created with success.', data=operation_response
     )
 
 
@@ -65,7 +65,7 @@ def get_all_operations(
     )
     operations = [OperationResponse.model_validate(m.to_dict()) for m in operations]
     return GetAllResponse(
-        message='operations found successfully.', data=operations, metadata=meta
+        message='Operations found successfully.', data=operations, metadata=meta
     )
 
 
@@ -99,7 +99,7 @@ def update_operation(
     operation = service.update_operation(id, operation)
     operation_response = OperationResponse.model_validate(operation.to_dict())
     return EntityResponse(
-        message='operation updated successfully.', data=operation_response
+        message='Operation updated successfully.', data=operation_response
     )
 
 
@@ -117,5 +117,5 @@ def get_operation(
     operation = service.get_operation(id)
     operation_response = OperationResponse.model_validate(operation.to_dict())
     return EntityResponse(
-        message='operation found successfully.', data=operation_response
+        message='Operation found successfully.', data=operation_response
     )
