@@ -32,12 +32,12 @@ class OperationRepository(IOperationRepository):
         include_inactive: Optional[bool] = False,
         exclude_id: Optional[str] = None,
     ) -> Optional[Operation]:
-        user_field = getattr(Operation, field_name, None)
-        if not user_field:
+        operation_field = getattr(Operation, field_name, None)
+        if not operation_field:
             raise InvalidFieldError(
                 f'Field {field_name} does not exist on Operation model'
             )
-        query = self.db.query(Operation).filter(user_field == value)
+        query = self.db.query(Operation).filter(operation_field == value)
         if not include_inactive:
             query = query.filter(Operation.is_active.is_(True))
         if exclude_id:

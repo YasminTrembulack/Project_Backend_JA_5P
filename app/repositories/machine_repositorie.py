@@ -30,12 +30,12 @@ class MachineRepository(IMachineRepository):
         include_inactive: Optional[bool] = False,
         exclude_id: Optional[str] = None,
     ) -> Optional[Machine]:
-        user_field = getattr(Machine, field_name, None)
-        if not user_field:
+        machine_field = getattr(Machine, field_name, None)
+        if not machine_field:
             raise InvalidFieldError(
                 f'Field {field_name} does not exist on Machine model'
             )
-        query = self.db.query(Machine).filter(user_field == value)
+        query = self.db.query(Machine).filter(machine_field == value)
         if not include_inactive:
             query = query.filter(Machine.is_active.is_(True))
         if exclude_id:

@@ -23,7 +23,7 @@ class OperationAssociationRepository(IOperationAssociationRepository):
             status=operation_association.status,
             operation_id=operation_association.operation_id,
             item_id=operation_association.item_id,
-            item_type=operation_association.item_type
+            item_type=operation_association.item_type,
         )
         self.db.add(db_operation_association)
         self.db.commit()
@@ -63,7 +63,7 @@ class OperationAssociationRepository(IOperationAssociationRepository):
 
         if not include_inactive:
             query = query.filter(OperationAssociation.is_active.is_(True))
-        
+
         if item_id:
             query = query.filter(OperationAssociation.item_id == item_id)
 

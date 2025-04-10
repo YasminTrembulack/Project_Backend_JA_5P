@@ -33,12 +33,12 @@ class MaterialRepository(IMaterialRepository):
         include_inactive: Optional[bool] = False,
         exclude_id: Optional[str] = None,
     ) -> Optional[Material]:
-        user_field = getattr(Material, field_name, None)
-        if not user_field:
+        material_field = getattr(Material, field_name, None)
+        if not material_field:
             raise InvalidFieldError(
                 f'Field {field_name} does not exist on Material model'
             )
-        query = self.db.query(Material).filter(user_field == value)
+        query = self.db.query(Material).filter(material_field == value)
         if not include_inactive:
             query = query.filter(Material.is_active.is_(True))
         if exclude_id:

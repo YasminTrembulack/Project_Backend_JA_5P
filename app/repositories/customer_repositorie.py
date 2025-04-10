@@ -32,12 +32,12 @@ class CustomerRepository(ICustomerRepository):
         include_inactive: Optional[bool] = False,
         exclude_id: Optional[str] = None,
     ) -> Optional[Customer]:
-        user_field = getattr(Customer, field_name, None)
-        if not user_field:
+        customer_field = getattr(Customer, field_name, None)
+        if not customer_field:
             raise InvalidFieldError(
                 f'Field {field_name} does not exist on Customer model'
             )
-        query = self.db.query(Customer).filter(user_field == value)
+        query = self.db.query(Customer).filter(customer_field == value)
         if not include_inactive:
             query = query.filter(Customer.is_active.is_(True))
         if exclude_id:
