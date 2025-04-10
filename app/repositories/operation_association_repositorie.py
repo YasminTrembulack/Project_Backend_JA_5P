@@ -20,9 +20,10 @@ class OperationAssociationRepository(IOperationAssociationRepository):
         self, operation_association: OperationAssociationPayload
     ) -> OperationAssociation:
         db_operation_association = OperationAssociation(
-            name=operation_association.name,
-            op_type=operation_association.op_type,
-            machine_id=operation_association.machine_id,
+            status=operation_association.status,
+            operation_id=operation_association.operation_id,
+            item_id=operation_association.item_id,
+            item_type=operation_association.item_type
         )
         self.db.add(db_operation_association)
         self.db.commit()
