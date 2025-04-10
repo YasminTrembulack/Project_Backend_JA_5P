@@ -217,7 +217,6 @@ class MoldBase(BaseModel):
 
 class MoldPayload(MoldBase):
     delivery_date: str
-    created_by_id: str
     customer_id: str
 
 
