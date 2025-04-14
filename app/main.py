@@ -11,6 +11,7 @@ from app.routes.auth_route import router as auth_router
 from app.routes.customer_route import router as customer_router
 from app.routes.machine_route import router as machine_router
 from app.routes.material_route import router as material_router
+from app.routes.mold_route import router as mold_router
 from app.routes.operation_route import router as operation_router
 from app.routes.ping_route import router as ping_router
 from app.routes.user_route import router as user_router
@@ -57,6 +58,7 @@ app.include_router(utils_router, prefix=Settings().API_PREFIX)
 app.include_router(material_router, prefix=Settings().API_PREFIX)
 app.include_router(operation_router, prefix=Settings().API_PREFIX)
 app.include_router(machine_router, prefix=Settings().API_PREFIX)
+app.include_router(mold_router, prefix=Settings().API_PREFIX)
 
 
 app.add_exception_handler(
