@@ -1,9 +1,11 @@
 from sqlalchemy.orm import Session
 
+from app.models.customer import Customer
 from app.models.mold import Mold
 from app.repositories.customer_repositorie import CustomerRepository
 from app.repositories.mold_repositorie import MoldRepository
-from app.types.schemas import PartPayload
+from app.types.exceptions import DataConflictError, NotFoundError
+from app.types.schemas import MoldPayload
 
 URGENT_DAYS_THRESHOLD = 5
 HIGH_DAYS_THRESHOLD = 10
@@ -19,8 +21,8 @@ class MoldService:
         self.mold_repo = MoldRepository(db)
         self.customer_repo = CustomerRepository(db)
 
-    def mold_register(self, payload: PartPayload) -> Mold:  # ! OK
-        self._get_customer_or_404(payload.mold_id)
+    def mold_register(self, payload: MoldPayload) -> Mold:  # ! OK
+        self._get_customer_or_404(payload.customer_id)
         if payload.name:
             self._validate_name_uniqueness(payload.name)
         else:
@@ -60,11 +62,11 @@ class MoldService:
 # def get_mold(self, id: str) -> Mold:
 #     return self._get_mold_or_404(id)
 
-# def _get_customer_or_404(self, id: str) -> Customer:
-#     customer = self.customer_repo.get_customer_by_field('id', id)
-#     if not customer:
-#         raise NotFoundError('Customer not found')
-#     return customer
+    def _get_customer_or_404(self, id: str) -> Customer:
+        customer = self.customer_repo.get_customer_by_field('id', id)
+        if not customer:
+            raise NotFoundError('Customer not found')
+        return customer
 
 # def _get_mold_or_404(self, id: str) -> Mold:
 #     mold = self.mold_repo.get_mold_by_field('id', id)
@@ -128,6 +130,6 @@ class MoldService:
 #             setattr(target, key, value)
 #     return target
 
-# def _validate_name_uniqueness(self, name: str, exclude_id: str = None) -> None:
-#     if self.mold_repo.get_mold_by_field('name', name, exclude_id=exclude_id):
-#         raise DataConflictError(f"A mold with name '{name}' already exists.")
+    def _validate_name_uniqueness(self, name: str, exclude_id: str = None) -> None:
+        if self.mold_repo.get_mold_by_field('name', name, exclude_id=exclude_id):
+            raise DataConflictError(f"A mold with name '{name}' already exists.")
