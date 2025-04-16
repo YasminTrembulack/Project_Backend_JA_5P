@@ -8,7 +8,6 @@ from app.types.schemas import (
     EntityResponse,
     MoldPayload,
     MoldResponde,
-    # Metadata,
 )
 
 router = APIRouter(prefix='/mold')

@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
 
+from app.models.mold import Mold
 from app.models.part import Part
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
+from app.types.exceptions import NotFoundError
 from app.types.schemas import PartPayload
 
 
@@ -58,11 +60,11 @@ class PartService:
 #         raise NotFoundError('Part not found')
 #     return part
 
-# def _get_mold_or_404(self, id: str) -> Mold:
-#     mold = self.mold_repo.get_mold_by_field('id', id)
-#     if not mold:
-#         raise NotFoundError('Mold not found')
-#     return mold
+    def _get_mold_or_404(self, id: str) -> Mold:
+        mold = self.mold_repo.get_mold_by_field('id', id)
+        if not mold:
+            raise NotFoundError('Mold not found')
+        return mold
 
 # @staticmethod
 # def _update_part_fields(payload: PartBase, target: Part) -> Part:
@@ -71,6 +73,6 @@ class PartService:
 #             setattr(target, key, value)
 #     return target
 
-# def _validate_name_uniqueness(self, name: str, exclude_id: str = None) -> None:
-#     if self.part_repo.get_part_by_field('name', name, exclude_id=exclude_id):
-#         raise DataConflictError(f"A part with name '{name}' already exists.")
+    def _validate_name_uniqueness(self, name: str, exclude_id: str = None) -> None:
+        if self.part_repo.get_part_by_field('name', name, exclude_id=exclude_id):
+            raise DataConflictError(f"A part with name '{name}' already exists.")

@@ -165,14 +165,13 @@ class PartBase(BaseModel):
 
 
 class PartPayload(PartBase):
-    description: str
     mold_id: str
 
 
 class PartResponse(PartBase):
     id: UUID
     name: str
-    description: str
+    description: str | None
     quantity: int
     status: PartStatusEnum
     model_3d: SimpleStatusEnum

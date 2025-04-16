@@ -16,6 +16,7 @@ from app.routes.operation_route import router as operation_router
 from app.routes.ping_route import router as ping_router
 from app.routes.user_route import router as user_router
 from app.routes.utils_route import router as utils_router
+from app.routes.part_route import router as part_router
 from app.types.exceptions import (
     DataConflictError,
     InvalidCountryError,
@@ -59,6 +60,7 @@ app.include_router(material_router, prefix=Settings().API_PREFIX)
 app.include_router(operation_router, prefix=Settings().API_PREFIX)
 app.include_router(machine_router, prefix=Settings().API_PREFIX)
 app.include_router(mold_router, prefix=Settings().API_PREFIX)
+app.include_router(part_router, prefix=Settings().API_PREFIX)
 
 
 app.add_exception_handler(
