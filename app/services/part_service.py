@@ -4,7 +4,7 @@ from app.models.mold import Mold
 from app.models.part import Part
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
-from app.types.exceptions import NotFoundError
+from app.types.exceptions import DataConflictError, NotFoundError
 from app.types.schemas import PartPayload
 
 
