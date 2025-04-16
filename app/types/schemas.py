@@ -1,8 +1,9 @@
-from datetime import date, datetime, timezone, time
+from datetime import date, datetime, time
 from typing import Generic, List, Optional, TypeVar
 from uuid import UUID
 
 import pytz
+from dateutil import parser
 from pydantic import BaseModel, EmailStr, computed_field, field_validator
 
 from app.core.settings import Settings
@@ -203,22 +204,27 @@ class MoldBase(BaseModel):
     def validate_delivery_date(cls, value):
         if value is None:
             return value
-        
-            
+
         timezone = pytz.timezone(Settings().TZ)
         current_time = datetime.now(timezone)
-        
+
+        if isinstance(value, str):
+            try:
+                value = parser.parse(value)
+            except (ValueError, TypeError):
+                raise InvalidFieldError('Invalid date format. Use YYYY-MM-DD.')
+
         if isinstance(value, date) and not isinstance(value, datetime):
             value_naive = datetime.combine(value, time(23, 59, 59))
             value = timezone.localize(value_naive)
-            
+
+        # Se for datetime sem tzinfo, aplicar o fuso horário
         elif isinstance(value, datetime) and value.tzinfo is None:
             value = timezone.localize(value)
-        if isinstance(value, str):
-            try:
-                value = datetime.fromisoformat(value)
-            except ValueError:
-                raise InvalidFieldError('Invalid date format. Use YYYY-MM-DD.')
+
+        # Se já tiver fuso, converter para o fuso padrão
+        elif isinstance(value, datetime) and value.tzinfo is not None:
+            value = value.astimezone(timezone)
 
         if value < current_time:
             raise InvalidFieldError('Delivery date must be in the future.')
@@ -234,13 +240,13 @@ class MoldPayload(MoldBase):
 class MoldResponde(MoldBase):
     id: UUID
     name: str
-    delivery_date: str
+    delivery_date: datetime
     priority: PriorityEnum
     quantity: int
     status: MoldStatusEnum
-    dimensions: str
-    created_by: UserBase
-    customer: CustomerBase
+    dimensions: str | None
+    created_by_id: str
+    customer_id: str
     created_at: str
     updated_at: str
 

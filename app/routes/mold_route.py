@@ -22,9 +22,12 @@ router = APIRouter(prefix='/mold')
 def create_mold(
     mold: MoldPayload,
     session: Session = Depends(get_session),
-    _: None = Depends(check_roles(['Admin', 'Editor'])),
+    user: None = Depends(check_roles(['Admin', 'Editor'])),
 ):
     service = MoldService(session)
+
+    mold.created_by_id = user.id
     db_mold = service.mold_register(mold)
+
     mold_response = MoldResponde.model_validate(db_mold.to_dict())
     return EntityResponse(message='Mold created with success.', data=mold_response)
