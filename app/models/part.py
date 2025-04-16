@@ -23,7 +23,7 @@ class Part(BaseModel):
     id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(VARCHAR(30), unique=True)
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
-    description: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(String(255), nullable=True)
     status: Mapped[PartStatusEnum] = mapped_column(
         Enum(PartStatusEnum), nullable=False
     )
