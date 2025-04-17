@@ -52,3 +52,9 @@ class IOperationAssociationRepository(ABC):
         self, operation_association: OperationAssociation
     ) -> OperationAssociation:
         pass
+
+    @abstractmethod
+    def get_by_item_and_operation(
+        self, item_id: str, operation_id: str, exclude_id: Optional[str] = None
+    ) -> OperationAssociation:
+        pass

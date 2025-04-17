@@ -51,7 +51,7 @@ class OperationAssociationRepository(IOperationAssociationRepository):
             query = query.filter(OperationAssociation.id != exclude_id)
         return query.first()
 
-    def get_all_operation_association_paginated(
+    def get_all_operation_associations_paginated(
         self,
         offset: int,
         limit: int,
@@ -105,3 +105,16 @@ class OperationAssociationRepository(IOperationAssociationRepository):
         if not include_inactive:
             query = query.filter(OperationAssociation.is_active.is_(True))
         return query.count()
+
+    def get_by_item_and_operation(
+        self, item_id: str, operation_id: str, exclude_id: Optional[str] = None
+    ) -> OperationAssociation:
+        query = self.db.query(OperationAssociation).filter(
+            OperationAssociation.item_id == item_id,
+            OperationAssociation.operation_id == operation_id,
+        )
+
+        if exclude_id:
+            query = query.filter(OperationAssociation.id != exclude_id)
+
+        return query.first()
