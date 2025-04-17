@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
 from sqlalchemy import UnaryExpression
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.interfaces.operation_repository_interface import IOperationRepository
 from app.models.operation import Operation
@@ -37,7 +37,14 @@ class OperationRepository(IOperationRepository):
             raise InvalidFieldError(
                 f'Field {field_name} does not exist on Operation model'
             )
-        query = self.db.query(Operation).filter(operation_field == value)
+        query = self.db.query(Operation)
+
+        options = [
+            joinedload(Operation.machine),
+        ]
+        query = query.options(*options)
+
+        query = query.filter(operation_field == value)
         if not include_inactive:
             query = query.filter(Operation.is_active.is_(True))
         if exclude_id:
