@@ -81,7 +81,7 @@ def delete_operation(
 ):
     service = OperationService(session)
     service.delete_operation(id)
-    return DeleteResponse(message='operation deleted successfully.')
+    return DeleteResponse(message='Operation deleted successfully.')
 
 
 @router.patch(

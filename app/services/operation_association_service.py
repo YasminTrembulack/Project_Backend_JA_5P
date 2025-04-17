@@ -1,0 +1,145 @@
+from typing import List, Tuple
+
+from sqlalchemy import desc
+from sqlalchemy.orm import Session
+
+from app.models.mold import Mold
+from app.models.operation import Operation, OperationAssociation
+from app.models.part import Part
+from app.repositories.mold_repositorie import MoldRepository
+from app.repositories.operation_association_repositorie import (
+    OperationAssociationRepository,
+)
+from app.repositories.operation_repositorie import OperationRepository
+from app.repositories.part_repositorie import PartRepository
+from app.types.enums import MachineStatusEnum
+from app.types.exceptions import (
+    DataConflictError,
+    InvalidFieldError,
+    InvalidMachineStateError,
+    NotFoundError,
+)
+from app.types.schemas import (
+    OperationAssociationBase,
+    OperationAssociationPayload,
+    OperationAssociationUpdatePayload,
+)
+
+
+class OperationAssociationService:
+    def __init__(self, db: Session):
+        self.operation_association_repo = OperationAssociationRepository(db)
+        self.operation_repo = OperationRepository(db)
+        self.mold_repo = MoldRepository(db)
+        self.part_repo = PartRepository(db)
+
+    def operation_association_register(
+        self, payload: OperationAssociationPayload
+    ) -> OperationAssociation:
+        machine = self._get_operation_or_404(payload.operation_id).machine
+
+        item = self._get_mold_or_part_or_404(payload.item_id)
+        if isinstance(item, Mold):
+            payload.item_type = 'Mold'
+        else:
+            payload.item_type = 'Part'
+        if machine and machine.status is not MachineStatusEnum.AVAILABLE:
+            raise InvalidMachineStateError(
+                f'Machine is not available. Current status: {machine.status}'
+            )
+        self._validate_ids(payload.item_id, payload.operation_id)
+
+        return self.operation_association_repo.create_operation_association(payload)
+
+    def get_all_operation_associations(
+        self, page: int, limit: int, order_by: str, desc_order: bool
+    ) -> Tuple[List[OperationAssociation], int]:
+        if not hasattr(OperationAssociation, order_by):
+            raise InvalidFieldError(
+                f'Field {order_by} does not exist on OperationAssociation model'
+            )
+        offset = (page - 1) * limit
+        order = (
+            desc(getattr(OperationAssociation, order_by))
+            if desc_order
+            else getattr(OperationAssociation, order_by)
+        )
+        return (
+            self.operation_association_repo.get_all_operation_associations_paginated(
+                offset, limit, order
+            )
+        )
+
+    def delete_operation_association(self, id: str) -> None:
+        operation_association = self._get_operation_association_or_404(id)
+        return self.operation_association_repo.delete_operation_association(
+            operation_association
+        )
+
+    def update_operation_association(
+        self, id: str, payload: OperationAssociationUpdatePayload
+    ) -> OperationAssociation:
+        operation_association = self._get_operation_association_or_404(id)
+        updated_data = payload.model_dump(exclude_unset=True)
+
+        new_item_id = updated_data.get('item_id', operation_association.item_id)
+        new_operation_id = updated_data.get(
+            'operation_id', operation_association.operation_id
+        )
+        self._get_mold_or_part_or_404(new_item_id)
+        self._validate_ids(new_item_id, new_operation_id, operation_association.id)
+
+        updated_operation_association = self._update_operation_association_fields(
+            payload, operation_association
+        )
+        return self.operation_association_repo.update_operation_association(
+            updated_operation_association
+        )
+
+    def get_operation_association(self, id: str) -> OperationAssociation:
+        return self._get_operation_association_or_404(id)
+
+    def _get_operation_association_or_404(self, id: str) -> OperationAssociation:
+        operation_association = (
+            self.operation_association_repo.get_operation_association_by_field(
+                'id', id
+            )
+        )
+        if not operation_association:
+            raise NotFoundError('OperationAssociation not found')
+        return operation_association
+
+    def _get_operation_or_404(self, id: str) -> Operation:
+        operation = self.operation_repo.get_operation_by_field('id', id)
+        if not operation:
+            raise NotFoundError('Operation not found')
+        return operation
+
+    @staticmethod
+    def _update_operation_association_fields(
+        payload: OperationAssociationBase, target: OperationAssociation
+    ) -> OperationAssociation:
+        for key, value in payload.model_dump(exclude_unset=True).items():
+            if hasattr(target, key) and value is not None:
+                setattr(target, key, value)
+        return target
+    
+    def _get_mold_or_part_or_404(self, id: str) -> Mold | Part:
+        mold = self.mold_repo.get_mold_by_field('id', id)
+        part = self.part_repo.get_part_by_field('id', id)
+        if mold:
+            return mold
+        if part:
+            return part
+        raise NotFoundError('No machine or part found with the provided ID')
+        
+
+    def _validate_ids(
+        self, item_id: str, operation_id: str, exclude_id: str = None
+    ) -> None:
+        if self.operation_association_repo.get_by_item_and_operation(
+            item_id, operation_id, exclude_id
+        ):
+            raise DataConflictError(
+                'An operation association for this item already exists.'
+            )

@@ -12,16 +12,20 @@ from app.routes.customer_route import router as customer_router
 from app.routes.machine_route import router as machine_router
 from app.routes.material_route import router as material_router
 from app.routes.mold_route import router as mold_router
-from app.routes.operation_route import router as operation_router
+from app.routes.part_route import router as part_router
 from app.routes.ping_route import router as ping_router
 from app.routes.user_route import router as user_router
 from app.routes.utils_route import router as utils_router
-from app.routes.part_route import router as part_router
+from app.routes.operation_route import router as operation_router
+from app.routes.operation_association_route import (
+    router as operation_association_router
+)
 from app.types.exceptions import (
     DataConflictError,
     InvalidCountryError,
     InvalidCredentialsError,
     InvalidFieldError,
+    InvalidMachineStateError,
     NotAuthenticatedError,
     NotFoundError,
     PermissionDeniedError,
@@ -58,6 +62,7 @@ app.include_router(auth_router, prefix=Settings().API_PREFIX)
 app.include_router(utils_router, prefix=Settings().API_PREFIX)
 app.include_router(material_router, prefix=Settings().API_PREFIX)
 app.include_router(operation_router, prefix=Settings().API_PREFIX)
+app.include_router(operation_association_router, prefix=Settings().API_PREFIX)
 app.include_router(machine_router, prefix=Settings().API_PREFIX)
 app.include_router(mold_router, prefix=Settings().API_PREFIX)
 app.include_router(part_router, prefix=Settings().API_PREFIX)
@@ -104,4 +109,11 @@ app.add_exception_handler(
 app.add_exception_handler(
     exc_class_or_status_code=InvalidCountryError,
     handler=create_exception_handler(status.HTTP_400_BAD_REQUEST, 'Invalid country'),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=InvalidMachineStateError,
+    handler=create_exception_handler(
+        status.HTTP_400_BAD_REQUEST, 'Machine is not available'
+    ),
 )
