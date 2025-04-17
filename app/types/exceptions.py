@@ -57,3 +57,7 @@ class NotFoundError(APIException):
 
 class InvalidCountryError(APIException):
     pass
+
+
+class InvalidMachineStateError(APIException):
+    pass
