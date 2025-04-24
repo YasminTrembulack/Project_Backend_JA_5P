@@ -67,10 +67,10 @@ class OperationAssociationRepository(IOperationAssociationRepository):
         if item_id:
             query = query.filter(OperationAssociation.item_id == item_id)
 
+        total_operation_associations = query.count()
         operation_associations = (
             query.order_by(order).offset(offset).limit(limit).all()
         )
-        total_operation_associations = query.count()
 
         return operation_associations, total_operation_associations
 
@@ -107,14 +107,17 @@ class OperationAssociationRepository(IOperationAssociationRepository):
         return query.count()
 
     def get_by_item_and_operation(
-        self, item_id: str, operation_id: str, exclude_id: Optional[str] = None
-    ) -> OperationAssociation:
+        self, item_id: str, operation_id: str, item_type: str, exclude_id: Optional[str] = None
+    ) -> Optional[OperationAssociation]:
         query = self.db.query(OperationAssociation).filter(
-            OperationAssociation.item_id == item_id,
             OperationAssociation.operation_id == operation_id,
+            OperationAssociation.item_type == item_type,
+            OperationAssociation.item_id == item_id,
         )
+        print(f'ITEM TYPE: {item_type}')
 
         if exclude_id:
             query = query.filter(OperationAssociation.id != exclude_id)
 
+        print(f'QUERY: {query}')
         return query.first()

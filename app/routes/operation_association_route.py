@@ -129,7 +129,7 @@ def get_operation_association(
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = OperationAssociationService(session)
-    operation_association = service.get_operation(id)
+    operation_association = service.get_operation_association(id)
     operation_association_response = OperationAssociationResponse.model_validate(
         operation_association.to_dict()
     )

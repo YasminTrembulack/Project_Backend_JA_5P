@@ -47,7 +47,7 @@ class OperationAssociationService:
             raise InvalidMachineStateError(
                 f'Machine is not available. Current status: {machine.status}'
             )
-        self._validate_ids(payload.item_id, payload.operation_id)
+        self._validate_ids(payload.item_id, payload.operation_id, payload.item_type)
 
         return self.operation_association_repo.create_operation_association(payload)
 
@@ -86,8 +86,13 @@ class OperationAssociationService:
         new_operation_id = updated_data.get(
             'operation_id', operation_association.operation_id
         )
-        self._get_mold_or_part_or_404(new_item_id)
-        self._validate_ids(new_item_id, new_operation_id, operation_association.id)
+        
+        item = self._get_mold_or_part_or_404(new_item_id)
+        if isinstance(item, Mold):
+            payload.item_type = 'Mold'
+        else:
+            payload.item_type = 'Part'
+        self._validate_ids(new_item_id, new_operation_id, payload.item_type, exclude_id=operation_association.id)
 
         updated_operation_association = self._update_operation_association_fields(
             payload, operation_association
@@ -135,10 +140,14 @@ class OperationAssociationService:
         
 
     def _validate_ids(
-        self, item_id: str, operation_id: str, exclude_id: str = None
+        self, item_id: str, operation_id: str, item_type: str, exclude_id: str = None
     ) -> None:
+
+        print(f'AAAAAAA: {self.operation_association_repo.get_by_item_and_operation(
+            item_id, operation_id, item_type, exclude_id
+        )}')
         if self.operation_association_repo.get_by_item_and_operation(
-            item_id, operation_id, exclude_id
+            item_id, operation_id, item_type, exclude_id
         ):
             raise DataConflictError(
                 'An operation association for this item already exists.'
