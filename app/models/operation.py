@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import CHAR, UUID, VARCHAR, Enum, ForeignKey, String
+from sqlalchemy import CHAR, UUID, VARCHAR, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
@@ -27,21 +27,18 @@ class OperationAssociation(BaseModel):
         CHAR(36), ForeignKey('operations.id'), nullable=False
     )
     item_id: Mapped[UUID] = mapped_column(CHAR(36), nullable=False)
+    
     operation: Mapped['Operation'] = relationship(
         back_populates='operation_associations'
     )
-    __mapper_args__ = {
-        'polymorphic_identity': 'operation_association',
-        'polymorphic_on': item_type,
-    }
+    
     part = relationship(
         'Part',
         primaryjoin=(
             'and_(foreign(OperationAssociation.item_id) == Part.id, '
             "OperationAssociation.item_type == 'Part')"
         ),
-        back_populates='operation_associations',
-        overlaps='mold',
+        viewonly=True
     )
 
     mold = relationship(
@@ -50,8 +47,7 @@ class OperationAssociation(BaseModel):
             'and_(foreign(OperationAssociation.item_id) == Mold.id, '
             "OperationAssociation.item_type == 'Mold')"
         ),
-        back_populates='operation_associations',
-        overlaps='part',
+        viewonly=True
     )
 
 

@@ -54,23 +54,13 @@ class Mold(BaseModel):
         'Part', back_populates='mold', passive_deletes=True
     )
 
-    operations: Mapped[list['Operation']] = relationship(
-        secondary='operation_association',
-        primaryjoin='and_(Mold.id == foreign(OperationAssociation.item_id), '
-        'OperationAssociation.item_type == "Mold")',
-        secondaryjoin=(
-            'and_(OperationAssociation.operation_id == foreign(Operation.id), '
-            'OperationAssociation.item_type == "Mold")'
-        ),
-        viewonly=True,
-    )
-
     operation_associations: Mapped[list['OperationAssociation']] = relationship(
-        primaryjoin='and_(Mold.id == foreign(OperationAssociation.item_id), '
-        'OperationAssociation.item_type == "Mold")',
+        primaryjoin=(
+            'and_(foreign(OperationAssociation.item_id) == Mold.id, '
+            "OperationAssociation.item_type == 'Mold')"
+        ),
         back_populates='mold',
-        cascade='all, delete-orphan',
-        overlaps='part,operation_associations',
+        cascade='all, delete-orphan'
     )
 
 
