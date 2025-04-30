@@ -13,7 +13,7 @@ from app.types.enums import PartStatusEnum, SimpleStatusEnum
 if TYPE_CHECKING:
     from app.models.material import Material, MaterialParts
     from app.models.mold import Mold
-    from app.models.operation import Operation, OperationAssociation
+    from app.models.operation import OperationAssociation
 
 
 @dataclass

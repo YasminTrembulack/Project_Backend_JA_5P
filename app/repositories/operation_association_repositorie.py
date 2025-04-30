@@ -98,7 +98,11 @@ class OperationAssociationRepository(IOperationAssociationRepository):
         return operation_association
 
     def get_by_item_and_operation(
-        self, item_id: str, operation_id: str, item_type: str, exclude_id: Optional[str] = None
+        self,
+        item_id: str,
+        operation_id: str,
+        item_type: str,
+        exclude_id: Optional[str] = None
     ) -> Optional[OperationAssociation]:
         query = self.db.query(OperationAssociation).filter(
             OperationAssociation.operation_id == operation_id,

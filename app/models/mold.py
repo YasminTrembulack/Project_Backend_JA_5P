@@ -13,7 +13,7 @@ from app.types.enums import MoldStatusEnum, PriorityEnum
 
 if TYPE_CHECKING:
     from app.models.customer import Customer
-    from app.models.operation import Operation, OperationAssociation
+    from app.models.operation import OperationAssociation
     from app.models.part import Part
     from app.models.user import User
 

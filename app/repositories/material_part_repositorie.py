@@ -98,9 +98,12 @@ class MaterialPartRepository(IMaterialPartRepository):
         self.db.refresh(material_part)
         return material_part
 
-
     def get_by_item_and_operation(
-        self, item_id: str, operation_id: str, item_type: str, exclude_id: Optional[str] = None
+        self,
+        item_id: str,
+        operation_id: str,
+        item_type: str,
+        exclude_id: Optional[str] = None
     ) -> Optional[MaterialPart]:
         query = self.db.query(MaterialPart).filter(
             MaterialPart.operation_id == operation_id,

@@ -62,5 +62,6 @@ class InvalidCountryError(APIException):
 class InvalidMachineStateError(APIException):
     pass
 
+
 class InvalidLeadTimeError(APIException):
     pass

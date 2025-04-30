@@ -43,8 +43,8 @@ class Material(BaseModel):
     description: Mapped[str] = mapped_column(String(255))
     unit_of_measure: Mapped[str] = mapped_column(String(20), nullable=True)
     stock_quantity: Mapped[float] = mapped_column(Float, nullable=False)
-    lead_time: Mapped[str] =  mapped_column(String(10))
-    part_associations: Mapped[list['MaterialParts']] = relationship(
+    lead_time: Mapped[str] = mapped_column(String(10))
+    part_associations: Mapped[list['MaterialPart']] = relationship(
         back_populates='material', cascade='all, delete-orphan'
     )
 

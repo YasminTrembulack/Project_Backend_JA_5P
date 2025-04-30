@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
 import re
+from datetime import datetime, timezone
 from typing import List, Tuple
 
 from sqlalchemy import desc
@@ -8,7 +8,12 @@ from sqlalchemy.orm import Session
 from app.models.material import Material
 from app.repositories.material_repositorie import MaterialRepository
 from app.types.enums import TimeUnitEnum
-from app.types.exceptions import DataConflictError, InvalidFieldError, NotFoundError, InvalidLeadTimeError
+from app.types.exceptions import (
+    DataConflictError,
+    InvalidFieldError,
+    InvalidLeadTimeError,
+    NotFoundError,
+)
 from app.types.schemas import MaterialBase, MaterialPayload, MaterialUpdatePayload
 
 
@@ -25,7 +30,7 @@ class MaterialService:
         if not self._validate_lead_time(payload.lead_time):
             raise InvalidLeadTimeError(
                 f"Invalid lead time format. Received: '{payload.lead_time}'")
-        
+
         return self.material_repo.create_material(payload)
 
     def get_all_materials(
@@ -82,7 +87,8 @@ class MaterialService:
         ):
             raise DataConflictError(f"A material with name '{name}' already exists.")
 
-    def _validate_lead_time(self, lead_time: str) -> bool:
+    @staticmethod
+    def _validate_lead_time(lead_time: str) -> bool:
         match = re.match(r'^\s*(\d+)\s*(\w+)\s*$', lead_time)
         if not match:
             return False
@@ -100,4 +106,3 @@ class MaterialService:
             return False
 
         return True
-            

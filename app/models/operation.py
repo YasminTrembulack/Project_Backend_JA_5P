@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import CHAR, UUID, VARCHAR, Enum, ForeignKey, Integer, String
+from sqlalchemy import CHAR, UUID, VARCHAR, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
@@ -27,11 +27,11 @@ class OperationAssociation(BaseModel):
         CHAR(36), ForeignKey('operations.id'), nullable=False
     )
     item_id: Mapped[UUID] = mapped_column(CHAR(36), nullable=False)
-    
+
     operation: Mapped['Operation'] = relationship(
         back_populates='operation_associations'
     )
-    
+
     part = relationship(
         'Part',
         primaryjoin=(

@@ -56,7 +56,7 @@ class OperationAssociationService:
     ) -> Tuple[List[OperationAssociation], int]:
         if not hasattr(OperationAssociation, order_by):
             raise InvalidFieldError(
-                f'Field {order_by} does not exist on OperationAssociation model'
+                f'Field {order_by} does not exist on Operation Association model'
             )
         offset = (page - 1) * limit
         order = (
@@ -86,13 +86,18 @@ class OperationAssociationService:
         new_operation_id = updated_data.get(
             'operation_id', operation_association.operation_id
         )
-        
+
         item = self._get_mold_or_part_or_404(new_item_id)
         if isinstance(item, Mold):
             payload.item_type = 'Mold'
         else:
             payload.item_type = 'Part'
-        self._validate_ids(new_item_id, new_operation_id, payload.item_type, exclude_id=operation_association.id)
+        self._validate_ids(
+            new_item_id,
+            new_operation_id,
+            payload.item_type,
+            exclude_id=operation_association.id
+        )
 
         updated_operation_association = self._update_operation_association_fields(
             payload, operation_association
@@ -128,7 +133,7 @@ class OperationAssociationService:
             if hasattr(target, key) and value is not None:
                 setattr(target, key, value)
         return target
-    
+
     def _get_mold_or_part_or_404(self, id: str) -> Mold | Part:
         mold = self.mold_repo.get_mold_by_field('id', id)
         part = self.part_repo.get_part_by_field('id', id)
@@ -137,15 +142,10 @@ class OperationAssociationService:
         if part:
             return part
         raise NotFoundError('No machine or part found with the provided ID')
-        
 
     def _validate_ids(
         self, item_id: str, operation_id: str, item_type: str, exclude_id: str = None
     ) -> None:
-
-        print(f'AAAAAAA: {self.operation_association_repo.get_by_item_and_operation(
-            item_id, operation_id, item_type, exclude_id
-        )}')
         if self.operation_association_repo.get_by_item_and_operation(
             item_id, operation_id, item_type, exclude_id
         ):

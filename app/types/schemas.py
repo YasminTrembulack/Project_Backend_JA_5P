@@ -317,7 +317,6 @@ class MaterialPartUpdatePayload(MaterialPartBase):
     pass
 
 
-
 # --- OPERATION CLASSES --- #
 
 

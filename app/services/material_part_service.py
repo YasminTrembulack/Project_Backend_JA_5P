@@ -1,12 +1,12 @@
-from datetime import datetime, timedelta
 import re
+from datetime import datetime, timedelta
 from typing import List, Tuple
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
-from app.models.part import Part
 from app.models.material import Material, MaterialPart
+from app.models.part import Part
 from app.repositories.material_part_repositorie import MaterialPartRepository
 from app.repositories.material_repositorie import MaterialRepository
 from app.repositories.part_repositorie import PartRepository
@@ -31,7 +31,7 @@ class MaterialPartService:
 
     def material_part_register(
         self, payload: MaterialPartPayload
-    ) -> MaterialPart: 
+    ) -> MaterialPart:
         self._get_part_or_404(payload.part_id)
         material = self._get_material_or_404(payload.material_id)
 
@@ -41,10 +41,10 @@ class MaterialPartService:
                 material.lead_time
             )
         else:
-            material.stock_quantity =- payload.quantity
+            material.stock_quantity = - payload.quantity
             self.material_repo.update_material(material)
             payload.status = MaterialStatusEnum.AVAILABLE
-        
+
         self._validate_ids(payload.part_id, payload.material_id)
         return self.material_part_repo.create_material_part(payload)
 
@@ -83,7 +83,7 @@ class MaterialPartService:
         new_material_id = updated_data.get(
             'material_id', material_part.material_id
         )
-        
+
         self._validate_ids(new_part_id, new_material_id, exclude_id=material_part.id)
 
         updated_material_part = self._update_material_part_fields(
@@ -105,7 +105,7 @@ class MaterialPartService:
         if not material_part:
             raise NotFoundError('Material Part not found')
         return material_part
-    
+
     def _get_part_or_404(self, id: str) -> Part:
         part = self.part_repo.get_part_by_field('id', id)
         if not part:
@@ -117,7 +117,7 @@ class MaterialPartService:
         if not material:
             raise NotFoundError('Material not found')
         return material
-    
+
     @staticmethod
     def _update_material_part_fields(
         payload: MaterialPartBase, target: MaterialPart
@@ -125,7 +125,7 @@ class MaterialPartService:
         for key, value in payload.model_dump(exclude_unset=True).items():
             if hasattr(target, key) and value is not None:
                 setattr(target, key, value)
-        return target     
+        return target
 
     def _validate_ids(
         self, part_id: str, material_id: str, exclude_id: str = None
@@ -137,7 +137,8 @@ class MaterialPartService:
                 'This material is already associated with this part.'
             )
 
-    def _calculate_delivery_date(self, lead_time: str) -> datetime:
+    @staticmethod
+    def _calculate_delivery_date(lead_time: str) -> datetime:
         numero, unidade = re.match(r'(\d+)\s*(\w+)', lead_time).groups()
         numero = int(numero)
         unidade = unidade.capitalize()
@@ -150,5 +151,5 @@ class MaterialPartService:
             delta = timedelta(days=30 * numero)
         elif unidade == TimeUnitEnum.YEAR.value:
             delta = timedelta(days=365 * numero)
-        
+
         return datetime.now() + delta
