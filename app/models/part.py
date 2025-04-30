@@ -11,7 +11,7 @@ from app.models.base_model import BaseModel
 from app.types.enums import PartStatusEnum, SimpleStatusEnum
 
 if TYPE_CHECKING:
-    from app.models.material import Material, MaterialParts
+    from app.models.material import Material, MaterialPart
     from app.models.mold import Mold
     from app.models.operation import OperationAssociation
 
@@ -51,10 +51,10 @@ class Part(BaseModel):
         cascade='all, delete-orphan'
     )
 
-    material_associations: Mapped[list['MaterialParts']] = relationship(
+    material_associations: Mapped[list['MaterialPart']] = relationship(
         back_populates='part', cascade='all, delete-orphan'
     )
 
     materials: Mapped[list['Material']] = relationship(
-        secondary='material_parts', back_populates='parts', viewonly=True
+        secondary='material_part', back_populates='parts', viewonly=True
     )

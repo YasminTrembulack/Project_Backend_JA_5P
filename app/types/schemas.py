@@ -293,7 +293,7 @@ class MaterialPartBase(BaseModel):
     part_id: Optional[str] = None
     material_id: Optional[str] = None
     quantity: Optional[float] = 1.0
-    expected_delivery_date = Optional[datetime] = None
+    expected_delivery_date: Optional[datetime] = None
     status: Optional[MaterialStatusEnum] = MaterialStatusEnum.PENDING
 
 

@@ -49,5 +49,5 @@ class Material(BaseModel):
     )
 
     parts: Mapped[list['Part']] = relationship(
-        secondary='material_parts', back_populates='materials', viewonly=True
+        secondary='material_part', back_populates='materials', viewonly=True
     )
