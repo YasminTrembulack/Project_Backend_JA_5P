@@ -15,7 +15,7 @@ from app.models.operation import Operation
 from app.models.operation import OperationAssociation
 from app.models.machine import Machine
 from app.models.material import Material
-from app.models.material import MaterialParts
+from app.models.material import MaterialPart
 
 
 config = context.config
