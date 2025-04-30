@@ -10,6 +10,7 @@ from app.middlewares.erro_handling import create_exception_handler
 from app.routes.auth_route import router as auth_router
 from app.routes.customer_route import router as customer_router
 from app.routes.machine_route import router as machine_router
+from app.routes.material_part_route import router as material_part_router
 from app.routes.material_route import router as material_router
 from app.routes.mold_route import router as mold_router
 from app.routes.operation_association_route import (
@@ -56,17 +57,23 @@ app.add_middleware(AuthenticationMiddleware)
 
 # TODO: realizar verificação de senha forte
 
-app.include_router(user_router, prefix=Settings().API_PREFIX)
-app.include_router(customer_router, prefix=Settings().API_PREFIX)
-app.include_router(ping_router, prefix=Settings().API_PREFIX)
-app.include_router(auth_router, prefix=Settings().API_PREFIX)
-app.include_router(utils_router, prefix=Settings().API_PREFIX)
-app.include_router(material_router, prefix=Settings().API_PREFIX)
-app.include_router(operation_router, prefix=Settings().API_PREFIX)
-app.include_router(operation_association_router, prefix=Settings().API_PREFIX)
-app.include_router(machine_router, prefix=Settings().API_PREFIX)
-app.include_router(mold_router, prefix=Settings().API_PREFIX)
-app.include_router(part_router, prefix=Settings().API_PREFIX)
+routers = [
+    auth_router,
+    customer_router,
+    machine_router,
+    material_part_router,
+    material_router,
+    mold_router,
+    operation_association_router,
+    operation_router,
+    part_router,
+    ping_router,
+    user_router,
+    utils_router,
+]
+
+for router in routers:
+    app.include_router(router, prefix=Settings().API_PREFIX)
 
 
 app.add_exception_handler(
