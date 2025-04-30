@@ -43,3 +43,5 @@ Para rodar o comando basta colocar task a seguir o comando. Exemplo `task run`.
 
 
 # TODO: criar um metodo dentro de mold service, que quando chamado atualize as prioridades dos moldes, alem disso adicionar um atributo em parts que seja a porcetagem de conclusao da peça, facilitando na hora da conta, apos isso atualizar os metodos que calcular a prioridade ou a conclusao em %
+
+# TODO: adicionar um campo com chave e valor para fazer um filtro
