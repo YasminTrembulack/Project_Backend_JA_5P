@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 class MaterialPart(BaseModel):
     __tablename__ = 'material_part'
 
+    id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     material_id: Mapped[UUID] = mapped_column(
         CHAR(36), ForeignKey('materials.id'), primary_key=True
     )
