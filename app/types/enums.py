@@ -67,3 +67,9 @@ class OpStatusEnum(str, Enum):
 class MaterialStatusEnum(str, Enum):
     PENDING = 'Pending'
     AVAILABLE = 'Available'
+
+class TimeUnitEnum(str, Enum):
+  DAY = 'Day'
+  WEEK = 'Week'
+  MOUNTH = 'Month'
+  YEAR = 'Year'
