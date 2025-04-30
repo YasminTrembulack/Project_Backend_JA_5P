@@ -97,15 +97,6 @@ class OperationAssociationRepository(IOperationAssociationRepository):
         self.db.refresh(operation_association)
         return operation_association
 
-    def total_operation_association(
-        self,
-        include_inactive: Optional[bool] = False,
-    ) -> int:
-        query = self.db.query(OperationAssociation)
-        if not include_inactive:
-            query = query.filter(OperationAssociation.is_active.is_(True))
-        return query.count()
-
     def get_by_item_and_operation(
         self, item_id: str, operation_id: str, item_type: str, exclude_id: Optional[str] = None
     ) -> Optional[OperationAssociation]:
