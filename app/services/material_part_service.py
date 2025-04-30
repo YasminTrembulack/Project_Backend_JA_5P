@@ -37,7 +37,7 @@ class MaterialPartService:
 
         if material.stock_quantity - payload.quantity < 0:
             payload.status = MaterialStatusEnum.PENDING
-            payload.expected_delivery_date = self._calcule_delivery_date(
+            payload.expected_delivery_date = self._calculate_delivery_date(
                 material.lead_time
             )
         else:
@@ -48,7 +48,7 @@ class MaterialPartService:
         self._validate_ids(payload.part_id, payload.material_id)
         return self.material_part_repo.create_material_part(payload)
 
-    def get_all_material_part(
+    def get_all_material_parts(
         self, page: int, limit: int, order_by: str, desc_order: bool
     ) -> Tuple[List[MaterialPart], int]:
         if not hasattr(MaterialPart, order_by):

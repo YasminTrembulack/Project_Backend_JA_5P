@@ -109,10 +109,7 @@ class OperationAssociationRepository(IOperationAssociationRepository):
             OperationAssociation.item_type == item_type,
             OperationAssociation.item_id == item_id,
         )
-        print(f'ITEM TYPE: {item_type}')
 
         if exclude_id:
             query = query.filter(OperationAssociation.id != exclude_id)
-
-        print(f'QUERY: {query}')
         return query.first()

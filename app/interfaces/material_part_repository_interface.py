@@ -4,13 +4,13 @@ from typing import List, Optional, Tuple
 from sqlalchemy import UnaryExpression
 
 from app.models.material import MaterialPart
-from app.types.schemas import MaterialPartsPayload
+from app.types.schemas import MaterialPartPayload
 
 
 class IMaterialPartRepository(ABC):
     @abstractmethod
     def create_material_part(
-        self, material_part: MaterialPartsPayload
+        self, material_part: MaterialPartPayload
     ) -> MaterialPart:
         pass
 
