@@ -10,6 +10,7 @@ from app.core.settings import Settings
 from app.types.enums import (
     CountryEnum,
     MachineStatusEnum,
+    MaterialStatusEnum,
     MoldStatusEnum,
     OpStatusEnum,
     PartStatusEnum,
@@ -261,11 +262,13 @@ class MaterialBase(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     stock_quantity: Optional[float] = 1.0
+    lead_time: Optional[str] = None
     unit_of_measure: Optional[str] = None
 
 
 class MaterialPayload(MaterialBase):
     stock_quantity: float
+    lead_time: str
 
 
 class MaterialResponse(MaterialBase):
@@ -274,12 +277,45 @@ class MaterialResponse(MaterialBase):
     description: str
     stock_quantity: float
     unit_of_measure: str
+    lead_time: str
     created_at: str
     updated_at: str
 
 
 class MaterialUpdatePayload(MaterialBase):
     pass
+
+
+# --- MATERIAL PARTS CLASSES --- #
+
+
+class MaterialPartBase(BaseModel):
+    part_id: Optional[str] = None
+    material_id: Optional[str] = None
+    quantity: Optional[float] = 1.0
+    expected_delivery_date = Optional[datetime] = None
+    status: Optional[MaterialStatusEnum] = MaterialStatusEnum.PENDING
+
+
+class MaterialPartPayload(MaterialPartBase):
+    material_id: str
+    part_id: str
+
+
+class MaterialPartResponse(MaterialPartBase):
+    id: UUID
+    material_id: str
+    part_id: str
+    quantity: float
+    status: str
+    expected_delivery_date: datetime | None
+    created_at: str
+    updated_at: str
+
+
+class MaterialPartUpdatePayload(MaterialPartBase):
+    pass
+
 
 
 # --- OPERATION CLASSES --- #
