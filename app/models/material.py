@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
@@ -14,8 +15,8 @@ if TYPE_CHECKING:
     from app.models.part import Part
 
 
-class MaterialParts(BaseModel):
-    __tablename__ = 'material_parts'
+class MaterialPart(BaseModel):
+    __tablename__ = 'material_part'
 
     material_id: Mapped[UUID] = mapped_column(
         CHAR(36), ForeignKey('materials.id'), primary_key=True
@@ -26,6 +27,7 @@ class MaterialParts(BaseModel):
     status: Mapped[MaterialStatusEnum] = mapped_column(
         Enum(MaterialStatusEnum), nullable=False
     )
+    expected_delivery_date: Mapped[datetime] = mapped_column(nullable=True)
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
 
     material: Mapped['Material'] = relationship(back_populates='part_associations')
@@ -41,7 +43,7 @@ class Material(BaseModel):
     description: Mapped[str] = mapped_column(String(255))
     unit_of_measure: Mapped[str] = mapped_column(String(20), nullable=True)
     stock_quantity: Mapped[float] = mapped_column(Float, nullable=False)
-
+    lead_time: Mapped[str] =  mapped_column(String(10))
     part_associations: Mapped[list['MaterialParts']] = relationship(
         back_populates='material', cascade='all, delete-orphan'
     )

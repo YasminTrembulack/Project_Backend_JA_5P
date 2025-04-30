@@ -25,6 +25,7 @@ from app.types.exceptions import (
     InvalidCountryError,
     InvalidCredentialsError,
     InvalidFieldError,
+    InvalidLeadTimeError,
     InvalidMachineStateError,
     NotAuthenticatedError,
     NotFoundError,
@@ -115,5 +116,12 @@ app.add_exception_handler(
     exc_class_or_status_code=InvalidMachineStateError,
     handler=create_exception_handler(
         status.HTTP_400_BAD_REQUEST, 'Machine is not available'
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=InvalidLeadTimeError,
+    handler=create_exception_handler(
+        status.HTTP_400_BAD_REQUEST, "Invalid lead time format."
     ),
 )

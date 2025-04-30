@@ -20,6 +20,7 @@ class MaterialRepository(IMaterialRepository):
             description=material.description,
             unit_of_measure=material.unit_of_measure,
             stock_quantity=material.stock_quantity,
+            lead_time=material.lead_time
         )
         self.db.add(db_material)
         self.db.commit()
