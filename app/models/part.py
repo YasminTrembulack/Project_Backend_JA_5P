@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import CHAR, UUID, VARCHAR, Enum, ForeignKey, Integer, String
+from sqlalchemy import CHAR, UUID, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
@@ -21,7 +21,8 @@ class Part(BaseModel):
     __tablename__ = 'parts'
 
     id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
-    name: Mapped[str] = mapped_column(VARCHAR(30), unique=True)
+    name: Mapped[str] = mapped_column(String(30), unique=True)
+    progress_percentage: Mapped[float] = mapped_column(Float, nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=True)
     status: Mapped[PartStatusEnum] = mapped_column(
@@ -33,7 +34,6 @@ class Part(BaseModel):
     nc_program: Mapped[SimpleStatusEnum] = mapped_column(
         Enum(SimpleStatusEnum), nullable=False
     )
-
     # Referência ao molde que possui a peça
     mold_id: Mapped[UUID] = mapped_column(
         CHAR(36), ForeignKey('molds.id', ondelete='CASCADE'), nullable=False
