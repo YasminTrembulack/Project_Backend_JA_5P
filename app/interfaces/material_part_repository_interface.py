@@ -58,3 +58,12 @@ class IMaterialPartRepository(ABC):
         self, part_id: str, material_id: str, exclude_id: Optional[str] = None
     ) -> MaterialPart:
         pass
+
+    @abstractmethod
+    def get_by_id_and_status(
+        self,
+        part_id: str,
+        status: str,
+        exclude_id: Optional[str] = None
+    ) -> Optional[MaterialPart]:
+        pass

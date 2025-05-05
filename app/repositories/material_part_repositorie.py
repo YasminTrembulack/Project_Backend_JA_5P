@@ -113,3 +113,18 @@ class MaterialPartRepository(IMaterialPartRepository):
             query = query.filter(MaterialPart.id != exclude_id)
 
         return query.first()
+
+    def get_by_id_and_status(
+        self,
+        part_id: str,
+        status: str,
+        exclude_id: Optional[str] = None
+    ) -> Optional[MaterialPart]:
+        query = self.db.query(MaterialPart).filter(
+            MaterialPart.part_id == part_id,
+            MaterialPart.status == status,
+        )
+
+        if exclude_id:
+            query = query.filter(MaterialPart.id != exclude_id)
+        return query.first()
