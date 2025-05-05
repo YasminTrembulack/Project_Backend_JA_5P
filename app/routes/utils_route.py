@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 
-from app.types.enums import CountryEnum
-from app.types.schemas import CountyResponse
+from app.types.enums import CountryEnum, TimeUnitEnum
+from app.types.schemas import CountyResponse, TimeUnitResponse
 
 router = APIRouter(prefix='/utils')
 
@@ -12,3 +12,11 @@ router = APIRouter(prefix='/utils')
 def get_countries():
     countries = [country.value for country in CountryEnum]
     return CountyResponse(countries=countries)
+
+
+@router.get(
+    '/time_unit', status_code=status.HTTP_200_OK, response_model=TimeUnitResponse
+)
+def get_countries():
+    time_unit = [unit.value for unit in TimeUnitEnum]
+    return TimeUnitResponse(time_unit=time_unit)

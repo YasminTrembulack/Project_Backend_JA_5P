@@ -49,6 +49,8 @@ class PingResponse(BaseModel):
 class CountyResponse(BaseModel):
     countries: List[str]
 
+class TimeUnitResponse(BaseModel):
+    time_unit: List[str]
 
 # --- USER CLASSES --- #
 
