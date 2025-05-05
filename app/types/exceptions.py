@@ -65,3 +65,6 @@ class InvalidMachineStateError(APIException):
 
 class InvalidLeadTimeError(APIException):
     pass
+
+class MaterialNotAvailableError(APIException):
+    pass
