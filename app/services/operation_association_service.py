@@ -4,19 +4,21 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from app.models.mold import Mold
-from app.models.operation import Operation, OperationAssociation
 from app.models.part import Part
+from app.models.operation import Operation, OperationAssociation
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.operation_association_repositorie import (
     OperationAssociationRepository,
 )
+from app.repositories.material_part_repositorie import MaterialPartRepository
 from app.repositories.operation_repositorie import OperationRepository
 from app.repositories.part_repositorie import PartRepository
-from app.types.enums import MachineStatusEnum
+from app.types.enums import MachineStatusEnum, MaterialStatusEnum, OpStatusEnum
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
     InvalidMachineStateError,
+    MaterialNotAvailableError,
     NotFoundError,
 )
 from app.types.schemas import (
@@ -29,6 +31,7 @@ from app.types.schemas import (
 class OperationAssociationService:
     def __init__(self, db: Session):
         self.operation_association_repo = OperationAssociationRepository(db)
+        self.material_part_repo = MaterialPartRepository(db)
         self.operation_repo = OperationRepository(db)
         self.mold_repo = MoldRepository(db)
         self.part_repo = PartRepository(db)
@@ -47,6 +50,9 @@ class OperationAssociationService:
             raise InvalidMachineStateError(
                 f'Machine is not available. Current status: {machine.status}'
             )
+        if payload.status == OpStatusEnum.COMPLETED and payload.item_type == 'Part':
+            self._validate_material_avaliability(payload.item_id)
+            
         self._validate_ids(payload.item_id, payload.operation_id, payload.item_type)
 
         return self.operation_association_repo.create_operation_association(payload)
@@ -83,6 +89,7 @@ class OperationAssociationService:
         updated_data = payload.model_dump(exclude_unset=True)
 
         new_item_id = updated_data.get('item_id', operation_association.item_id)
+        new_status = updated_data.get('status', operation_association.status)
         new_operation_id = updated_data.get(
             'operation_id', operation_association.operation_id
         )
@@ -92,6 +99,10 @@ class OperationAssociationService:
             payload.item_type = 'Mold'
         else:
             payload.item_type = 'Part'
+            
+        if new_status == OpStatusEnum.COMPLETED and payload.item_type == 'Part':
+            self._validate_material_avaliability(new_item_id)
+            
         self._validate_ids(
             new_item_id,
             new_operation_id,
@@ -151,4 +162,13 @@ class OperationAssociationService:
         ):
             raise DataConflictError(
                 'An operation association for this item already exists.'
+            )
+
+    def _validate_material_avaliability(self, id: str):
+        if self.material_part_repo.get_by_id_and_status(
+            id, MaterialStatusEnum.PENDING
+        ):
+            raise MaterialNotAvailableError(
+                "Cannot change status to 'Completed'"
+                "because there are still pending materials."
             )
