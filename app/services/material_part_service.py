@@ -41,7 +41,9 @@ class MaterialPartService:
                 material.lead_time
             )
         else:
-            material.stock_quantity = - payload.quantity
+            new_qtd = material.stock_quantity - payload.quantity
+            material.stock_quantity = new_qtd
+
             self.material_repo.update_material(material)
             payload.status = MaterialStatusEnum.AVAILABLE
 
