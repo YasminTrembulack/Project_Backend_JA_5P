@@ -102,14 +102,19 @@ class OperationAssociationRepository(IOperationAssociationRepository):
         item_id: str,
         operation_id: str,
         item_type: str,
-        exclude_id: Optional[str] = None
+        exclude_id: Optional[str] = None,
+        include_inactive: Optional[bool] = False,
     ) -> Optional[OperationAssociation]:
         query = self.db.query(OperationAssociation).filter(
             OperationAssociation.operation_id == operation_id,
             OperationAssociation.item_type == item_type,
             OperationAssociation.item_id == item_id,
         )
-
+        
         if exclude_id:
             query = query.filter(OperationAssociation.id != exclude_id)
+            
+        if not include_inactive:
+            query = query.filter(OperationAssociation.is_active.is_(True))
+
         return query.first()
