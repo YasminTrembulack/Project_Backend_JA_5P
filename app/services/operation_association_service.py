@@ -46,6 +46,7 @@ class OperationAssociationService:
             payload.item_type = 'Mold'
         else:
             payload.item_type = 'Part'
+
         if machine and machine.status is not MachineStatusEnum.AVAILABLE:
             raise InvalidMachineStateError(
                 f'Machine is not available. Current status: {machine.status}'
@@ -55,7 +56,14 @@ class OperationAssociationService:
             
         self._validate_ids(payload.item_id, payload.operation_id, payload.item_type)
 
-        return self.operation_association_repo.create_operation_association(payload)
+        new_operation_association =  (
+            self.operation_association_repo.create_operation_association(payload)
+        )
+        
+        if payload.item_type == 'Part':
+            self.part_repo.update_part_progress(payload.item_id)
+        
+        return new_operation_association
 
     def get_all_operation_associations(
         self, page: int, limit: int, order_by: str, desc_order: bool
@@ -78,9 +86,13 @@ class OperationAssociationService:
 
     def delete_operation_association(self, id: str) -> None:
         operation_association = self._get_operation_association_or_404(id)
-        return self.operation_association_repo.delete_operation_association(
+        item = self._get_mold_or_part_or_404(operation_association.item_id)
+        
+        self.operation_association_repo.delete_operation_association(
             operation_association
         )
+        if isinstance(item, Part):
+            self.part_repo.update_part_progress(item.id)
 
     def update_operation_association(
         self, id: str, payload: OperationAssociationUpdatePayload
@@ -90,6 +102,7 @@ class OperationAssociationService:
 
         new_item_id = updated_data.get('item_id', operation_association.item_id)
         new_status = updated_data.get('status', operation_association.status)
+        its_a_new_status = True if operation_association.status != payload.status else False
         new_operation_id = updated_data.get(
             'operation_id', operation_association.operation_id
         )
@@ -100,8 +113,9 @@ class OperationAssociationService:
         else:
             payload.item_type = 'Part'
             
-        if new_status == OpStatusEnum.COMPLETED and payload.item_type == 'Part':
-            self._validate_material_avaliability(new_item_id)
+        if payload.item_type == 'Part':
+            if new_status == OpStatusEnum.COMPLETED:
+                self._validate_material_avaliability(new_item_id)
             
         self._validate_ids(
             new_item_id,
@@ -113,9 +127,17 @@ class OperationAssociationService:
         updated_operation_association = self._update_operation_association_fields(
             payload, operation_association
         )
-        return self.operation_association_repo.update_operation_association(
-            updated_operation_association
+        new_operation_association =  (
+            self.operation_association_repo.update_operation_association(
+                updated_operation_association
+            )
         )
+
+        if payload.item_type == 'Part' and its_a_new_status:
+            self.part_repo.update_part_progress(new_item_id)
+                
+        return new_operation_association
+        
 
     def get_operation_association(self, id: str) -> OperationAssociation:
         return self._get_operation_association_or_404(id)
