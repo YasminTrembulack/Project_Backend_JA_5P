@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.interfaces.part_repository_interface import IPartRepository
 from app.models.part import Part
+from app.types.enums import MaterialStatusEnum, OpStatusEnum
 from app.types.exceptions import InvalidFieldError
 from app.types.schemas import PartPayload
 
@@ -90,3 +91,15 @@ class PartRepository(IPartRepository):
         if not include_inactive:
             query = query.filter(Part.is_active.is_(True))
         return query.count()
+
+    def update_part_progress(self, part_id: str) -> None:
+        part = self.db.query(Part).filter_by(id=part_id).first()
+        if not part:
+            return
+        
+        total = len(part.operation_associations) + len(part.materials)
+        done = sum(1 for oa in part.operation_associations if oa.status == OpStatusEnum.COMPLETED) + \
+            sum(1 for mp in part.materials if mp.status == MaterialStatusEnum.AVAILABLE)
+
+        part.progress_percentage = int((done / total) * 100) if total > 0 else 0
+        self.db.commit()
