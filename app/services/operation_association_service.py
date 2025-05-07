@@ -4,13 +4,13 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from app.models.mold import Mold
-from app.models.part import Part
 from app.models.operation import Operation, OperationAssociation
+from app.models.part import Part
+from app.repositories.material_part_repositorie import MaterialPartRepository
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.operation_association_repositorie import (
     OperationAssociationRepository,
 )
-from app.repositories.material_part_repositorie import MaterialPartRepository
 from app.repositories.operation_repositorie import OperationRepository
 from app.repositories.part_repositorie import PartRepository
 from app.types.enums import MachineStatusEnum, MaterialStatusEnum, OpStatusEnum
@@ -53,16 +53,16 @@ class OperationAssociationService:
             )
         if payload.status == OpStatusEnum.COMPLETED and payload.item_type == 'Part':
             self._validate_material_avaliability(payload.item_id)
-            
+
         self._validate_ids(payload.item_id, payload.operation_id, payload.item_type)
 
-        new_operation_association =  (
+        new_operation_association = (
             self.operation_association_repo.create_operation_association(payload)
         )
-        
+
         if payload.item_type == 'Part':
             self.part_repo.update_part_progress(payload.item_id)
-        
+
         return new_operation_association
 
     def get_all_operation_associations(
@@ -87,7 +87,7 @@ class OperationAssociationService:
     def delete_operation_association(self, id: str) -> None:
         operation_association = self._get_operation_association_or_404(id)
         item = self._get_mold_or_part_or_404(operation_association.item_id)
-        
+
         self.operation_association_repo.delete_operation_association(
             operation_association
         )
@@ -102,7 +102,9 @@ class OperationAssociationService:
 
         new_item_id = updated_data.get('item_id', operation_association.item_id)
         new_status = updated_data.get('status', operation_association.status)
-        its_a_new_status = True if operation_association.status != payload.status else False
+        its_a_new_status = (
+            True if operation_association.status != payload.status else False
+        )
         new_operation_id = updated_data.get(
             'operation_id', operation_association.operation_id
         )
@@ -112,22 +114,22 @@ class OperationAssociationService:
             payload.item_type = 'Mold'
         else:
             payload.item_type = 'Part'
-            
+
         if payload.item_type == 'Part':
             if new_status == OpStatusEnum.COMPLETED:
                 self._validate_material_avaliability(new_item_id)
-            
+
         self._validate_ids(
             new_item_id,
             new_operation_id,
             payload.item_type,
-            exclude_id=operation_association.id
+            exclude_id=operation_association.id,
         )
 
         updated_operation_association = self._update_operation_association_fields(
             payload, operation_association
         )
-        new_operation_association =  (
+        new_operation_association = (
             self.operation_association_repo.update_operation_association(
                 updated_operation_association
             )
@@ -135,9 +137,8 @@ class OperationAssociationService:
 
         if payload.item_type == 'Part' and its_a_new_status:
             self.part_repo.update_part_progress(new_item_id)
-                
+
         return new_operation_association
-        
 
     def get_operation_association(self, id: str) -> OperationAssociation:
         return self._get_operation_association_or_404(id)
@@ -192,5 +193,5 @@ class OperationAssociationService:
         ):
             raise MaterialNotAvailableError(
                 "Cannot change status to 'Completed'"
-                "because there are still pending materials."
+                'because there are still pending materials.'
             )

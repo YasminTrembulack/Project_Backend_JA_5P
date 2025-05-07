@@ -17,6 +17,6 @@ def get_countries():
 @router.get(
     '/time_unit', status_code=status.HTTP_200_OK, response_model=TimeUnitResponse
 )
-def get_countries():
+def get_time_unit():
     time_unit = [unit.value for unit in TimeUnitEnum]
     return TimeUnitResponse(time_unit=time_unit)

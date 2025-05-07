@@ -110,10 +110,10 @@ class OperationAssociationRepository(IOperationAssociationRepository):
             OperationAssociation.item_type == item_type,
             OperationAssociation.item_id == item_id,
         )
-        
+
         if exclude_id:
             query = query.filter(OperationAssociation.id != exclude_id)
-            
+
         if not include_inactive:
             query = query.filter(OperationAssociation.is_active.is_(True))
 

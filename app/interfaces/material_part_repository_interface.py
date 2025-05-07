@@ -36,21 +36,15 @@ class IMaterialPartRepository(ABC):
         pass
 
     @abstractmethod
-    def delete_material_part(
-        self, material_part: MaterialPart
-    ) -> None:
+    def delete_material_part(self, material_part: MaterialPart) -> None:
         pass
 
     @abstractmethod
-    def update_material_part(
-        self, material_part: MaterialPart
-    ) -> MaterialPart:
+    def update_material_part(self, material_part: MaterialPart) -> MaterialPart:
         pass
 
     @abstractmethod
-    def restore_material_part(
-        self, material_part: MaterialPart
-    ) -> MaterialPart:
+    def restore_material_part(self, material_part: MaterialPart) -> MaterialPart:
         pass
 
     @abstractmethod
@@ -61,9 +55,6 @@ class IMaterialPartRepository(ABC):
 
     @abstractmethod
     def get_by_id_and_status(
-        self,
-        part_id: str,
-        status: str,
-        exclude_id: Optional[str] = None
+        self, part_id: str, status: str, exclude_id: Optional[str] = None
     ) -> Optional[MaterialPart]:
         pass

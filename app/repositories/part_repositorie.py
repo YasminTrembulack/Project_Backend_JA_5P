@@ -96,13 +96,18 @@ class PartRepository(IPartRepository):
         part = self.db.query(Part).filter_by(id=part_id).first()
         if not part:
             return
-        
-        active_operations = [oa for oa in part.operation_associations if oa.is_active]
+
         active_materials = [m for m in part.materials if m.is_active]
-        
+        active_operations = [
+            oa for oa in part.operation_associations if oa.is_active
+        ]
+
         total = len(active_operations) + len(active_materials)
-        done = (sum(1 for oa in active_operations if oa.status == OpStatusEnum.COMPLETED) +
-            sum(1 for m in active_materials if m.status == MaterialStatusEnum.AVAILABLE))
+        done = sum(
+            1 for oa in active_operations if oa.status == OpStatusEnum.COMPLETED
+        ) + sum(
+            1 for m in active_materials if m.status == MaterialStatusEnum.AVAILABLE
+        )
 
         part.progress_percentage = int((done / total) * 100) if total > 0 else 0
         self.db.commit()

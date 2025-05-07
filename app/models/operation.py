@@ -38,7 +38,7 @@ class OperationAssociation(BaseModel):
             'and_(foreign(OperationAssociation.item_id) == Part.id, '
             "OperationAssociation.item_type == 'Part')"
         ),
-        viewonly=True
+        viewonly=True,
     )
 
     mold = relationship(
@@ -47,7 +47,7 @@ class OperationAssociation(BaseModel):
             'and_(foreign(OperationAssociation.item_id) == Mold.id, '
             "OperationAssociation.item_type == 'Mold')"
         ),
-        viewonly=True
+        viewonly=True,
     )
 
 

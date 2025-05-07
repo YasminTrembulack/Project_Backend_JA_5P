@@ -29,7 +29,8 @@ class MaterialService:
             payload.name = str(new_name)
         if not self._validate_lead_time(payload.lead_time):
             raise InvalidLeadTimeError(
-                f"Invalid lead time format. Received: '{payload.lead_time}'")
+                f"Invalid lead time format. Received: '{payload.lead_time}'"
+            )
 
         return self.material_repo.create_material(payload)
 

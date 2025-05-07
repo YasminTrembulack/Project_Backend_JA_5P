@@ -61,7 +61,7 @@ class Mold(BaseModel):
         ),
         back_populates='mold',
         cascade='all, delete-orphan',
-        overlaps="operation_associations"
+        overlaps='operation_associations',
     )
 
 

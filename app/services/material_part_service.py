@@ -29,9 +29,7 @@ class MaterialPartService:
         self.part_repo = PartRepository(db)
         self.material_repo = MaterialRepository(db)
 
-    def material_part_register(
-        self, payload: MaterialPartPayload
-    ) -> MaterialPart:
+    def material_part_register(self, payload: MaterialPartPayload) -> MaterialPart:
         self._get_part_or_404(payload.part_id)
         material = self._get_material_or_404(payload.material_id)
 
@@ -63,17 +61,13 @@ class MaterialPartService:
             if desc_order
             else getattr(MaterialPart, order_by)
         )
-        return (
-            self.material_part_repo.get_all_material_parts_paginated(
-                offset, limit, order
-            )
+        return self.material_part_repo.get_all_material_parts_paginated(
+            offset, limit, order
         )
 
     def delete_material_part(self, id: str) -> None:
         material_part = self._get_material_part_or_404(id)
-        return self.material_part_repo.delete_material_part(
-            material_part
-        )
+        return self.material_part_repo.delete_material_part(material_part)
 
     def update_material_part(
         self, id: str, payload: MaterialPartUpdatePayload
@@ -82,28 +76,20 @@ class MaterialPartService:
         updated_data = payload.model_dump(exclude_unset=True)
 
         new_part_id = updated_data.get('part_id', material_part.part_id)
-        new_material_id = updated_data.get(
-            'material_id', material_part.material_id
-        )
+        new_material_id = updated_data.get('material_id', material_part.material_id)
 
         self._validate_ids(new_part_id, new_material_id, exclude_id=material_part.id)
 
         updated_material_part = self._update_material_part_fields(
             payload, material_part
         )
-        return self.material_part_repo.update_material_part(
-            updated_material_part
-        )
+        return self.material_part_repo.update_material_part(updated_material_part)
 
     def get_material_part(self, id: str) -> MaterialPart:
         return self._get_material_part_or_404(id)
 
     def _get_material_part_or_404(self, id: str) -> MaterialPart:
-        material_part = (
-            self.material_part_repo.get_material_part_by_field(
-                'id', id
-            )
-        )
+        material_part = self.material_part_repo.get_material_part_by_field('id', id)
         if not material_part:
             raise NotFoundError('Material Part not found')
         return material_part

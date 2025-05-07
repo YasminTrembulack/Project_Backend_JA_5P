@@ -28,9 +28,7 @@ def create_material_part(
     _: None = Depends(check_roles(['Admin', 'Editor'])),
 ):
     service = MaterialPartService(session)
-    db_material_part = service.material_part_register(
-        material_part
-    )
+    db_material_part = service.material_part_register(material_part)
     material_part_response = MaterialPartResponse.model_validate(
         db_material_part.to_dict()
     )
@@ -54,8 +52,8 @@ def get_all_material_part(
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = MaterialPartService(session)
-    material_parts, total_material_parts = (
-        service.get_all_material_parts(page, limit, order_by, desc_order)
+    material_parts, total_material_parts = service.get_all_material_parts(
+        page, limit, order_by, desc_order
     )
     total_pages = (total_material_parts + limit - 1) // limit
     meta = Metadata(
@@ -69,8 +67,7 @@ def get_all_material_part(
         desc_order=desc_order,
     )
     material_parts = [
-        MaterialPartResponse.model_validate(m.to_dict())
-        for m in material_parts
+        MaterialPartResponse.model_validate(m.to_dict()) for m in material_parts
     ]
     return GetAllResponse(
         message='Material Part found successfully.',
@@ -106,9 +103,7 @@ def update_material_part(
     _: None = Depends(check_roles(['Admin', 'Editor'])),
 ):
     service = MaterialPartService(session)
-    material_part = service.update_material_part(
-        id, material_part
-    )
+    material_part = service.update_material_part(id, material_part)
     material_part_response = MaterialPartResponse.model_validate(
         material_part.to_dict()
     )

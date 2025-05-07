@@ -24,7 +24,7 @@ class MaterialPartRepository(IMaterialPartRepository):
             part_id=material_part.part_id,
             status=material_part.status,
             quantity=material_part.quantity,
-            expected_delivery_date=material_part.expected_delivery_date
+            expected_delivery_date=material_part.expected_delivery_date,
         )
         self.db.add(db_material_part)
         self.db.commit()
@@ -43,9 +43,7 @@ class MaterialPartRepository(IMaterialPartRepository):
             raise InvalidFieldError(
                 f'Field {field_name} does not exist on Material Part model'
             )
-        query = self.db.query(MaterialPart).filter(
-            material_part_field == value
-        )
+        query = self.db.query(MaterialPart).filter(material_part_field == value)
         if not include_inactive:
             query = query.filter(MaterialPart.is_active.is_(True))
         if exclude_id:
@@ -69,29 +67,21 @@ class MaterialPartRepository(IMaterialPartRepository):
             query = query.filter(MaterialPart.item_id == item_id)
 
         total_material_parts = query.count()
-        material_parts = (
-            query.order_by(order).offset(offset).limit(limit).all()
-        )
+        material_parts = query.order_by(order).offset(offset).limit(limit).all()
 
         return material_parts, total_material_parts
 
-    def delete_material_part(
-        self, material_part: MaterialPart
-    ) -> None:
+    def delete_material_part(self, material_part: MaterialPart) -> None:
         material_part.is_active = False
         material_part.disabled_at = datetime.now(timezone.utc)
         self.db.commit()
 
-    def update_material_part(
-        self, material_part: MaterialPart
-    ) -> MaterialPart:
+    def update_material_part(self, material_part: MaterialPart) -> MaterialPart:
         self.db.commit()
         self.db.refresh(material_part)
         return material_part
 
-    def restore_material_part(
-        self, material_part: MaterialPart
-    ) -> MaterialPart:
+    def restore_material_part(self, material_part: MaterialPart) -> MaterialPart:
         material_part.is_active = True
         material_part.archived_at = None
         self.db.commit()
@@ -99,10 +89,7 @@ class MaterialPartRepository(IMaterialPartRepository):
         return material_part
 
     def get_by_part_and_material(
-        self,
-        part_id: str,
-        material_id: str,
-        exclude_id: Optional[str] = None
+        self, part_id: str, material_id: str, exclude_id: Optional[str] = None
     ) -> Optional[MaterialPart]:
         query = self.db.query(MaterialPart).filter(
             MaterialPart.part_id == part_id,
@@ -115,10 +102,7 @@ class MaterialPartRepository(IMaterialPartRepository):
         return query.first()
 
     def get_by_id_and_status(
-        self,
-        part_id: str,
-        status: str,
-        exclude_id: Optional[str] = None
+        self, part_id: str, status: str, exclude_id: Optional[str] = None
     ) -> Optional[MaterialPart]:
         query = self.db.query(MaterialPart).filter(
             MaterialPart.part_id == part_id,

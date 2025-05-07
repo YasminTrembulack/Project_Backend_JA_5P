@@ -32,6 +32,7 @@ class PartService:
         if self.part_repo.get_part_by_field('name', name, exclude_id=exclude_id):
             raise DataConflictError(f"A part with name '{name}' already exists.")
 
+
 # def get_all_parts(
 #     self, page: int, limit: int, order_by: str, desc_order: bool
 # ) -> Tuple[List[Part], int]:
