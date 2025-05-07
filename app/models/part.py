@@ -48,7 +48,8 @@ class Part(BaseModel):
             "OperationAssociation.item_type == 'Part')"
         ),
         back_populates='part',
-        cascade='all, delete-orphan'
+        cascade='all, delete-orphan',
+        overlaps="operation_associations"
     )
 
     material_associations: Mapped[list['MaterialPart']] = relationship(

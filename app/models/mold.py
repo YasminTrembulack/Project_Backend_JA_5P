@@ -60,7 +60,8 @@ class Mold(BaseModel):
             "OperationAssociation.item_type == 'Mold')"
         ),
         back_populates='mold',
-        cascade='all, delete-orphan'
+        cascade='all, delete-orphan',
+        overlaps="operation_associations"
     )
 
 
