@@ -59,6 +59,7 @@ class IOperationAssociationRepository(ABC):
         item_id: str,
         operation_id: str,
         item_type: str,
-        exclude_id: Optional[str] = None
+        exclude_id: Optional[str] = None,
+        include_inactive: Optional[bool] = False,
     ) -> OperationAssociation:
         pass
