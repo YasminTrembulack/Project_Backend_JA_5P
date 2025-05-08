@@ -8,7 +8,7 @@ from sqlalchemy import CHAR, UUID, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
-from app.types.enums import PartStatusEnum, SimpleStatusEnum
+from app.types.enums import ItemStatusEnum, SimpleStatusEnum
 
 if TYPE_CHECKING:
     from app.models.material import Material, MaterialPart
@@ -25,8 +25,8 @@ class Part(BaseModel):
     progress_percentage: Mapped[float] = mapped_column(Float, nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=True)
-    status: Mapped[PartStatusEnum] = mapped_column(
-        Enum(PartStatusEnum), nullable=False
+    status: Mapped[ItemStatusEnum] = mapped_column(
+        Enum(ItemStatusEnum), nullable=False
     )
     model_3d: Mapped[SimpleStatusEnum] = mapped_column(
         Enum(SimpleStatusEnum), nullable=False

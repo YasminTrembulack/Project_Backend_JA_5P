@@ -35,22 +35,15 @@ class PriorityEnum(str, Enum):
     URGENT = 'Urgent'
 
 
-class MoldStatusEnum(str, Enum):
+class ItemStatusEnum(str, Enum):
     PENDING = 'Pending'
     IN_PROGRESS = 'In Progress'
     COMPLETED = 'Completed'
-    SHIPPED = 'Shipped'
 
 
 class SimpleStatusEnum(str, Enum):
     PENDING = 'Pending'
     APPROVED = 'Approved'
-
-
-class PartStatusEnum(str, Enum):
-    PENDING = 'Pending'
-    IN_PROGRESS = 'In Progress'
-    COMPLETED = 'Completed'
 
 
 class MachineStatusEnum(str, Enum):

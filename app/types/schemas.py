@@ -9,11 +9,10 @@ from pydantic import BaseModel, EmailStr, computed_field, field_validator
 from app.core.settings import Settings
 from app.types.enums import (
     CountryEnum,
+    ItemStatusEnum,
     MachineStatusEnum,
     MaterialStatusEnum,
-    MoldStatusEnum,
     OpStatusEnum,
-    PartStatusEnum,
     PriorityEnum,
     SimpleStatusEnum,
 )
@@ -164,7 +163,7 @@ class PartBase(BaseModel):
     description: Optional[str] = None
     quantity: Optional[int] = 1
     progress_percentage: Optional[float] = 0.0
-    status: Optional[PartStatusEnum] = PartStatusEnum.PENDING
+    status: Optional[ItemStatusEnum] = ItemStatusEnum.PENDING
     model_3d: Optional[SimpleStatusEnum] = SimpleStatusEnum.PENDING
     nc_program: Optional[SimpleStatusEnum] = SimpleStatusEnum.PENDING
     mold_id: Optional[str] = None
@@ -180,7 +179,7 @@ class PartResponse(PartBase):
     description: str | None
     quantity: int
     progress_percentage: float
-    status: PartStatusEnum
+    status: ItemStatusEnum
     model_3d: SimpleStatusEnum
     nc_program: SimpleStatusEnum
     mold_id: str
@@ -191,7 +190,7 @@ class PartResponse(PartBase):
 class PartUpdatePayload(PartBase):
     quantity: Optional[int] = None
     progress_percentage: Optional[float] = None
-    status: Optional[PartStatusEnum] = None
+    status: Optional[ItemStatusEnum] = None
     model_3d: Optional[SimpleStatusEnum] = None
     nc_program: Optional[SimpleStatusEnum] = None
 
@@ -204,7 +203,7 @@ class MoldBase(BaseModel):
     delivery_date: Optional[datetime] = None
     priority: Optional[PriorityEnum] = PriorityEnum.LOW
     quantity: Optional[int] = 1
-    status: Optional[MoldStatusEnum] = MoldStatusEnum.PENDING
+    status: Optional[ItemStatusEnum] = ItemStatusEnum.PENDING
     dimensions: Optional[str] = None
     created_by_id: Optional[str] = None
     customer_id: Optional[str] = None
@@ -253,7 +252,7 @@ class MoldResponde(MoldBase):
     delivery_date: datetime
     priority: PriorityEnum
     quantity: int
-    status: MoldStatusEnum
+    status: ItemStatusEnum
     dimensions: str | None
     created_by_id: str
     customer_id: str
@@ -264,7 +263,7 @@ class MoldResponde(MoldBase):
 class MoldUpdatePayload(MoldBase):
     priority: Optional[PriorityEnum] = None
     quantity: Optional[int] = None
-    status: Optional[MoldStatusEnum] = None
+    status: Optional[ItemStatusEnum] = None
 
 
 # --- MATERIAL CLASSES --- #

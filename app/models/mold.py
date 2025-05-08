@@ -5,11 +5,11 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import CHAR, UUID, VARCHAR, Enum, ForeignKey, Integer, String
+from sqlalchemy import CHAR, UUID, VARCHAR, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
-from app.types.enums import MoldStatusEnum, PriorityEnum
+from app.types.enums import ItemStatusEnum, PriorityEnum
 
 if TYPE_CHECKING:
     from app.models.customer import Customer
@@ -24,13 +24,14 @@ class Mold(BaseModel):
 
     id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(VARCHAR(30), unique=True)
+    progress_percentage: Mapped[float] = mapped_column(Float, nullable=False)
     delivery_date: Mapped[datetime]
     priority: Mapped[PriorityEnum] = mapped_column(
         Enum(PriorityEnum), nullable=False
     )
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
-    status: Mapped[MoldStatusEnum] = mapped_column(
-        Enum(MoldStatusEnum), nullable=False
+    status: Mapped[ItemStatusEnum] = mapped_column(
+        Enum(ItemStatusEnum), nullable=False
     )
     # '200x150x50 mm'  # Comprimento x Largura x Altura
     dimensions: Mapped[str | None] = mapped_column(String(50), nullable=True)
@@ -63,7 +64,3 @@ class Mold(BaseModel):
         cascade='all, delete-orphan',
         overlaps='operation_associations',
     )
-
-
-# Quando um Mold for deletado, o User e o Customer não devem ser afetados.
-# Quando um User ou Customer for deletado, a referência no Mold deve ser nula.
