@@ -6,12 +6,6 @@ from sqlalchemy.orm import Session
 
 from app.interfaces.part_repository_interface import IPartRepository
 from app.models.part import Part
-from app.types.enums import (
-    MaterialStatusEnum,
-    OpStatusEnum,
-    PartStatusEnum,
-    SimpleStatusEnum,
-)
 from app.types.exceptions import InvalidFieldError
 from app.types.schemas import PartPayload
 
@@ -98,39 +92,3 @@ class PartRepository(IPartRepository):
         if not include_inactive:
             query = query.filter(Part.is_active.is_(True))
         return query.count()
-
-    def update_part_progress(self, part_id: str) -> None:
-        part = self.db.query(Part).filter_by(id=part_id).first()
-        if not part:
-            return
-
-        active_material_associations = [
-            m for m in part.material_associations if m.is_active
-        ]
-        active_operations = [
-            oa for oa in part.operation_associations if oa.is_active
-        ]
-
-        total = len(active_operations) + len(active_material_associations) + 2
-        done = (
-            sum(1 for oa in active_operations if oa.status == OpStatusEnum.COMPLETED)
-            + sum(
-                1
-                for m in active_material_associations
-                if m.status == MaterialStatusEnum.AVAILABLE
-            )
-            + (1 if part.model_3d == SimpleStatusEnum.APPROVED else 0)
-            + (1 if part.nc_program == SimpleStatusEnum.APPROVED else 0)
-        )
-        pp = int((done / total) * 100) if total > 0 else 0
-        part.progress_percentage = pp
-
-        part.status = (
-            PartStatusEnum.COMPLETED
-            if pp == COMPLETED_PERCENTAGE
-            else PartStatusEnum.IN_PROGRESS
-            if pp > 0
-            else PartStatusEnum.PENDING
-        )
-
-        self.db.commit()
