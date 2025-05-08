@@ -83,6 +83,16 @@ class MaterialPartService:
         new_part_id = updated_data.get('part_id', material_part.part_id)
         new_material_id = updated_data.get('material_id', material_part.material_id)
         its_a_new_status = True if material_part.status != payload.status else False
+
+        material = self._get_material_or_404(new_material_id)
+        self._get_part_or_404(new_part_id)
+
+        required_quantity = payload.quantity - material_part.quantity
+        if material.stock_quantity - required_quantity < 0:
+            payload.status = MaterialStatusEnum.PENDING
+            payload.expected_delivery_date = self._calculate_delivery_date(
+                material.lead_time
+            )
         self._validate_ids(new_part_id, new_material_id, exclude_id=material_part.id)
 
         updated_material_part = self._update_material_part_fields(
