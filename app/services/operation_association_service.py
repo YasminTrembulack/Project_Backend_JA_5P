@@ -13,6 +13,7 @@ from app.repositories.operation_association_repositorie import (
 )
 from app.repositories.operation_repositorie import OperationRepository
 from app.repositories.part_repositorie import PartRepository
+from app.services.progress_service import ProgressService
 from app.types.enums import MachineStatusEnum, MaterialStatusEnum, OpStatusEnum
 from app.types.exceptions import (
     DataConflictError,
@@ -35,6 +36,7 @@ class OperationAssociationService:
         self.operation_repo = OperationRepository(db)
         self.mold_repo = MoldRepository(db)
         self.part_repo = PartRepository(db)
+        self.progress_service = ProgressService(self.mold_repo, self.part_repo)
 
     def operation_association_register(
         self, payload: OperationAssociationPayload
@@ -61,7 +63,7 @@ class OperationAssociationService:
         )
 
         if payload.item_type == 'Part':
-            self.part_repo.update_part_progress(payload.item_id)
+            self.progress_service.update_part_progress(payload.item_id)
 
         return new_operation_association
 
@@ -92,7 +94,7 @@ class OperationAssociationService:
             operation_association
         )
         if isinstance(item, Part):
-            self.part_repo.update_part_progress(item.id)
+            self.progress_service.update_part_progress(item.id)
 
     def update_operation_association(
         self, id: str, payload: OperationAssociationUpdatePayload
@@ -136,7 +138,7 @@ class OperationAssociationService:
         )
 
         if payload.item_type == 'Part' and its_a_new_status:
-            self.part_repo.update_part_progress(new_item_id)
+            self.progress_service.update_part_progress(new_item_id)
 
         return new_operation_association
 
