@@ -97,16 +97,20 @@ class PartRepository(IPartRepository):
         if not part:
             return
 
-        active_materials = [m for m in part.materials if m.is_active]
+        active_material_associations = [
+            m for m in part.material_associations if m.is_active
+        ]
         active_operations = [
             oa for oa in part.operation_associations if oa.is_active
         ]
 
-        total = len(active_operations) + len(active_materials)
+        total = len(active_operations) + len(active_material_associations)
         done = sum(
             1 for oa in active_operations if oa.status == OpStatusEnum.COMPLETED
         ) + sum(
-            1 for m in active_materials if m.status == MaterialStatusEnum.AVAILABLE
+            1
+            for m in active_material_associations
+            if m.status == MaterialStatusEnum.AVAILABLE
         )
 
         part.progress_percentage = int((done / total) * 100) if total > 0 else 0
