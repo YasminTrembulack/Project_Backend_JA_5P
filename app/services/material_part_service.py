@@ -46,7 +46,10 @@ class MaterialPartService:
             payload.status = MaterialStatusEnum.AVAILABLE
 
         self._validate_ids(payload.part_id, payload.material_id)
-        return self.material_part_repo.create_material_part(payload)
+        new_material_part = self.material_part_repo.create_material_part(payload)
+
+        self.part_repo.update_part_progress(payload.part_id)
+        return new_material_part
 
     def get_all_material_parts(
         self, page: int, limit: int, order_by: str, desc_order: bool
@@ -67,7 +70,9 @@ class MaterialPartService:
 
     def delete_material_part(self, id: str) -> None:
         material_part = self._get_material_part_or_404(id)
-        return self.material_part_repo.delete_material_part(material_part)
+        part_id = material_part.part_id
+        self.material_part_repo.delete_material_part(material_part)
+        self.part_repo.update_part_progress(part_id)
 
     def update_material_part(
         self, id: str, payload: MaterialPartUpdatePayload
@@ -77,13 +82,21 @@ class MaterialPartService:
 
         new_part_id = updated_data.get('part_id', material_part.part_id)
         new_material_id = updated_data.get('material_id', material_part.material_id)
-
+        its_a_new_status = True if material_part.status != payload.status else False
         self._validate_ids(new_part_id, new_material_id, exclude_id=material_part.id)
 
         updated_material_part = self._update_material_part_fields(
             payload, material_part
         )
-        return self.material_part_repo.update_material_part(updated_material_part)
+
+        new_material_part = self.material_part_repo.update_material_part(
+            updated_material_part
+        )
+
+        if its_a_new_status:
+            self.part_repo.update_part_progress(new_part_id)
+
+        return new_material_part
 
     def get_material_part(self, id: str) -> MaterialPart:
         return self._get_material_part_or_404(id)
