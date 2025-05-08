@@ -163,6 +163,7 @@ class PartBase(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     quantity: Optional[int] = 1
+    progress_percentage: Optional[float] = 0.0
     status: Optional[PartStatusEnum] = PartStatusEnum.PENDING
     model_3d: Optional[SimpleStatusEnum] = SimpleStatusEnum.PENDING
     nc_program: Optional[SimpleStatusEnum] = SimpleStatusEnum.PENDING
@@ -178,6 +179,7 @@ class PartResponse(PartBase):
     name: str
     description: str | None
     quantity: int
+    progress_percentage: float
     status: PartStatusEnum
     model_3d: SimpleStatusEnum
     nc_program: SimpleStatusEnum
@@ -187,7 +189,11 @@ class PartResponse(PartBase):
 
 
 class PartUpdatePayload(PartBase):
-    pass
+    quantity: Optional[int] = None
+    progress_percentage: Optional[float] = None
+    status: Optional[PartStatusEnum] = None
+    model_3d: Optional[SimpleStatusEnum] = None
+    nc_program: Optional[SimpleStatusEnum] = None
 
 
 # --- MOLD CLASSES --- #
@@ -256,7 +262,9 @@ class MoldResponde(MoldBase):
 
 
 class MoldUpdatePayload(MoldBase):
-    pass
+    priority: Optional[PriorityEnum] = None
+    quantity: Optional[int] = None
+    status: Optional[MoldStatusEnum] = None
 
 
 # --- MATERIAL CLASSES --- #
@@ -287,7 +295,7 @@ class MaterialResponse(MaterialBase):
 
 
 class MaterialUpdatePayload(MaterialBase):
-    pass
+    stock_quantity: Optional[float] = None
 
 
 # --- MATERIAL PARTS CLASSES --- #
@@ -318,7 +326,8 @@ class MaterialPartResponse(MaterialPartBase):
 
 
 class MaterialPartUpdatePayload(MaterialPartBase):
-    pass
+    quantity: Optional[float] = None
+    status: Optional[MaterialStatusEnum] = None
 
 
 # --- OPERATION CLASSES --- #
@@ -373,7 +382,7 @@ class OperationAssociationResponse(OperationAssociationBase):
 
 
 class OperationAssociationUpdatePayload(OperationAssociationBase):
-    pass
+    status: Optional[OpStatusEnum] = None
 
 
 # --- MACHINE CLASSES --- #
@@ -399,4 +408,4 @@ class MachineResponse(MachineBase):
 
 
 class MachineUpdatePayload(MachineBase):
-    pass
+    status: Optional[MachineStatusEnum] = None
