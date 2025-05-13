@@ -70,6 +70,13 @@ class PartRepository(IPartRepository):
     def delete_part(self, part: Part) -> None:
         part.is_active = False
         part.disabled_at = datetime.now(timezone.utc)
+        for oa in part.operation_associations:
+            oa.is_active = False
+            oa.disabled_at = datetime.now(timezone.utc)
+
+        for ma in part.material_associations:
+            ma.is_active = False
+            ma.disabled_at = datetime.now(timezone.utc)
         self.db.commit()
 
     def update_part(self, part: Part) -> Part:
