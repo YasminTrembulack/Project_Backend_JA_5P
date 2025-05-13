@@ -269,7 +269,6 @@ class MoldUpdatePayload(MoldBase):
     progress_percentage: Optional[float] = None
 
 
-
 # --- MATERIAL CLASSES --- #
 
 

@@ -41,23 +41,24 @@ class MoldService:
                 f'Field {order_by} does not exist or is not sortable.'
             )
         offset = (page - 1) * limit
-        
+
         order_attr = getattr(Mold, order_by)
         order = desc(order_attr) if desc_order else order_attr
 
-        molds, total_molds = self.mold_repo.get_all_molds_paginated(offset, limit, order)
+        molds, total_molds = self.mold_repo.get_all_molds_paginated(
+            offset, limit, order
+        )
         return [self._calculate_priority(m) for m in molds], total_molds
-    
+
     def _get_customer_or_404(self, id: str) -> Customer:
         customer = self.customer_repo.get_customer_by_field('id', id)
         if not customer:
             raise NotFoundError('Customer not found')
         return customer
-    
+
     def _validate_name_uniqueness(self, name: str, exclude_id: str = None) -> None:
         if self.mold_repo.get_mold_by_field('name', name, exclude_id=exclude_id):
             raise DataConflictError(f"A mold with name '{name}' already exists.")
-
 
     def delete_mold(self, id: str) -> None:
         mold = self._get_mold_or_404(id)
@@ -74,14 +75,14 @@ class MoldService:
 
         new_name = updated_data.get('name', mold.name)
         self._validate_name_uniqueness(new_name, mold.id)
-        
+
         its_a_new_delivery_date = True if 'delivery_date' in updated_data else False
-        
+
         updated_mold = self._update_mold_fields(payload, mold)
-        
+
         if its_a_new_delivery_date:
             return self._calculate_priority(mold)
-        
+
         return self.mold_repo.update_mold(updated_mold)
 
     def get_mold(self, id: str) -> Mold:
@@ -97,7 +98,11 @@ class MoldService:
     def _calculate_priority(self, mold: Mold) -> Mold:
         # if mold.priority_updated_at != date.today():
         mold.priority_updated_at = date.today()
-        mold.progress_percentage = self.progress_service._calculate_mold_progress_percentage(mold.mold_parts)
+        mold.progress_percentage = (
+            self.progress_service._calculate_mold_progress_percentage(
+                mold.mold_parts
+            )
+        )
         mold.priority = self.progress_service.calculate_priority(
             mold.delivery_date, mold.progress_percentage
         )

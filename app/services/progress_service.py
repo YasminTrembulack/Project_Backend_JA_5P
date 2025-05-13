@@ -46,16 +46,16 @@ class ProgressService:
         part.status = self._define_status(progress_percentage)
 
         self.part_repo.update_part(part)
-    
+
         self.update_mold_progress(part.mold_id)
-    
+
     @staticmethod
     def calculate_priority(
         delivery_date: datetime, progress_percentage: float
     ) -> PriorityEnum:
         now = datetime.now()
         days_until_delivery = max((delivery_date - now).days, 0)
-        
+
         if days_until_delivery <= URGENT_DAYS_THRESHOLD:
             progress_weight = 1.0
         elif days_until_delivery <= HIGH_DAYS_THRESHOLD:

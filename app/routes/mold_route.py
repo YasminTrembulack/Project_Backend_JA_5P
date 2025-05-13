@@ -36,7 +36,6 @@ def create_mold(
     return EntityResponse(message='Mold created with success.', data=mold_response)
 
 
-
 @router.get(
     '/all',
     status_code=status.HTTP_200_OK,

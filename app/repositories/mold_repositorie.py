@@ -77,10 +77,10 @@ class MoldRepository(IMoldRepository):
 
     def delete_mold(self, mold: Mold) -> None:
         now = datetime.now(timezone.utc)
-        
+
         mold.is_active = False
         mold.disabled_at = now
-        
+
         for part in mold.parts:
             part.is_active = False
             part.disabled_at = now
