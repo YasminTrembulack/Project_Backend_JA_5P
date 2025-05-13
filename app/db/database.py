@@ -57,5 +57,8 @@ def import_models():
 
 def get_session():
     import_models()
-    with SessionLocal() as session:
+    session = SessionLocal()
+    try:
         yield session
+    finally:
+        session.close()
