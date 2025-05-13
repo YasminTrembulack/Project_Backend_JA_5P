@@ -202,6 +202,7 @@ class MoldBase(BaseModel):
     name: Optional[str] = None
     delivery_date: Optional[datetime] = None
     priority: Optional[PriorityEnum] = PriorityEnum.LOW
+    progress_percentage: Optional[float] = 0.0
     quantity: Optional[int] = 1
     status: Optional[ItemStatusEnum] = ItemStatusEnum.PENDING
     dimensions: Optional[str] = None
@@ -252,6 +253,7 @@ class MoldResponde(MoldBase):
     delivery_date: datetime
     priority: PriorityEnum
     quantity: int
+    progress_percentage: float
     status: ItemStatusEnum
     dimensions: str | None
     created_by_id: str
@@ -264,6 +266,8 @@ class MoldUpdatePayload(MoldBase):
     priority: Optional[PriorityEnum] = None
     quantity: Optional[int] = None
     status: Optional[ItemStatusEnum] = None
+    progress_percentage: Optional[float] = None
+
 
 
 # --- MATERIAL CLASSES --- #
