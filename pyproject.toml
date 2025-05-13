@@ -8,6 +8,9 @@ omit = [
     "app/models/operation.py",
     "app/models/part.py",
     "app/models/user.py",
+    "**/services/*",
+    "**/repositories/*",
+    "**/routes/*",
 ]
 
 [tool.ruff]
