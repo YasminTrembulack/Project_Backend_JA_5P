@@ -76,8 +76,22 @@ class MoldRepository(IMoldRepository):
         return molds, total_molds
 
     def delete_mold(self, mold: Mold) -> None:
+        now = datetime.now(timezone.utc)
+        
         mold.is_active = False
-        mold.disabled_at = datetime.now(timezone.utc)
+        mold.disabled_at = now
+        
+        for part in mold.parts:
+            part.is_active = False
+            part.disabled_at = now
+
+            for oa in part.operation_associations:
+                oa.is_active = False
+                oa.disabled_at = now
+
+            for ma in part.material_associations:
+                ma.is_active = False
+                ma.disabled_at = now
         self.db.commit()
 
     def update_mold(self, mold: Mold) -> Mold:
