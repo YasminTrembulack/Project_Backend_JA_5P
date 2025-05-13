@@ -44,15 +44,6 @@ class PartService:
 
     def delete_part(self, id: str) -> None:
         part = self._get_part_or_404(id)
-
-        for oa in part.operation_associations:
-            oa.is_active = False
-            oa.disabled_at = datetime.now(timezone.utc)
-
-        for ma in part.material_associations:
-            ma.is_active = False
-            ma.disabled_at = datetime.now(timezone.utc)
-
         self.part_repo.delete_part(part)
 
     def get_part(self, id: str) -> Part:

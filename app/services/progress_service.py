@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from app.models.material import MaterialPart
 from app.models.mold import Mold
@@ -20,9 +20,9 @@ URGENT_DAYS_THRESHOLD = 3
 HIGH_DAYS_THRESHOLD = 7
 MEDIUM_DAYS_THRESHOLD = 15
 
-URGENT_PRIORITY_THRESHOLD = 70
-HIGH_PRIORITY_THRESHOLD = 40
-MEDIUM_PRIORITY_THRESHOLD = 15
+URGENT_PRIORITY_THRESHOLD = 80
+HIGH_PRIORITY_THRESHOLD = 60
+MEDIUM_PRIORITY_THRESHOLD = 40
 
 
 class ProgressService:
@@ -55,22 +55,19 @@ class ProgressService:
     ) -> PriorityEnum:
         now = datetime.now()
         days_until_delivery = max((delivery_date - now).days, 0)
-
+        
         if days_until_delivery <= URGENT_DAYS_THRESHOLD:
-            priority_score = 4  # Urgente
             progress_weight = 1.0
         elif days_until_delivery <= HIGH_DAYS_THRESHOLD:
-            priority_score = 3  # Alta
             progress_weight = 0.8
         elif days_until_delivery <= MEDIUM_DAYS_THRESHOLD:
-            priority_score = 2  # Média
             progress_weight = 0.5
         else:
-            priority_score = 1  # Baixa
             progress_weight = 0.3
 
-        progress_penalty = (100 - progress_percentage) * progress_weight
-        priority_score += progress_penalty
+        priority_score = (100 - progress_percentage) * progress_weight
+        print(days_until_delivery)
+        print(priority_score)
 
         if priority_score >= URGENT_PRIORITY_THRESHOLD:
             return PriorityEnum.URGENT
@@ -88,6 +85,7 @@ class ProgressService:
 
         progress_percentage = self._calculate_mold_progress_percentage(active_parts)
 
+        mold.priority_updated_at = date.today()
         mold.priority = self.calculate_priority(
             mold.delivery_date, progress_percentage
         )
