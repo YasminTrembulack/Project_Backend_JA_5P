@@ -21,19 +21,25 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
         try:
             auth_header = request.headers.get('Authorization')
-            if not auth_header or not auth_header.startswith('Bearer '):
-                raise AuthTokenMissingError('Authentication token is missing')
+            access_token = None
+            refresh_token = None
 
-            token = auth_header.split(' ')[1].strip()
-
-            if request.url.path.startswith('/api/refresh_token'):
-                payload = security.verify_refresh_token(token)
+            if auth_header and auth_header.startswith('Bearer '):
+                access_token = auth_header.split(' ')[1].strip()
             else:
-                payload = security.verify_access_token(token)
+                refresh_token = request.cookies.get('refresh_token')
+                if not refresh_token:
+                    raise AuthTokenMissingError('Authentication token is missing')
+
+            if refresh_token:
+                payload = security.verify_refresh_token(refresh_token)
+            else:
+                payload = security.verify_access_token(access_token)
+
             user_id = payload.get('id')
-            
+
             if not user_id:
-                raise InvalidTokenError("User ID not found in token.")
+                raise InvalidTokenError('User ID not found in token.')
 
             session: Session = next(get_session())  # Criar a sessão
             try:
