@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 
 from app.core.security import security
 from app.repositories.user_repositorie import UserRepository
-from app.types.exceptions import InvalidCredentialsError
-from app.types.schemas import LoginPayload, UserResponse
+from app.types.exceptions import InvalidCredentialsError, InvalidTokenError
+from app.types.schemas import LoginPayload
 
 
 class AuthService:
@@ -20,4 +20,18 @@ class AuthService:
         payload = {k: v for k, v in user_found.to_dict().items() if k != "password"}
         
         access_token = security.create_access_token(payload)
-        return access_token, user_found
+        refresh_token = security.create_refresh_token({'id': user_found.id})
+        return access_token, refresh_token, user_found
+    
+    def refresh_token(self, refresh_token: str):
+        user_payload = security.verify_refresh_token(refresh_token)
+        user_id = user_payload.get('user_id')
+        user_found = self.user_repo.get_user_by_field('id', user_id)
+        
+        if not user_found:
+            raise InvalidTokenError("User not found or token is invalid.")
+        
+        payload = {k: v for k, v in user_found.to_dict().items() if k != "password"}
+        
+        access_token = security.create_access_token(payload)
+        return access_token
