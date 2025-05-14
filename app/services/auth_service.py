@@ -23,9 +23,7 @@ class AuthService:
         refresh_token = security.create_refresh_token({'id': user_found.id})
         return access_token, refresh_token, user_found
     
-    def refresh_token(self, refresh_token: str):
-        user_payload = security.verify_refresh_token(refresh_token)
-        user_id = user_payload.get('user_id')
+    def refresh_token(self, user_id: str):
         user_found = self.user_repo.get_user_by_field('id', user_id)
         
         if not user_found:
