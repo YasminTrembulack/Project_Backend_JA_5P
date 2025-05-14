@@ -26,15 +26,18 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
 
             token = auth_header.split(' ')[1].strip()
 
-            payload = security.verify_access_token(token)
-            user_id = payload.get('user_id')
+            if request.url.path.startswith('/api/refresh_token'):
+                payload = security.verify_refresh_token(token)
+            else:
+                payload = security.verify_access_token(token)
+            user_id = payload.get('id')
+            
+            if not user_id:
+                raise InvalidTokenError("User ID not found in token.")
 
-            session: Session = next(get_session())
-            try:
+            with get_session() as session:
                 repo = UserRepository(session)
                 user = repo.get_user_by_field('id', user_id)
-            finally:
-                session.close()
 
             if user is None:
                 raise InvalidTokenError()
