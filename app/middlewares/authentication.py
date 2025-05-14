@@ -35,9 +35,12 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
             if not user_id:
                 raise InvalidTokenError("User ID not found in token.")
 
-            with get_session() as session:
+            session: Session = next(get_session())  # Criar a sessão
+            try:
                 repo = UserRepository(session)
                 user = repo.get_user_by_field('id', user_id)
+            finally:
+                session.close()
 
             if user is None:
                 raise InvalidTokenError()
