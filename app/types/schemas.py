@@ -97,8 +97,12 @@ class LoginPayload(BaseModel):
 class LoginResponse(BaseModel):
     message: str
     user: UserResponse
-    token: str
+    access_token: str
+    refresh_token: str
 
+class RefreshTokenResponse(BaseModel):
+    message: str
+    access_token: str
 
 # --- METADATA CLASS --- #
 
