@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.core.security import security
 from app.repositories.user_repositorie import UserRepository
 from app.types.exceptions import InvalidCredentialsError
-from app.types.schemas import LoginPayload
+from app.types.schemas import LoginPayload, UserResponse
 
 
 class AuthService:
@@ -16,6 +16,8 @@ class AuthService:
             raise InvalidCredentialsError('Invalid email or password')
         if not security.verify_password(user.password, user_found.password):
             raise InvalidCredentialsError('Invalid email or password')
-        payload = {'user_id': str(user_found.id), 'user_role': user_found.role}
+        
+        payload = {k: v for k, v in user_found.to_dict().items() if k != "password"}
+        
         access_token = security.create_access_token(payload)
         return access_token, user_found
