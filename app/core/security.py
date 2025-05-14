@@ -40,17 +40,17 @@ class SecurityManager:
         except jwt.InvalidTokenError:
             raise InvalidTokenError()
         return payload
-    
+
     def verify_access_token(self, token: str) -> Dict:
         payload = self._verify_token(token)
-        if payload.get("type") != "access":
-            raise InvalidTokenError("This is not an access token.")
+        if payload.get('type') != 'access':
+            raise InvalidTokenError('This is not an access token.')
         return payload
 
     def verify_refresh_token(self, token: str) -> Dict:
         payload = self._verify_token(token)
-        if payload.get("type") != "refresh":
-            raise InvalidTokenError("This is not a refresh token.")
+        if payload.get('type') != 'refresh':
+            raise InvalidTokenError('This is not a refresh token.')
         return payload
 
 

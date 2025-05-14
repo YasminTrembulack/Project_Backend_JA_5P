@@ -22,12 +22,18 @@ from app.routes.ping_route import router as ping_router
 from app.routes.user_route import router as user_router
 from app.routes.utils_route import router as utils_router
 from app.types.exceptions import (
+    AuthTokenMissingError,
+    DatabaseConnectionError,
     DataConflictError,
+    ExpiredSignatureError,
     InvalidCountryError,
     InvalidCredentialsError,
     InvalidFieldError,
     InvalidLeadTimeError,
     InvalidMachineStateError,
+    InvalidTokenError,
+    MaterialNotAvailableError,
+    MigrationExecutionError,
     NotAuthenticatedError,
     NotFoundError,
     PermissionDeniedError,
@@ -130,5 +136,48 @@ app.add_exception_handler(
     exc_class_or_status_code=InvalidLeadTimeError,
     handler=create_exception_handler(
         status.HTTP_400_BAD_REQUEST, 'Invalid lead time format.'
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=InvalidTokenError,
+    handler=create_exception_handler(
+        status.HTTP_401_UNAUTHORIZED, 'Invalid token, please re-authenticate again.'
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=ExpiredSignatureError,
+    handler=create_exception_handler(
+        status.HTTP_401_UNAUTHORIZED,
+        'Token has expired and needs re-authentication.',
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=AuthTokenMissingError,
+    handler=create_exception_handler(
+        status.HTTP_401_UNAUTHORIZED, 'Authentication token is missing'
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=DatabaseConnectionError,
+    handler=create_exception_handler(
+        status.HTTP_500_INTERNAL_SERVER_ERROR, 'Database connection error'
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=MigrationExecutionError,
+    handler=create_exception_handler(
+        status.HTTP_500_INTERNAL_SERVER_ERROR, 'Migration execution failed'
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=MaterialNotAvailableError,
+    handler=create_exception_handler(
+        status.HTTP_400_BAD_REQUEST, 'Material not available'
     ),
 )
