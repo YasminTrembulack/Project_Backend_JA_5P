@@ -17,7 +17,7 @@ from app.types.exceptions import (
 class AuthenticationMiddleware(BaseHTTPMiddleware):
     @staticmethod
     async def dispatch(request, call_next):
-        if request.url.path.startswith('/api/login'):
+        if request.method == "OPTIONS" or request.url.path.startswith('/api/login'):
             return await call_next(request)
         try:
             auth_header = request.headers.get('Authorization')
@@ -28,6 +28,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                 access_token = auth_header.split(' ')[1].strip()
             else:
                 refresh_token = request.cookies.get('refresh_token')
+                print(f"REFRESH TOKEN: {refresh_token}")
                 if not refresh_token:
                     raise AuthTokenMissingError('Authentication token is missing')
 
