@@ -5,6 +5,7 @@ from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.mold_service import MoldService
 from app.types.schemas import (
+    CustomerResponse,
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
@@ -12,6 +13,7 @@ from app.types.schemas import (
     MoldPayload,
     MoldResponde,
     MoldUpdatePayload,
+    UserResponse,
 )
 
 router = APIRouter(prefix='/mold')
@@ -62,9 +64,19 @@ def get_all_molds(
         order_by=order_by,
         desc_order=desc_order,
     )
-    molds = [MoldResponde.model_validate(m.to_dict()) for m in molds]
+    
+    molds_response = []
+
+    for m in molds:
+        mold_dict = m.to_dict()
+        
+        mold_dict["customer"] = CustomerResponse.model_validate(m.customer.to_dict())
+        mold_dict["created_by"] = UserResponse.model_validate(m.created_by.to_dict())
+
+        molds_response.append(MoldResponde.model_validate(mold_dict))
+        
     return GetAllResponse(
-        message='Molds found successfully.', data=molds, metadata=meta
+        message='Molds found successfully.', data=molds_response, metadata=meta
     )
 
 
