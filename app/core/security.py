@@ -26,7 +26,7 @@ class SecurityManager:
         to_encode.update({'exp': expire, 'type': token_type})
         return jwt.encode(to_encode, self.secret_key, self.algorithm)
 
-    def create_access_token(self, data: dict, expires_in: int = 15) -> str: #TODO expires_in 15
+    def create_access_token(self, data: dict, expires_in: int = 15) -> str:
         return self._create_token(data, expires_in, 'access')
 
     def create_refresh_token(self, data: dict, expires_in: int = 60 * 24 * 7) -> str:
