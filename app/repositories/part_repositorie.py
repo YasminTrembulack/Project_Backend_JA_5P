@@ -25,6 +25,7 @@ class PartRepository(IPartRepository):
             status=part.status,
             quantity=part.quantity,
             description=part.description,
+            progress_percentage=part.progress_percentage
         )
         self.db.add(db_part)
         self.db.commit()
