@@ -262,7 +262,9 @@ class MoldResponde(MoldBase):
     status: ItemStatusEnum
     dimensions: str | None
     created_by_id: str
+    created_by: Optional[UserResponse] = None
     customer_id: str
+    customer: Optional[CustomerResponse] = None
     created_at: str
     updated_at: str
 
