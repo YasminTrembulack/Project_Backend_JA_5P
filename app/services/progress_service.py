@@ -66,8 +66,6 @@ class ProgressService:
             progress_weight = 0.3
 
         priority_score = (100 - progress_percentage) * progress_weight
-        print(days_until_delivery)
-        print(priority_score)
 
         if priority_score >= URGENT_PRIORITY_THRESHOLD:
             return PriorityEnum.URGENT
