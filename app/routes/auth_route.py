@@ -25,10 +25,11 @@ def login(
         key='refresh_token',
         value=refresh_token,
         httponly=True,
-        secure=True,
-        samesite='Strict',
+        secure=False,
+        samesite='Lax',
         max_age=60 * 60 * 24 * 7,
-        path='/api/refresh_token',
+        path='/',
+        domain='localhost'
     )
 
     return LoginResponse(
