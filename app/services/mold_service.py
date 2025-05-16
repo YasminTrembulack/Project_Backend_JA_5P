@@ -11,6 +11,7 @@ from app.repositories.customer_repositorie import CustomerRepository
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
+from app.types.customer import CustomerResponse
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
@@ -21,6 +22,9 @@ from app.types.mold import (
     MoldPayload,
     MoldUpdatePayload,
 )
+from app.types.operation_association import OperationAssociationResponse
+from app.types.part import PartResponse
+from app.types.user import UserResponse
 
 
 class MoldService:
@@ -102,6 +106,26 @@ class MoldService:
         if not mold:
             raise NotFoundError('Mold not found')
         return mold
+    
+    @staticmethod
+    def configure_associations_response(mold: Mold, associations: List[str]) -> dict:
+        ASSOCIATION_LOADERS = {
+            'customer': CustomerResponse.model_validate(mold.customer.to_dict()),
+            'created_by': UserResponse.model_validate(mold.created_by.to_dict()),
+            'mold_parts': [
+                PartResponse.model_validate(p.to_dict())
+                for p in mold.mold_parts
+            ],
+            'operation_associations': [
+                OperationAssociationResponse.model_validate(op.to_dict())
+                for op in mold.operation_associations
+            ],
+        }
+        return {
+            a: ASSOCIATION_LOADERS[a]
+            for a in associations
+            if a in ASSOCIATION_LOADERS
+        }
 
     def _calculate_priority(self, mold: Mold) -> Mold:
         # if mold.priority_updated_at != date.today(): #TODO ADICIONAR ISSO DEPOIS
