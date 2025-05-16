@@ -73,7 +73,6 @@ def get_all_operations(
             op, query.associations
         )
         combined_dict = {**operations_dict, **associations_dict}
-        print(combined_dict)
 
         operations_response.append(OperationResponse.model_validate(combined_dict))
 

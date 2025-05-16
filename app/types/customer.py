@@ -43,6 +43,5 @@ class CustomerResponse(CustomerBase):
     id: UUID
     full_name: str
     country_name: str
-    country_code: str
     created_at: str
     updated_at: str

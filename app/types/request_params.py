@@ -23,14 +23,18 @@ def create_query_params_class(
                 raise ValueError(f'Limit must be between {MIN_LIMIT} and {MAX_LIMIT}')
             return v
         
-        @field_validator('associations', each_item=True)
+        @field_validator('associations', mode='before')
         def check_association(cls, v):
+            if not v:
+                return v 
             if v not in allowed_associations:
                 raise ValueError(f"Invalid association '{v}'. Allowed: {allowed_associations}")
             return v
 
         @field_validator('order_by')
         def check_order_by(cls, v):
+            if not v:
+                return v 
             if v not in allowed_order_by:
                 raise ValueError(f"Invalid order_by '{v}'. Allowed: {allowed_order_by}")
             return v

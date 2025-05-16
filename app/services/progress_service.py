@@ -15,7 +15,7 @@ from app.types.enums import (
     PriorityEnum,
     SimpleStatusEnum,
 )
-from app.types.enums import NotFoundError
+from app.types.exceptions import NotFoundError
 
 
 COMPLETED_PERCENTAGE = 100
