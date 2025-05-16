@@ -8,8 +8,8 @@ from app.models.machine import Machine
 from app.models.operation import Operation
 from app.repositories.machine_repositorie import MachineRepository
 from app.repositories.operation_repositorie import OperationRepository
-from app.types.exceptions import DataConflictError, InvalidFieldError, NotFoundError
-from app.types.schemas import OperationBase, OperationPayload, OperationUpdatePayload
+from app.types import DataConflictError, InvalidFieldError, NotFoundError
+from app.types import MachineResponse, OperationBase, OperationPayload, OperationUpdatePayload
 
 
 class OperationService:
@@ -41,6 +41,18 @@ class OperationService:
             else getattr(Operation, order_by)
         )
         return self.operation_repo.get_all_operations_paginated(offset, limit, order)
+    
+    def configure_associations_response(self, operation: Operation, associations: List[str]) -> dict:
+        ASSOCIATION_LOADERS = {}
+
+        if operation.machine is not None:
+            ASSOCIATION_LOADERS['machine'] = MachineResponse.model_validate(operation.machine.to_dict())
+
+        return {
+            a: ASSOCIATION_LOADERS[a]
+            for a in associations
+            if a in ASSOCIATION_LOADERS
+        }
 
     def delete_operation(self, id: str) -> None:
         operation = self._get_operation_or_404(id)

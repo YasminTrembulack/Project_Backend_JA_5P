@@ -8,14 +8,23 @@ from app.models.mold import Mold
 from app.models.part import Part
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
-from app.types.exceptions import DataConflictError, InvalidFieldError, NotFoundError
-from app.types.schemas import PartBase, PartPayload, PartUpdatePayload
+from app.services.progress_service import ProgressService
+from app.types import DataConflictError, InvalidFieldError, NotFoundError
+from app.types import (
+    MaterialPartResponse,
+    MoldResponse,
+    OperationAssociationResponse,
+    PartBase,
+    PartPayload,
+    PartUpdatePayload,
+)
 
 
 class PartService:
     def __init__(self, db: Session):
         self.part_repo = PartRepository(db)
         self.mold_repo = MoldRepository(db)
+        self.progress_service = ProgressService(self.mold_repo, self.part_repo)
 
     def part_register(self, payload: PartPayload) -> Part:  # ! OK
         self._get_mold_or_404(payload.mold_id)
@@ -39,7 +48,26 @@ class PartService:
         order = (
             desc(getattr(Part, order_by)) if desc_order else getattr(Part, order_by)
         )
+        # options = self._configure_associations_options(associations)
         return self.part_repo.get_all_parts_paginated(offset, limit, order)
+
+    def configure_associations_response(self, part: Part, associations: List[str]) -> dict:
+        ASSOCIATION_LOADERS = {
+            'mold': MoldResponse.model_validate(part.mold.to_dict()),
+            'operation_associations': [
+                OperationAssociationResponse.model_validate(op.to_dict())
+                for op in part.operation_associations
+            ],
+            'material_associations': [
+                MaterialPartResponse.model_validate(mat.to_dict())
+                for mat in part.material_associations
+            ],
+        }
+        return {
+            a: ASSOCIATION_LOADERS[a]
+            for a in associations
+            if a in ASSOCIATION_LOADERS
+        }
 
     def delete_part(self, id: str) -> None:
         part = self._get_part_or_404(id)
@@ -70,7 +98,7 @@ class PartService:
         new_part = self.part_repo.update_part(updated_part)
 
         if its_a_new_3d or its_a_new_nc:
-            self.part_repo.update_part_progress(new_part.id)
+            self.progress_service.update_part_progress(new_part.id)
 
         return new_part
 
