@@ -4,7 +4,8 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from app.models.mold import Mold
-from app.models.operation import Operation, OperationAssociation
+from app.models.operation import Operation
+from app.models.operation_association import OperationAssociation
 from app.models.part import Part
 from app.repositories.material_part_repositorie import MaterialPartRepository
 from app.repositories.mold_repositorie import MoldRepository

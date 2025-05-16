@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 
 from sqlalchemy import UnaryExpression
 
-from app.models.material import MaterialPart
+from app.models.material_part import MaterialPart
 from app.types.material_part import MaterialPartPayload
 
 

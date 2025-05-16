@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.interfaces.operation_association_repository_interface import (
     IOperationAssociationRepository,
 )
-from app.models.operation import OperationAssociation
+from app.models.operation_association import OperationAssociation
 from app.types.exceptions import InvalidFieldError
 from app.types.operation_association import OperationAssociationPayload
 

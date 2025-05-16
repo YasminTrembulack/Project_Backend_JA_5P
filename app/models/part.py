@@ -11,9 +11,10 @@ from app.models.base_model import BaseModel
 from app.types.enums import ItemStatusEnum, SimpleStatusEnum
 
 if TYPE_CHECKING:
-    from app.models.material import Material, MaterialPart
+    from app.models.material import Material
+    from app.models.material_part import MaterialPart
     from app.models.mold import Mold
-    from app.models.operation import OperationAssociation
+    from app.models.operation_association import OperationAssociation
 
 
 @dataclass

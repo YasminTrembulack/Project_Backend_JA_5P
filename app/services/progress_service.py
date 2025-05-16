@@ -2,9 +2,9 @@ from datetime import date, datetime
 
 from loguru import logger
 
-from app.models.material import MaterialPart
+from app.models.material_part import MaterialPart
 from app.models.mold import Mold
-from app.models.operation import OperationAssociation
+from app.models.operation_association import OperationAssociation
 from app.models.part import Part
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository

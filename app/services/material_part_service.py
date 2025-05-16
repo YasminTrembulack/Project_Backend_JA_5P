@@ -5,7 +5,8 @@ from typing import List, Tuple
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
-from app.models.material import Material, MaterialPart
+from app.models.material import Material
+from app.models.material_part import MaterialPart
 from app.models.part import Part
 from app.repositories.material_part_repositorie import MaterialPartRepository
 from app.repositories.material_repositorie import MaterialRepository

@@ -13,27 +13,7 @@ from app.types.enums import MaterialStatusEnum
 
 if TYPE_CHECKING:
     from app.models.part import Part
-
-
-class MaterialPart(BaseModel):
-    __tablename__ = 'material_part'
-
-    id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
-    material_id: Mapped[UUID] = mapped_column(
-        CHAR(36), ForeignKey('materials.id'), primary_key=True
-    )
-    part_id: Mapped[UUID] = mapped_column(
-        CHAR(36), ForeignKey('parts.id'), primary_key=True
-    )
-    status: Mapped[MaterialStatusEnum] = mapped_column(
-        Enum(MaterialStatusEnum), nullable=False
-    )
-    expected_delivery_date: Mapped[datetime] = mapped_column(nullable=True)
-    quantity: Mapped[float] = mapped_column(Float, default=1, nullable=False)
-
-    material: Mapped['Material'] = relationship(back_populates='part_associations')
-    part: Mapped['Part'] = relationship(back_populates='material_associations')
-
+    from app.models.material_part import MaterialPart
 
 @dataclass
 class Material(BaseModel):

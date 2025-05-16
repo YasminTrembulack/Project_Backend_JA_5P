@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 
 from sqlalchemy import UnaryExpression
 
-from app.models.operation import OperationAssociation
+from app.models.operation_association import OperationAssociation
 from app.types.operation_association import OperationAssociationPayload
 
 

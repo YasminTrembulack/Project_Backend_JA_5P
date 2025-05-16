@@ -49,6 +49,7 @@ def import_models():
         machine,
         material,
         mold,
+        operation_association,
         operation,
         part,
         user,

@@ -12,10 +12,10 @@ from app.models.mold import Mold
 from app.models.part import Part
 from app.models.user import User
 from app.models.operation import Operation
-from app.models.operation import OperationAssociation
+from app.models.operation_association import OperationAssociation
 from app.models.machine import Machine
 from app.models.material import Material
-from app.models.material import MaterialPart
+from app.models.material_part import MaterialPart
 
 
 config = context.config
