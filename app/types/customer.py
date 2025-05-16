@@ -1,18 +1,22 @@
 # --- CUSTOMER CLASSES --- #
 
 
-from typing import Optional
+from typing import TYPE_CHECKING, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, computed_field, field_validator
 
+from app.types.base import BaseQueryParams
 from app.types.enums import CountryEnum
 from app.types.exceptions import InvalidCountryError
 
+if TYPE_CHECKING:
+    from app.types.mold import MoldResponse
 
 class CustomerBase(BaseModel):
     full_name: Optional[str] = None
     country_name: Optional[str] = None
+    molds: Optional[List['MoldResponse']] = []
 
     @field_validator('country_name')
     def validate_country(cls, v):
@@ -45,3 +49,6 @@ class CustomerResponse(CustomerBase):
     country_name: str
     created_at: str
     updated_at: str
+
+class CustomerQueryParams(BaseQueryParams):
+    order_by: str = 'created_at'

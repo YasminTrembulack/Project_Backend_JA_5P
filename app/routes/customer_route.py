@@ -1,3 +1,4 @@
+from typing import List, Literal
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -12,6 +13,7 @@ from app.types.base import (
 )
 from app.types.customer import (
     CustomerPayload,
+    CustomerQueryParams,
     CustomerResponse,
     CustomerUpdatePayload,
 )
@@ -43,33 +45,40 @@ def create_customer(
     response_model=GetAllResponse[CustomerResponse],
 )
 def get_all_customers(
-    page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=50),
-    order_by: str = Query('full_name'),
-    desc_order: bool = Query(False),
+    query: CustomerQueryParams = Depends(),
+    associations: List[Literal['molds']] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = CustomerService(session)
     customers, total_customers = service.get_all_customers(
-        page, limit, order_by, desc_order
+        query.page, query.limit, query.order_by, query.desc_order
     )
-    total_pages = (total_customers + limit - 1) // limit
+    total_pages = (total_customers + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_customers,
-        limit=limit,
-        page=page,
+        limit=query.limit,
+        page=query.page,
         total_pages=total_pages,
-        has_next=page < total_pages,
-        has_previous=page > 1,
-        order_by=order_by,
-        desc_order=desc_order,
+        has_next=query.page < total_pages,
+        has_previous=query.page > 1,
+        order_by=query.order_by,
+        desc_order=query.desc_order,
     )
-    customers = [
-        CustomerResponse.model_validate(user.to_dict()) for user in customers
-    ]
+    
+    customer_response = []
+    print(associations)
+    for c in customers:
+        customer_dict = c.to_dict()
+        associations_dict = service.configure_associations_response(c, associations)
+        combined_dict = {**customer_dict, **associations_dict}
+
+        customer_response.append(CustomerResponse.model_validate(combined_dict))
+
     return GetAllResponse(
-        message='Customers found successfully.', data=customers, metadata=meta
+        message='Customers found successfully.',
+        data=customer_response,
+        metadata=meta
     )
 
 

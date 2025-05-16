@@ -15,6 +15,7 @@ from app.types.exceptions import (
     InvalidFieldError,
     NotFoundError,
 )
+from app.types.mold import MoldResponse
 
 
 class CustomerService:
@@ -69,6 +70,24 @@ class CustomerService:
 
     def get_customer(self, id: str) -> Customer:
         return self._get_customer_or_404(id)
+    
+    @staticmethod
+    def configure_associations_response(customer: Customer, associations: List[str]) -> dict:
+        def _load_molds():
+            return [
+                MoldResponse.model_validate(c.to_dict())
+                for c in customer.molds
+            ]
+
+        loaders = {
+            'molds': _load_molds,
+        }
+
+        return {
+            key: loaders[key]()
+            for key in associations
+            if key in loaders and getattr(customer, key, None) is not None
+        }
 
     def _get_or_validate_customer_uniqueness(
         self, full_name: str, country_name: str, customer_id: str = None
