@@ -9,14 +9,16 @@ from app.models.material import Material, MaterialPart
 from app.models.part import Part
 from app.repositories.material_part_repositorie import MaterialPartRepository
 from app.repositories.material_repositorie import MaterialRepository
+from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
-from app.types.enums import MaterialStatusEnum, TimeUnitEnum
-from app.types.exceptions import (
+from app.services.progress_service import ProgressService
+from app.types import MaterialStatusEnum, TimeUnitEnum
+from app.types import (
     DataConflictError,
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.schemas import (
+from app.types import (
     MaterialPartBase,
     MaterialPartPayload,
     MaterialPartUpdatePayload,
@@ -28,6 +30,9 @@ class MaterialPartService:
         self.material_part_repo = MaterialPartRepository(db)
         self.part_repo = PartRepository(db)
         self.material_repo = MaterialRepository(db)
+        self.mold_repo = MoldRepository(db)
+        self.progress_service = ProgressService(self.mold_repo, self.part_repo)
+        
 
     def material_part_register(self, payload: MaterialPartPayload) -> MaterialPart:
         self._get_part_or_404(payload.part_id)
@@ -48,7 +53,7 @@ class MaterialPartService:
         self._validate_ids(payload.part_id, payload.material_id)
         new_material_part = self.material_part_repo.create_material_part(payload)
 
-        self.part_repo.update_part_progress(payload.part_id)
+        self.progress_service.update_part_progress(payload.part_id)
         return new_material_part
 
     def get_all_material_parts(
@@ -72,7 +77,7 @@ class MaterialPartService:
         material_part = self._get_material_part_or_404(id)
         part_id = material_part.part_id
         self.material_part_repo.delete_material_part(material_part)
-        self.part_repo.update_part_progress(part_id)
+        self.progress_service.update_part_progress(part_id)
 
     def update_material_part(
         self, id: str, payload: MaterialPartUpdatePayload
@@ -104,7 +109,7 @@ class MaterialPartService:
         )
 
         if its_a_new_status:
-            self.part_repo.update_part_progress(new_part_id)
+            self.progress_service.update_part_progress(new_part_id)
 
         return new_material_part
 
