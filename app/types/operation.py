@@ -1,7 +1,7 @@
 # --- OPERATION CLASSES --- #
 
 
-from typing import List, Literal, Optional
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -37,5 +37,4 @@ class OperationUpdatePayload(OperationBase):
 
 
 class OperationQueryParams(BaseQueryParams):
-    order_by: str = 'created_at'  
-
+    order_by: str = 'created_at'

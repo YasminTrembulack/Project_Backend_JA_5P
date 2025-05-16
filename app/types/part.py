@@ -1,10 +1,9 @@
 # --- PART CLASSES --- #
 
 
-from typing import List, Literal, Optional
+from typing import List, Optional
 from uuid import UUID
 
-from fastapi import Query
 from pydantic import BaseModel
 
 from app.types.base import BaseQueryParams
@@ -60,4 +59,3 @@ class PartUpdatePayload(PartBase):
 
 class PartQueryParams(BaseQueryParams):
     order_by: str = 'created_at'
-

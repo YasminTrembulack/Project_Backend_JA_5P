@@ -1,4 +1,5 @@
 from typing import List, Literal
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -70,9 +71,7 @@ def get_all_operations(
 
     for op in operations:
         operations_dict = op.to_dict()
-        associations_dict = service.configure_associations_response(
-            op, associations
-        )
+        associations_dict = service.configure_associations_response(op, associations)
         combined_dict = {**operations_dict, **associations_dict}
 
         operations_response.append(OperationResponse.model_validate(combined_dict))

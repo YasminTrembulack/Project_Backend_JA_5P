@@ -1,4 +1,5 @@
 from typing import List, Literal
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -11,14 +12,12 @@ from app.types.base import (
     GetAllResponse,
     Metadata,
 )
-from app.types.customer import CustomerResponse
 from app.types.mold import (
     MoldPayload,
     MoldQueryParams,
     MoldResponse,
     MoldUpdatePayload,
 )
-from app.types.user import UserResponse
 
 router = APIRouter(prefix='/mold')
 
@@ -75,13 +74,10 @@ def get_all_molds(
 
     for m in molds:
         mold_dict = m.to_dict()
-        associations_dict = service.configure_associations_response(
-            m, associations
-        )
+        associations_dict = service.configure_associations_response(m, associations)
         combined_dict = {**mold_dict, **associations_dict}
 
         molds_response.append(MoldResponse.model_validate(combined_dict))
-
 
     return GetAllResponse(
         message='Molds found successfully.', data=molds_response, metadata=meta

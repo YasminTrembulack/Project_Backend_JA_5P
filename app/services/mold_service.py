@@ -106,15 +106,14 @@ class MoldService:
         if not mold:
             raise NotFoundError('Mold not found')
         return mold
-    
+
     @staticmethod
     def configure_associations_response(mold: Mold, associations: List[str]) -> dict:
         ASSOCIATION_LOADERS = {
             'customer': CustomerResponse.model_validate(mold.customer.to_dict()),
             'created_by': UserResponse.model_validate(mold.created_by.to_dict()),
             'mold_parts': [
-                PartResponse.model_validate(p.to_dict())
-                for p in mold.mold_parts
+                PartResponse.model_validate(p.to_dict()) for p in mold.mold_parts
             ],
             'operation_associations': [
                 OperationAssociationResponse.model_validate(op.to_dict())

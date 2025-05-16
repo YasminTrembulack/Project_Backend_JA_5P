@@ -1,10 +1,9 @@
 from datetime import date, datetime, time
 
 # --- MOLD CLASSES --- #
-from typing import List, Literal, Optional
+from typing import TYPE_CHECKING, List, Optional
 from uuid import UUID
 
-from fastapi import Query
 import pytz
 from dateutil import parser
 from pydantic import BaseModel, field_validator
@@ -19,8 +18,6 @@ from app.types.enums import (
 from app.types.exceptions import InvalidFieldError
 from app.types.operation_association import OperationAssociationResponse
 from app.types.user import UserResponse
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.types.part import PartResponse
@@ -102,4 +99,4 @@ class MoldUpdatePayload(MoldBase):
 
 
 class MoldQueryParams(BaseQueryParams):
-    order_by: str = 'created_at'  
+    order_by: str = 'created_at'

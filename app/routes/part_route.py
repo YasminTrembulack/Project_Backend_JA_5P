@@ -1,7 +1,7 @@
 from typing import List, Literal
+
 from fastapi import APIRouter, Depends, Query, Request, status
 from sqlalchemy.orm import Session
-from loguru import logger
 
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
@@ -74,9 +74,7 @@ def get_all_parts(
 
     for p in parts:
         part_dict = p.to_dict()
-        associations_dict = service.configure_associations_response(
-            p, associations
-        )
+        associations_dict = service.configure_associations_response(p, associations)
         combined_dict = {**part_dict, **associations_dict}
 
         parst_reponse.append(PartResponse.model_validate(combined_dict))
