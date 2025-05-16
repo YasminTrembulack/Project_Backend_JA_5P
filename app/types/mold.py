@@ -1,21 +1,29 @@
 from datetime import date, datetime, time
 
 # --- MOLD CLASSES --- #
-from typing import Optional
+from typing import List, Literal, Optional
 from uuid import UUID
 
+from fastapi import Query
 import pytz
 from dateutil import parser
 from pydantic import BaseModel, field_validator
 
 from app.core.settings import Settings
+from app.types.base import BaseQueryParams
 from app.types.customer import CustomerResponse
 from app.types.enums import (
     ItemStatusEnum,
     PriorityEnum,
 )
 from app.types.exceptions import InvalidFieldError
+from app.types.operation_association import OperationAssociationResponse
 from app.types.user import UserResponse
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.types.part import PartResponse
 
 
 class MoldBase(BaseModel):
@@ -30,6 +38,8 @@ class MoldBase(BaseModel):
     created_by: Optional[UserResponse] = None
     customer_id: Optional[str] = None
     customer: Optional[CustomerResponse] = None
+    mold_parts: Optional[List['PartResponse']] = []
+    operation_associations: Optional[List[OperationAssociationResponse]] = []
 
     @field_validator('delivery_date', mode='before')
     @classmethod
@@ -89,3 +99,7 @@ class MoldUpdatePayload(MoldBase):
     quantity: Optional[int] = None
     status: Optional[ItemStatusEnum] = None
     progress_percentage: Optional[float] = None
+
+
+class MoldQueryParams(BaseQueryParams):
+    order_by: str = 'created_at'  

@@ -1,11 +1,13 @@
 # --- PART CLASSES --- #
 
 
-from typing import List, Optional
+from typing import List, Literal, Optional
 from uuid import UUID
 
+from fastapi import Query
 from pydantic import BaseModel
 
+from app.types.base import BaseQueryParams
 from app.types.enums import (
     ItemStatusEnum,
     SimpleStatusEnum,
@@ -13,7 +15,6 @@ from app.types.enums import (
 from app.types.material_part import MaterialPartResponse
 from app.types.mold import MoldResponse
 from app.types.operation_association import OperationAssociationResponse
-from app.types.request_params import create_query_params_class
 
 
 class PartBase(BaseModel):
@@ -57,9 +58,6 @@ class PartUpdatePayload(PartBase):
     nc_program: Optional[SimpleStatusEnum] = None
 
 
-PART_ASSOCIATIONS = ['mold', 'operation_associations', 'material_associations']
+class PartQueryParams(BaseQueryParams):
+    order_by: str = 'created_at'
 
-
-PartQueryParams = create_query_params_class(
-    'PartQueryParams', PART_ASSOCIATIONS, ['created_at']
-)

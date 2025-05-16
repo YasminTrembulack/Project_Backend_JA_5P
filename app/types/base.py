@@ -37,6 +37,12 @@ class TimeUnitResponse(BaseModel):
     time_unit: List[str]
 
 
+class BaseQueryParams(BaseModel):
+    page: int = 1
+    limit: int = 10
+    desc_order: bool = False
+
+
 # --- METADATA CLASS --- #
 
 

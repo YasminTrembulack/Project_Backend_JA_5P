@@ -1,13 +1,15 @@
 # --- OPERATION CLASSES --- #
 
 
-from typing import Optional
+from typing import List, Literal, Optional
 from uuid import UUID
 
 from pydantic import BaseModel
 
+from app.types.base import BaseQueryParams
 from app.types.machine import MachineResponse
-from app.types.request_params import create_query_params_class
+
+OPERATIONS_ASSOCIATIONS = ['machine']
 
 
 class OperationBase(BaseModel):
@@ -34,9 +36,6 @@ class OperationUpdatePayload(OperationBase):
     pass
 
 
-OPERATIONS_ASSOCIATIONS = ['machine']
+class OperationQueryParams(BaseQueryParams):
+    order_by: str = 'created_at'  
 
-
-OperationQueryParams = create_query_params_class(
-    'OperationQueryParams', OPERATIONS_ASSOCIATIONS, ['created_at']
-)
