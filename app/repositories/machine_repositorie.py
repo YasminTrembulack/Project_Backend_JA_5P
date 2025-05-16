@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.interfaces.machine_repository_interface import IMachineRepository
 from app.models.machine import Machine
-from app.types.exceptions import InvalidFieldError
-from app.types.schemas import MachinePayload
+from app.types import InvalidFieldError
+from app.types import MachinePayload
 
 
 class MachineRepository(IMachineRepository):

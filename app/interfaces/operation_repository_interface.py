@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 from sqlalchemy import UnaryExpression
 
 from app.models.operation import Operation
-from app.types.schemas import OperationPayload
+from app.types import OperationPayload
 
 
 class IOperationRepository(ABC):

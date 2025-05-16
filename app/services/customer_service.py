@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 from app.models.customer import Customer
 from app.repositories.customer_repositorie import CustomerRepository
-from app.types.exceptions import DataConflictError, InvalidFieldError, NotFoundError
-from app.types.schemas import CustomerBase, CustomerPayload, CustomerUpdatePayload
+from app.types import DataConflictError, InvalidFieldError, NotFoundError
+from app.types import CustomerBase, CustomerPayload, CustomerUpdatePayload
 
 
 class CustomerService:

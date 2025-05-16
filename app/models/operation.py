@@ -8,7 +8,7 @@ from sqlalchemy import CHAR, UUID, VARCHAR, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
-from app.types.enums import OpStatusEnum
+from app.types import OpStatusEnum
 
 if TYPE_CHECKING:
     from app.models.machine import Machine

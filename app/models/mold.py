@@ -19,7 +19,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
-from app.types.enums import ItemStatusEnum, PriorityEnum
+from app.types import ItemStatusEnum, PriorityEnum
 
 if TYPE_CHECKING:
     from app.models.customer import Customer

@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 from sqlalchemy import UnaryExpression
 
 from app.models.user import User
-from app.types.schemas import UserPayload
+from app.types import UserPayload
 
 
 class IUserRepository(ABC):

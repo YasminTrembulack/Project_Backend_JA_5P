@@ -21,7 +21,7 @@ from app.routes.part_route import router as part_router
 from app.routes.ping_route import router as ping_router
 from app.routes.user_route import router as user_router
 from app.routes.utils_route import router as utils_router
-from app.types.exceptions import (
+from app.types import (
     AuthTokenMissingError,
     DatabaseConnectionError,
     DataConflictError,
@@ -53,11 +53,11 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=['http://localhost:5173'],
     allow_credentials=True,
     allow_methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
     allow_headers=['*'],
-    expose_headers=["Set-Cookie"],
+    expose_headers=['Set-Cookie'],
 )
 
 app.add_middleware(AuthenticationMiddleware)

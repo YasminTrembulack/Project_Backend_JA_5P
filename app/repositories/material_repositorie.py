@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.interfaces.material_repository_interface import IMaterialRepository
 from app.models.material import Material
-from app.types.exceptions import InvalidFieldError
-from app.types.schemas import MaterialPayload
+from app.types import InvalidFieldError
+from app.types import MaterialPayload
 
 
 class MaterialRepository(IMaterialRepository):

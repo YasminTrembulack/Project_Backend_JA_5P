@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.core.settings import Settings
-from app.types.exceptions import DatabaseConnectionError, MigrationExecutionError
+from app.types import DatabaseConnectionError, MigrationExecutionError
 
 engine = create_engine(Settings().DATABASE_URL)
 

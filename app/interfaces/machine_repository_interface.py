@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 from sqlalchemy import UnaryExpression
 
 from app.models.machine import Machine
-from app.types.schemas import MachinePayload
+from app.types import MachinePayload
 
 
 class IMachineRepository(ABC):

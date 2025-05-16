@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.interfaces.part_repository_interface import IPartRepository
 from app.models.part import Part
-from app.types.exceptions import InvalidFieldError
-from app.types.schemas import PartPayload
+from app.types import InvalidFieldError
+from app.types import PartPayload
 
 COMPLETED_PERCENTAGE = 100
 
@@ -25,7 +25,7 @@ class PartRepository(IPartRepository):
             status=part.status,
             quantity=part.quantity,
             description=part.description,
-            progress_percentage=part.progress_percentage
+            progress_percentage=part.progress_percentage,
         )
         self.db.add(db_part)
         self.db.commit()

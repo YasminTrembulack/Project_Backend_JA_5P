@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 from sqlalchemy import UnaryExpression
 
 from app.models.material import Material
-from app.types.schemas import MaterialPayload
+from app.types import MaterialPayload
 
 
 class IMaterialRepository(ABC):

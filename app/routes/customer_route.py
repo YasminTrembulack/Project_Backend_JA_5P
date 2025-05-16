@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.customer_service import CustomerService
-from app.types.schemas import (
+from app.types import (
     CustomerPayload,
     CustomerResponse,
     CustomerUpdatePayload,

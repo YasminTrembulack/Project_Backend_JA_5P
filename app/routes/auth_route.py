@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.auth_service import AuthService
-from app.types.schemas import (
+from app.types import (
     LoginPayload,
     LoginResponse,
     RefreshTokenResponse,
@@ -29,7 +29,7 @@ def login(
         samesite='Lax',
         max_age=60 * 60 * 24 * 7,
         path='/',
-        domain='localhost'
+        domain='localhost',
     )
 
     return LoginResponse(

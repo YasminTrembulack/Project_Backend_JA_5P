@@ -1,7 +1,7 @@
 import pytest
 
 from app.core.security import SecurityManager
-from app.types.exceptions import ExpiredSignatureError, InvalidTokenError
+from app.types import ExpiredSignatureError, InvalidTokenError
 
 
 @pytest.fixture

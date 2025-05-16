@@ -3,7 +3,7 @@ from typing import List
 from fastapi import Depends, Request
 
 from app.models.user import User
-from app.types.exceptions import NotAuthenticatedError, PermissionDeniedError
+from app.types import NotAuthenticatedError, PermissionDeniedError
 
 
 def get_current_user(request: Request):

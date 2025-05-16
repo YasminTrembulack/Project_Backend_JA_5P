@@ -4,7 +4,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from loguru import logger
 
-from app.types.exceptions import APIException
+from app.types import APIException
 
 
 def create_exception_handler(

@@ -11,8 +11,8 @@ from app.repositories.customer_repositorie import CustomerRepository
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
-from app.types.exceptions import DataConflictError, InvalidFieldError, NotFoundError
-from app.types.schemas import MoldBase, MoldPayload, MoldUpdatePayload
+from app.types import DataConflictError, InvalidFieldError, NotFoundError
+from app.types import MoldBase, MoldPayload, MoldUpdatePayload
 
 
 class MoldService:
@@ -96,7 +96,7 @@ class MoldService:
         return mold
 
     def _calculate_priority(self, mold: Mold) -> Mold:
-        # if mold.priority_updated_at != date.today():
+        # if mold.priority_updated_at != date.today(): #TODO ADICIONAR ISSO DEPOIS
         mold.priority_updated_at = date.today()
         mold.progress_percentage = (
             self.progress_service._calculate_mold_progress_percentage(

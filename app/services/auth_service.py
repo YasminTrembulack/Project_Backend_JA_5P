@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 
 from app.core.security import security
 from app.repositories.user_repositorie import UserRepository
-from app.types.exceptions import InvalidCredentialsError, InvalidTokenError
-from app.types.schemas import LoginPayload
+from app.types import InvalidCredentialsError, InvalidTokenError
+from app.types import LoginPayload
 
 
 class AuthService:

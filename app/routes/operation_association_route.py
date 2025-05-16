@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.operation_association_service import OperationAssociationService
-from app.types.schemas import (
+from app.types import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,

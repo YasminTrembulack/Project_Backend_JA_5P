@@ -4,14 +4,14 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.mold_service import MoldService
-from app.types.schemas import (
+from app.types import (
     CustomerResponse,
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     Metadata,
     MoldPayload,
-    MoldResponde,
+    MoldResponse,
     MoldUpdatePayload,
     UserResponse,
 )
@@ -22,7 +22,7 @@ router = APIRouter(prefix='/mold')
 @router.post(
     '/register',
     status_code=status.HTTP_201_CREATED,
-    response_model=EntityResponse[MoldResponde],
+    response_model=EntityResponse[MoldResponse],
 )
 def create_mold(
     mold: MoldPayload,
@@ -34,19 +34,19 @@ def create_mold(
     mold.created_by_id = user.id
     db_mold = service.mold_register(mold)
 
-    mold_response = MoldResponde.model_validate(db_mold.to_dict())
+    mold_response = MoldResponse.model_validate(db_mold.to_dict())
     return EntityResponse(message='Mold created with success.', data=mold_response)
 
 
 @router.get(
     '/all',
     status_code=status.HTTP_200_OK,
-    response_model=GetAllResponse[MoldResponde],
+    response_model=GetAllResponse[MoldResponse],
 )
 def get_all_molds(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=50),
-    order_by: str = Query('created_at'),
+    order_by: str = Query('priority'),
     desc_order: bool = Query(False),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
@@ -64,17 +64,17 @@ def get_all_molds(
         order_by=order_by,
         desc_order=desc_order,
     )
-    
+
     molds_response = []
 
     for m in molds:
         mold_dict = m.to_dict()
-        
-        mold_dict["customer"] = CustomerResponse.model_validate(m.customer.to_dict())
-        mold_dict["created_by"] = UserResponse.model_validate(m.created_by.to_dict())
 
-        molds_response.append(MoldResponde.model_validate(mold_dict))
-        
+        mold_dict['customer'] = CustomerResponse.model_validate(m.customer.to_dict())
+        mold_dict['created_by'] = UserResponse.model_validate(m.created_by.to_dict())
+
+        molds_response.append(MoldResponse.model_validate(mold_dict))
+
     return GetAllResponse(
         message='Molds found successfully.', data=molds_response, metadata=meta
     )
@@ -98,7 +98,7 @@ def delete_mold(
 @router.get(
     '/{id}',
     status_code=status.HTTP_200_OK,
-    response_model=EntityResponse[MoldResponde],
+    response_model=EntityResponse[MoldResponse],
 )
 def get_mold(
     id: str,
@@ -107,14 +107,14 @@ def get_mold(
 ):
     service = MoldService(session)
     mold = service.get_mold(id)
-    mold_response = MoldResponde.model_validate(mold.to_dict())
+    mold_response = MoldResponse.model_validate(mold.to_dict())
     return EntityResponse(message='Mold found successfully.', data=mold_response)
 
 
 @router.patch(
     '/update/{id}',
     status_code=status.HTTP_200_OK,
-    response_model=EntityResponse[MoldResponde],
+    response_model=EntityResponse[MoldResponse],
 )
 def update_mold(
     id: str,
@@ -124,5 +124,5 @@ def update_mold(
 ):
     service = MoldService(session)
     mold = service.update_mold(id, mold)
-    mold_response = MoldResponde.model_validate(mold.to_dict())
+    mold_response = MoldResponse.model_validate(mold.to_dict())
     return EntityResponse(message='Mold updated successfully.', data=mold_response)
