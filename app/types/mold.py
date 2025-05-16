@@ -1,24 +1,21 @@
 from datetime import date, datetime, time
-from uuid import UUID
-from dateutil import parser
-
 
 # --- MOLD CLASSES --- #
-
-
 from typing import Optional
+from uuid import UUID
 
-from pydantic import BaseModel, field_validator
 import pytz
-from app.types import (
-    PriorityEnum,
-    ItemStatusEnum,
-    UserResponse,
-    CustomerResponse,
-    InvalidFieldError
-)
+from dateutil import parser
+from pydantic import BaseModel, field_validator
 
 from app.core.settings import Settings
+from app.types.enums import (
+    ItemStatusEnum,
+    PriorityEnum,
+)
+from app.types.user import UserResponse
+from app.types.customer import CustomerResponse
+from app.types.exceptions import InvalidFieldError
 
 
 class MoldBase(BaseModel):

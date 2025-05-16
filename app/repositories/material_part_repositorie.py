@@ -8,8 +8,8 @@ from app.interfaces.material_part_repository_interface import (
     IMaterialPartRepository,
 )
 from app.models.material import MaterialPart
-from app.types import InvalidFieldError
-from app.types import MaterialPartPayload
+from app.types.exceptions import InvalidFieldError
+from app.types.material_part import MaterialPartPayload
 
 
 class MaterialPartRepository(IMaterialPartRepository):

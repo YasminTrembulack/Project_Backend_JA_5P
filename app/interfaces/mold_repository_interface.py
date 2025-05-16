@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 from sqlalchemy import UnaryExpression
 
 from app.models.mold import Mold
-from app.types import MoldPayload
+from app.types.mold import MoldPayload
 
 
 class IMoldRepository(ABC):

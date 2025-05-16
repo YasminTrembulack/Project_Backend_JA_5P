@@ -4,17 +4,19 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.mold_service import MoldService
-from app.types import (
-    CustomerResponse,
+from app.types.mold import (
+    MoldPayload,
+    MoldResponse,
+    MoldUpdatePayload,
+)
+from app.types.base import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     Metadata,
-    MoldPayload,
-    MoldResponse,
-    MoldUpdatePayload,
-    UserResponse,
 )
+from app.types.customer import CustomerResponse
+from app.types.user import UserResponse
 
 router = APIRouter(prefix='/mold')
 

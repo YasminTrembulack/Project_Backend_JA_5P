@@ -8,8 +8,16 @@ from sqlalchemy.orm.attributes import InstrumentedAttribute
 from app.core.security import security
 from app.models.user import User
 from app.repositories.user_repositorie import UserRepository
-from app.types import DataConflictError, InvalidFieldError, NotFoundError
-from app.types import UserBase, UserPayload, UserUpdatePayload
+from app.types.user import (
+    UserBase,
+    UserPayload,
+    UserUpdatePayload,
+)
+from app.types.exceptions import (
+    DataConflictError,
+    InvalidFieldError,
+    NotFoundError,
+)
 
 
 class UserService:

@@ -9,15 +9,19 @@ from app.models.part import Part
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
-from app.types import DataConflictError, InvalidFieldError, NotFoundError
-from app.types import (
-    MaterialPartResponse,
-    MoldResponse,
-    OperationAssociationResponse,
+from app.types.part import (
     PartBase,
     PartPayload,
     PartUpdatePayload,
 )
+from app.types.exceptions import (
+    NotFoundError,
+    DataConflictError,
+    InvalidFieldError,
+)
+from app.types.operation_association import OperationAssociationResponse
+from app.types.mold import MoldResponse
+from app.types.material_part import MaterialPartResponse
 
 
 class PartService:
@@ -51,7 +55,10 @@ class PartService:
         # options = self._configure_associations_options(associations)
         return self.part_repo.get_all_parts_paginated(offset, limit, order)
 
-    def configure_associations_response(self, part: Part, associations: List[str]) -> dict:
+    @staticmethod
+    def configure_associations_response(
+        part: Part, associations: List[str]
+    ) -> dict:
         ASSOCIATION_LOADERS = {
             'mold': MoldResponse.model_validate(part.mold.to_dict()),
             'operation_associations': [

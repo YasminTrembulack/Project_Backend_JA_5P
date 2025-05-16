@@ -12,17 +12,17 @@ from app.repositories.material_repositorie import MaterialRepository
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
-from app.types import MaterialStatusEnum, TimeUnitEnum
-from app.types import (
-    DataConflictError,
-    InvalidFieldError,
-    NotFoundError,
-)
-from app.types import (
+from app.types.material_part import (
     MaterialPartBase,
     MaterialPartPayload,
     MaterialPartUpdatePayload,
 )
+from app.types.exceptions import (
+    DataConflictError,
+    InvalidFieldError,
+    NotFoundError,
+)
+from app.types.enums import MaterialStatusEnum, TimeUnitEnum
 
 
 class MaterialPartService:
@@ -32,7 +32,6 @@ class MaterialPartService:
         self.material_repo = MaterialRepository(db)
         self.mold_repo = MoldRepository(db)
         self.progress_service = ProgressService(self.mold_repo, self.part_repo)
-        
 
     def material_part_register(self, payload: MaterialPartPayload) -> MaterialPart:
         self._get_part_or_404(payload.part_id)

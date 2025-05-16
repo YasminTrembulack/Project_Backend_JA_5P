@@ -5,7 +5,7 @@ import jwt
 from passlib.context import CryptContext
 
 from app.core.settings import Settings
-from app.types import ExpiredSignatureError, InvalidTokenError
+from app.types.exceptions import ExpiredSignatureError, InvalidTokenError
 
 
 class SecurityManager:

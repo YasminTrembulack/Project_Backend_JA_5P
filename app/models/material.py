@@ -9,7 +9,7 @@ from sqlalchemy import CHAR, UUID, Enum, Float, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
-from app.types import MaterialStatusEnum
+from app.types.enums import MaterialStatusEnum
 
 if TYPE_CHECKING:
     from app.models.part import Part

@@ -6,14 +6,17 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.part_service import PartService
-from app.types import (
+from app.types.part import (
+    PartPayload,
+    PartResponse,
+    PartUpdatePayload,
+    PartQueryParams
+)
+from app.types.base import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     Metadata,
-    PartPayload,
-    PartResponse,
-    PartUpdatePayload,
 )
 
 router = APIRouter(prefix='/part')
@@ -42,36 +45,30 @@ def create_part(
     status_code=status.HTTP_200_OK,
     response_model=GetAllResponse[PartResponse],
 )
-def get_all_parts(  # noqa: PLR0913, PLR0917
-    page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=50),
-    order_by: str = Query('created_at'),
-    desc_order: bool = Query(False),
-    associations: list[
-        Literal['mold', 'operation_associations', 'material_associations']
-    ] = Query([]),
+def get_all_parts(
+    query: PartQueryParams = Depends(), # type: ignore
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = PartService(session)
-    parts, total_parts = service.get_all_parts(page, limit, order_by, desc_order)
-    total_pages = (total_parts + limit - 1) // limit
+    parts, total_parts = service.get_all_parts(query.page, query.limit, query.order_by, query.desc_order)
+    total_pages = (total_parts + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_parts,
-        limit=limit,
-        page=page,
+        limit=query.limit,
+        page=query.page,
         total_pages=total_pages,
-        has_next=page < total_pages,
-        has_previous=page > 1,
-        order_by=order_by,
-        desc_order=desc_order,
+        has_next=query.page < total_pages,
+        has_previous=query.page > 1,
+        order_by=query.order_by,
+        desc_order=query.desc_order,
     )
 
     parst_reponse = []
 
     for p in parts:
         part_dict = p.to_dict()
-        associations_dict = service.configure_associations_response(p, associations)
+        associations_dict = service.configure_associations_response(p, query.associations)
         combined_dict = {**part_dict, **associations_dict}
 
         parst_reponse.append(PartResponse.model_validate(combined_dict))

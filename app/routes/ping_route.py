@@ -4,7 +4,7 @@ import pytz
 from fastapi import APIRouter, status
 
 from app.core.settings import Settings
-from app.types import PingResponse
+from app.types.base import PingResponse
 
 router = APIRouter()
 

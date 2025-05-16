@@ -14,18 +14,23 @@ from app.repositories.operation_association_repositorie import (
 from app.repositories.operation_repositorie import OperationRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
-from app.types import MachineStatusEnum, MaterialStatusEnum, OpStatusEnum
-from app.types import (
+from app.types.operation_association import (
+    OperationAssociationBase,
+    OperationAssociationPayload,
+    OperationAssociationUpdatePayload,
+
+)
+from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
     InvalidMachineStateError,
     MaterialNotAvailableError,
     NotFoundError,
 )
-from app.types import (
-    OperationAssociationBase,
-    OperationAssociationPayload,
-    OperationAssociationUpdatePayload,
+from app.types.enums import (
+    MaterialStatusEnum,  
+    MachineStatusEnum,  
+    OpStatusEnum,
 )
 
 

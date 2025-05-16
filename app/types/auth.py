@@ -1,7 +1,8 @@
 
 from pydantic import BaseModel, EmailStr
 
-from app.types import UserResponse
+from app.types.user import UserResponse
+# --- AUTHENTICATION CLASSES --- #
 
 
 class LoginPayload(BaseModel):

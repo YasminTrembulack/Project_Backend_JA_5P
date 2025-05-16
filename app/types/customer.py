@@ -6,7 +6,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, computed_field, field_validator
 
-from app.types import InvalidCountryError, CountryEnum
+from app.types.enums import CountryEnum
+from app.types.exceptions import InvalidCountryError
 
 
 class CustomerBase(BaseModel):
@@ -45,4 +46,3 @@ class CustomerResponse(CustomerBase):
     country_code: str
     created_at: str
     updated_at: str
-

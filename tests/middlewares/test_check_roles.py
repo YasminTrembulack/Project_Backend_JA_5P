@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 from app.middlewares.check_roles import check_roles, get_current_user
 from app.models.user import User
-from app.types import NotAuthenticatedError, PermissionDeniedError
+from app.types.exceptions import NotAuthenticatedError, PermissionDeniedError
 
 mock_admin_user = User(full_name='Admin User', role='Admin')
 mock_regular_user = User(full_name='Regular User', role='User')

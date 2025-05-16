@@ -1,19 +1,22 @@
 from datetime import date, datetime
+
 from loguru import logger
+
 from app.models.material import MaterialPart
 from app.models.mold import Mold
 from app.models.operation import OperationAssociation
 from app.models.part import Part
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
-from app.types import (
+from app.types.enums import (
     ItemStatusEnum,
     MaterialStatusEnum,
     OpStatusEnum,
     PriorityEnum,
     SimpleStatusEnum,
 )
-from app.types import NotFoundError
+from app.types.enums import NotFoundError
+
 
 COMPLETED_PERCENTAGE = 100
 
@@ -67,12 +70,12 @@ class ProgressService:
             progress_weight = 0.3
 
         priority_score = (100 - progress_percentage) * progress_weight
-        
+
         logger.info(f"DAYS: {days_until_delivery}")
         logger.info(f"WEIGHT: {progress_weight}")
         logger.info(f"PROGRESS: {progress_percentage}")
         logger.info(f"PRIORITY SCORE: {priority_score}\n")
-        
+
         if priority_score >= URGENT_PRIORITY_THRESHOLD:
             return PriorityEnum.URGENT
         elif priority_score >= HIGH_PRIORITY_THRESHOLD:
@@ -130,7 +133,8 @@ class ProgressService:
         )
         return round((done / total) * 100, 2) if total > 0 else 0
 
-    def _define_status(self, progress_percentage: float) -> ItemStatusEnum:
+    @staticmethod
+    def _define_status(progress_percentage: float) -> ItemStatusEnum:
         return (
             ItemStatusEnum.COMPLETED
             if progress_percentage == COMPLETED_PERCENTAGE

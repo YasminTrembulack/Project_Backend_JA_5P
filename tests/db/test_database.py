@@ -3,7 +3,7 @@ from unittest.mock import ANY, MagicMock, patch
 import pytest
 
 from app.db import database
-from app.types import DatabaseConnectionError, MigrationExecutionError
+from app.types.exceptions import DatabaseConnectionError, MigrationExecutionError
 
 
 def test_connection_success():

@@ -8,8 +8,8 @@ from app.interfaces.operation_association_repository_interface import (
     IOperationAssociationRepository,
 )
 from app.models.operation import OperationAssociation
-from app.types import InvalidFieldError
-from app.types import OperationAssociationPayload
+from app.types.exceptions import InvalidFieldError
+from app.types.operation_association import OperationAssociationPayload
 
 
 class OperationAssociationRepository(IOperationAssociationRepository):

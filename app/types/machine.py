@@ -5,8 +5,10 @@
 
 from typing import Optional
 from uuid import UUID
+
 from pydantic import BaseModel
-from app.types import MachineStatusEnum
+
+from app.types.enums import MachineStatusEnum
 
 
 class MachineBase(BaseModel):

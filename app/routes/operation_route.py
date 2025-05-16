@@ -1,19 +1,21 @@
-from typing import Literal
-from fastapi import APIRouter, Depends, Query, status
+
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.operation_service import OperationService
-from app.types import (
-    CustomerResponse,
+from app.types.operation import (
+    OperationPayload,
+    OperationQueryParams,
+    OperationResponse,
+    OperationUpdatePayload,
+)
+from app.types.base import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     Metadata,
-    OperationPayload,
-    OperationResponse,
-    OperationUpdatePayload,
 )
 
 router = APIRouter(prefix='/operation')
@@ -43,44 +45,42 @@ def create_operation(
     response_model=GetAllResponse[OperationResponse],
 )
 def get_all_operations(
-    page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=50),
-    order_by: str = Query('created_at'),
-    desc_order: bool = Query(False),
-    associations: list[
-        Literal['machine']
-    ] = Query([]),
+    query: OperationQueryParams = Depends(), # type: ignore
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = OperationService(session)
     operations, total_operations = service.get_all_operations(
-        page, limit, order_by, desc_order
+        query.page, query.limit, query.order_by, query.desc_order
     )
-    total_pages = (total_operations + limit - 1) // limit
+    total_pages = (total_operations + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_operations,
-        limit=limit,
-        page=page,
+        limit=query.limit,
+        page=query.page,
         total_pages=total_pages,
-        has_next=page < total_pages,
-        has_previous=page > 1,
-        order_by=order_by,
-        desc_order=desc_order,
+        has_next=query.page < total_pages,
+        has_previous=query.page > 1,
+        order_by=query.order_by,
+        desc_order=query.desc_order,
     )
-    
+
     operations_response = []
 
     for op in operations:
         operations_dict = op.to_dict()
-        associations_dict = service.configure_associations_response(op, associations)
+        associations_dict = service.configure_associations_response(
+            op, query.associations
+        )
         combined_dict = {**operations_dict, **associations_dict}
         print(combined_dict)
 
         operations_response.append(OperationResponse.model_validate(combined_dict))
-        
+
     return GetAllResponse(
-        message='Operations found successfully.', data=operations_response, metadata=meta
+        message='Operations found successfully.',
+        data=operations_response,
+        metadata=meta
     )
 
 

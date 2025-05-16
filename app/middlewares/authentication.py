@@ -7,7 +7,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.core.security import security
 from app.db.database import get_session
 from app.repositories.user_repositorie import UserRepository
-from app.types import (
+from app.types.exceptions import (
     APIException,
     AuthTokenMissingError,
     InvalidTokenError,

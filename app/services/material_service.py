@@ -7,15 +7,19 @@ from sqlalchemy.orm import Session
 
 from app.models.material import Material
 from app.repositories.material_repositorie import MaterialRepository
-from app.types import TimeUnitEnum
-from app.types import (
-    DataConflictError,
-    InvalidFieldError,
-    InvalidLeadTimeError,
-    NotFoundError,
+from app.types.material import (
+    MaterialBase,
+    MaterialPayload,
+    MaterialUpdatePayload,
 )
-from app.types import MaterialBase, MaterialPayload, MaterialUpdatePayload
 
+from app.types.exceptions import (
+    DataConflictError,
+    InvalidFieldError, 
+    NotFoundError,   
+    InvalidLeadTimeError,
+)
+from app.types.enums import TimeUnitEnum
 
 class MaterialService:
     def __init__(self, db: Session):

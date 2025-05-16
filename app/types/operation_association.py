@@ -6,7 +6,8 @@ from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
-from app.types import OpStatusEnum
+
+from app.types.enums import OpStatusEnum
 
 
 class OperationAssociationBase(BaseModel):

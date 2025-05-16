@@ -21,7 +21,7 @@ from app.routes.part_route import router as part_router
 from app.routes.ping_route import router as ping_router
 from app.routes.user_route import router as user_router
 from app.routes.utils_route import router as utils_router
-from app.types import (
+from app.types.exceptions import (
     AuthTokenMissingError,
     DatabaseConnectionError,
     DataConflictError,

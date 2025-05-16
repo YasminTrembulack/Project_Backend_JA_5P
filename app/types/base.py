@@ -1,14 +1,12 @@
 
-# --- AUTHENTICATION CLASSES --- #
 
 
 from typing import Generic, List, TypeVar
-from pydantic import BaseModel, EmailStr
 
-from app.types import UserResponse
-
+from pydantic import BaseModel, field_validator
 
 T = TypeVar('T')
+
 
 
 # --- RESPONSE CLASSES --- #
@@ -41,7 +39,6 @@ class CountyResponse(BaseModel):
 
 class TimeUnitResponse(BaseModel):
     time_unit: List[str]
-
 
 
 # --- METADATA CLASS --- #

@@ -4,14 +4,16 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.user_service import UserService
-from app.types import (
+from app.types.user import (
+    UserPayload,
+    UserResponse,
+    UserUpdatePayload,
+)
+from app.types.base import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     Metadata,
-    UserPayload,
-    UserResponse,
-    UserUpdatePayload,
 )
 
 router = APIRouter(prefix='/user')

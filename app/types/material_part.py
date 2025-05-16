@@ -5,8 +5,10 @@
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
+
 from pydantic import BaseModel
-from app.types import MaterialStatusEnum
+
+from app.types.enums import MaterialStatusEnum
 
 
 class MaterialPartBase(BaseModel):
