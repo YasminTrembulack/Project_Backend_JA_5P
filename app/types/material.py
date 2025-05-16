@@ -1,5 +1,3 @@
-
-
 # --- MATERIAL CLASSES --- #
 
 

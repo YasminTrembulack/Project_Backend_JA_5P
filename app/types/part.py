@@ -1,5 +1,3 @@
-
-
 # --- PART CLASSES --- #
 
 
@@ -12,10 +10,11 @@ from app.types.enums import (
     ItemStatusEnum,
     SimpleStatusEnum,
 )
-from app.types.request_params import create_query_params_class
 from app.types.material_part import MaterialPartResponse
 from app.types.mold import MoldResponse
 from app.types.operation_association import OperationAssociationResponse
+from app.types.request_params import create_query_params_class
+
 
 class PartBase(BaseModel):
     name: Optional[str] = None
@@ -57,11 +56,10 @@ class PartUpdatePayload(PartBase):
     model_3d: Optional[SimpleStatusEnum] = None
     nc_program: Optional[SimpleStatusEnum] = None
 
+
 PART_ASSOCIATIONS = ['mold', 'operation_associations', 'material_associations']
 
 
 PartQueryParams = create_query_params_class(
-    'PartQueryParams',
-    PART_ASSOCIATIONS,
-    ['created_at']
+    'PartQueryParams', PART_ASSOCIATIONS, ['created_at']
 )

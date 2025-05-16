@@ -6,16 +6,17 @@ from sqlalchemy.orm import Session
 
 from app.models.machine import Machine
 from app.repositories.machine_repositorie import MachineRepository
-from app.types.machine import (
-    MachineBase,
-    MachinePayload,
-    MachineUpdatePayload,
-)
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
     NotFoundError,
 )
+from app.types.machine import (
+    MachineBase,
+    MachinePayload,
+    MachineUpdatePayload,
+)
+
 
 class MachineService:
     def __init__(self, db: Session):

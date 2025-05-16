@@ -1,21 +1,20 @@
-
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.operation_service import OperationService
-from app.types.operation import (
-    OperationPayload,
-    OperationQueryParams,
-    OperationResponse,
-    OperationUpdatePayload,
-)
 from app.types.base import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     Metadata,
+)
+from app.types.operation import (
+    OperationPayload,
+    OperationQueryParams,
+    OperationResponse,
+    OperationUpdatePayload,
 )
 
 router = APIRouter(prefix='/operation')
@@ -45,7 +44,7 @@ def create_operation(
     response_model=GetAllResponse[OperationResponse],
 )
 def get_all_operations(
-    query: OperationQueryParams = Depends(), # type: ignore
+    query: OperationQueryParams = Depends(),  # type: ignore
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
@@ -79,7 +78,7 @@ def get_all_operations(
     return GetAllResponse(
         message='Operations found successfully.',
         data=operations_response,
-        metadata=meta
+        metadata=meta,
     )
 
 

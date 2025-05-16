@@ -17,15 +17,14 @@ from app.types.enums import (
 )
 from app.types.exceptions import NotFoundError
 
-
 COMPLETED_PERCENTAGE = 100
 
-URGENT_DAYS_THRESHOLD = 5     # urgência se a entrega for em até 5 dias
-HIGH_DAYS_THRESHOLD = 15      # alta prioridade até 15 dias
-MEDIUM_DAYS_THRESHOLD = 45    # prioridade média até 45 dias
+URGENT_DAYS_THRESHOLD = 5  # urgência se a entrega for em até 5 dias
+HIGH_DAYS_THRESHOLD = 15  # alta prioridade até 15 dias
+MEDIUM_DAYS_THRESHOLD = 45  # prioridade média até 45 dias
 
 URGENT_PRIORITY_THRESHOLD = 120  # ex: (100 - 0) * 1.2 = 120
-HIGH_PRIORITY_THRESHOLD = 75     # ex: (100 - 0) * 0.8 = 80
+HIGH_PRIORITY_THRESHOLD = 75  # ex: (100 - 0) * 0.8 = 80
 MEDIUM_PRIORITY_THRESHOLD = 35
 
 
@@ -71,10 +70,10 @@ class ProgressService:
 
         priority_score = (100 - progress_percentage) * progress_weight
 
-        logger.info(f"DAYS: {days_until_delivery}")
-        logger.info(f"WEIGHT: {progress_weight}")
-        logger.info(f"PROGRESS: {progress_percentage}")
-        logger.info(f"PRIORITY SCORE: {priority_score}\n")
+        logger.info(f'DAYS: {days_until_delivery}')
+        logger.info(f'WEIGHT: {progress_weight}')
+        logger.info(f'PROGRESS: {progress_percentage}')
+        logger.info(f'PRIORITY SCORE: {priority_score}\n')
 
         if priority_score >= URGENT_PRIORITY_THRESHOLD:
             return PriorityEnum.URGENT

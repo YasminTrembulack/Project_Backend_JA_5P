@@ -1,5 +1,3 @@
-
-
 # --- OPERATION CLASSES --- #
 
 
@@ -35,11 +33,10 @@ class OperationResponse(OperationBase):
 class OperationUpdatePayload(OperationBase):
     pass
 
+
 OPERATIONS_ASSOCIATIONS = ['machine']
 
 
 OperationQueryParams = create_query_params_class(
-    'OperationQueryParams',
-    OPERATIONS_ASSOCIATIONS,
-    ['created_at']
+    'OperationQueryParams', OPERATIONS_ASSOCIATIONS, ['created_at']
 )

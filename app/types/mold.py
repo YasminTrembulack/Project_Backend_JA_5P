@@ -9,13 +9,13 @@ from dateutil import parser
 from pydantic import BaseModel, field_validator
 
 from app.core.settings import Settings
+from app.types.customer import CustomerResponse
 from app.types.enums import (
     ItemStatusEnum,
     PriorityEnum,
 )
-from app.types.user import UserResponse
-from app.types.customer import CustomerResponse
 from app.types.exceptions import InvalidFieldError
+from app.types.user import UserResponse
 
 
 class MoldBase(BaseModel):

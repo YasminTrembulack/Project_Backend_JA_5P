@@ -4,16 +4,16 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.operation_association_service import OperationAssociationService
-from app.types.operation_association import (
-    OperationAssociationPayload,
-    OperationAssociationResponse,
-    OperationAssociationUpdatePayload,
-)
 from app.types.base import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     Metadata,
+)
+from app.types.operation_association import (
+    OperationAssociationPayload,
+    OperationAssociationResponse,
+    OperationAssociationUpdatePayload,
 )
 
 router = APIRouter(prefix='/operation_association')

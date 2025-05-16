@@ -16,6 +16,7 @@ from app.types.exceptions import (
     NotFoundError,
 )
 
+
 class CustomerService:
     def __init__(self, db: Session):
         self.customer_repo = CustomerRepository(db)

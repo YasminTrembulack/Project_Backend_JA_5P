@@ -13,17 +13,17 @@ from app.repositories.material_repositorie import MaterialRepository
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
-from app.types.material_part import (
-    MaterialPartBase,
-    MaterialPartPayload,
-    MaterialPartUpdatePayload,
-)
+from app.types.enums import MaterialStatusEnum, TimeUnitEnum
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.enums import MaterialStatusEnum, TimeUnitEnum
+from app.types.material_part import (
+    MaterialPartBase,
+    MaterialPartPayload,
+    MaterialPartUpdatePayload,
+)
 
 
 class MaterialPartService:

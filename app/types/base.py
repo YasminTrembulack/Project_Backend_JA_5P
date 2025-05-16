@@ -1,12 +1,8 @@
-
-
-
 from typing import Generic, List, TypeVar
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel
 
 T = TypeVar('T')
-
 
 
 # --- RESPONSE CLASSES --- #

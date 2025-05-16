@@ -15,11 +15,10 @@ from app.repositories.operation_association_repositorie import (
 from app.repositories.operation_repositorie import OperationRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
-from app.types.operation_association import (
-    OperationAssociationBase,
-    OperationAssociationPayload,
-    OperationAssociationUpdatePayload,
-
+from app.types.enums import (
+    MachineStatusEnum,
+    MaterialStatusEnum,
+    OpStatusEnum,
 )
 from app.types.exceptions import (
     DataConflictError,
@@ -28,10 +27,10 @@ from app.types.exceptions import (
     MaterialNotAvailableError,
     NotFoundError,
 )
-from app.types.enums import (
-    MaterialStatusEnum,  
-    MachineStatusEnum,  
-    OpStatusEnum,
+from app.types.operation_association import (
+    OperationAssociationBase,
+    OperationAssociationPayload,
+    OperationAssociationUpdatePayload,
 )
 
 
