@@ -57,21 +57,31 @@ class PartService:
 
     @staticmethod
     def configure_associations_response(part: Part, associations: List[str]) -> dict:
-        ASSOCIATION_LOADERS = {
-            'mold': MoldResponse.model_validate(part.mold.to_dict()),
-            'operation_associations': [
+        def _load_mold():
+            return MoldResponse.model_validate(part.mold.to_dict())
+
+        def _load_operation_associations():
+            return [
                 OperationAssociationResponse.model_validate(op.to_dict())
                 for op in part.operation_associations
-            ],
-            'material_associations': [
+            ]
+
+        def _load_material_associations():
+            return [
                 MaterialPartResponse.model_validate(mat.to_dict())
                 for mat in part.material_associations
-            ],
+            ]
+
+        loaders = {
+            'mold': _load_mold,
+            'operation_associations': _load_operation_associations,
+            'material_associations': _load_material_associations,
         }
+
         return {
-            a: ASSOCIATION_LOADERS[a]
-            for a in associations
-            if a in ASSOCIATION_LOADERS
+            key: loaders[key]()
+            for key in associations
+            if key in loaders and getattr(part, key, None) is not None
         }
 
     def delete_part(self, id: str) -> None:

@@ -109,21 +109,34 @@ class MoldService:
 
     @staticmethod
     def configure_associations_response(mold: Mold, associations: List[str]) -> dict:
-        ASSOCIATION_LOADERS = {
-            'customer': CustomerResponse.model_validate(mold.customer.to_dict()),
-            'created_by': UserResponse.model_validate(mold.created_by.to_dict()),
-            'mold_parts': [
+        def _load_customer():
+            return CustomerResponse.model_validate(mold.customer.to_dict())
+
+        def _load_created_by():
+            return UserResponse.model_validate(mold.created_by.to_dict())
+
+        def _load_mold_parts():
+            return [
                 PartResponse.model_validate(p.to_dict()) for p in mold.mold_parts
-            ],
-            'operation_associations': [
+            ]
+
+        def _load_operation_associations():
+            return [
                 OperationAssociationResponse.model_validate(op.to_dict())
                 for op in mold.operation_associations
-            ],
+            ]
+
+        loaders = {
+            'customer': _load_customer,
+            'created_by': _load_created_by,
+            'mold_parts': _load_mold_parts,
+            'operation_associations': _load_operation_associations,
         }
+
         return {
-            a: ASSOCIATION_LOADERS[a]
-            for a in associations
-            if a in ASSOCIATION_LOADERS
+            key: loaders[key]()
+            for key in associations
+            if key in loaders and getattr(mold, key, None) is not None
         }
 
     def _calculate_priority(self, mold: Mold) -> Mold:

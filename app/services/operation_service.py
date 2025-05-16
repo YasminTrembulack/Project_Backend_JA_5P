@@ -55,17 +55,16 @@ class OperationService:
     def configure_associations_response(
         operation: Operation, associations: List[str]
     ) -> dict:
-        ASSOCIATION_LOADERS = {}
+        def _load_machine():
+            return MachineResponse.model_validate(operation.machine.to_dict())
 
-        if operation.machine is not None:
-            ASSOCIATION_LOADERS['machine'] = MachineResponse.model_validate(
-                operation.machine.to_dict()
-            )
-
+        loaders = {
+            'machine': _load_machine,
+        }
         return {
-            a: ASSOCIATION_LOADERS[a]
-            for a in associations
-            if a in ASSOCIATION_LOADERS
+            key: loaders[key]()
+            for key in associations
+            if key in loaders and getattr(operation, key, None) is not None
         }
 
     def delete_operation(self, id: str) -> None:
