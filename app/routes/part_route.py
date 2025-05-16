@@ -46,7 +46,6 @@ def create_part(
     response_model=GetAllResponse[PartResponse],
 )
 def get_all_parts(
-    request: Request,
     query: PartQueryParams = Depends(),
     associations: List[
         Literal['mold', 'operation_associations', 'material_associations']
