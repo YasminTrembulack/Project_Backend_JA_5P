@@ -1,3 +1,4 @@
+from typing import List, Literal
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -13,6 +14,7 @@ from app.types.base import (
 from app.types.customer import CustomerResponse
 from app.types.mold import (
     MoldPayload,
+    MoldQueryParams,
     MoldResponse,
     MoldUpdatePayload,
 )
@@ -46,36 +48,40 @@ def create_mold(
     response_model=GetAllResponse[MoldResponse],
 )
 def get_all_molds(
-    page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=50),
-    order_by: str = Query('priority'),
-    desc_order: bool = Query(False),
+    query: MoldQueryParams = Depends(),
+    associations: List[
+        Literal['customer', 'mold_parts', 'operation_associations', 'created_by']
+    ] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = MoldService(session)
-    molds, total_molds = service.get_all_molds(page, limit, order_by, desc_order)
-    total_pages = (total_molds + limit - 1) // limit
+    molds, total_molds = service.get_all_molds(
+        query.page, query.limit, query.order_by, query.desc_order
+    )
+    total_pages = (total_molds + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_molds,
-        limit=limit,
-        page=page,
+        limit=query.limit,
+        page=query.page,
         total_pages=total_pages,
-        has_next=page < total_pages,
-        has_previous=page > 1,
-        order_by=order_by,
-        desc_order=desc_order,
+        has_next=query.page < total_pages,
+        has_previous=query.page > 1,
+        order_by=query.order_by,
+        desc_order=query.desc_order,
     )
 
     molds_response = []
 
     for m in molds:
         mold_dict = m.to_dict()
+        associations_dict = service.configure_associations_response(
+            m, associations
+        )
+        combined_dict = {**mold_dict, **associations_dict}
 
-        mold_dict['customer'] = CustomerResponse.model_validate(m.customer.to_dict())
-        mold_dict['created_by'] = UserResponse.model_validate(m.created_by.to_dict())
+        molds_response.append(MoldResponse.model_validate(combined_dict))
 
-        molds_response.append(MoldResponse.model_validate(mold_dict))
 
     return GetAllResponse(
         message='Molds found successfully.', data=molds_response, metadata=meta

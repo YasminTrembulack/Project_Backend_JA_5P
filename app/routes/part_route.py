@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from typing import List, Literal
+from fastapi import APIRouter, Depends, Query, Request, status
 from sqlalchemy.orm import Session
+from loguru import logger
 
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
@@ -44,7 +46,11 @@ def create_part(
     response_model=GetAllResponse[PartResponse],
 )
 def get_all_parts(
-    query: PartQueryParams = Depends(),  # type: ignore
+    request: Request,
+    query: PartQueryParams = Depends(),
+    associations: List[
+        Literal['mold', 'operation_associations', 'material_associations']
+    ] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
@@ -69,7 +75,7 @@ def get_all_parts(
     for p in parts:
         part_dict = p.to_dict()
         associations_dict = service.configure_associations_response(
-            p, query.associations
+            p, associations
         )
         combined_dict = {**part_dict, **associations_dict}
 

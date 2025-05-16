@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, status
+from typing import List, Literal
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_session
@@ -44,7 +45,8 @@ def create_operation(
     response_model=GetAllResponse[OperationResponse],
 )
 def get_all_operations(
-    query: OperationQueryParams = Depends(),  # type: ignore
+    query: OperationQueryParams = Depends(),
+    associations: List[Literal['machine']] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
@@ -69,7 +71,7 @@ def get_all_operations(
     for op in operations:
         operations_dict = op.to_dict()
         associations_dict = service.configure_associations_response(
-            op, query.associations
+            op, associations
         )
         combined_dict = {**operations_dict, **associations_dict}
 
