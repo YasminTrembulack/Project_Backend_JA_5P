@@ -13,6 +13,7 @@ from app.types.exceptions import InvalidCountryError
 if TYPE_CHECKING:
     from app.types.mold import MoldResponse
 
+
 class CustomerBase(BaseModel):
     full_name: Optional[str] = None
     country_name: Optional[str] = None
@@ -49,6 +50,7 @@ class CustomerResponse(CustomerBase):
     country_name: str
     created_at: str
     updated_at: str
+
 
 class CustomerQueryParams(BaseQueryParams):
     order_by: str = 'created_at'

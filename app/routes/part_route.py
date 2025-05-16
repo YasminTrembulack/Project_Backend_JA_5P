@@ -1,6 +1,6 @@
 from typing import List, Literal
 
-from fastapi import APIRouter, Depends, Query, Request, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_session

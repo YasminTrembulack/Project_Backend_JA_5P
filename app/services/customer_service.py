@@ -70,14 +70,13 @@ class CustomerService:
 
     def get_customer(self, id: str) -> Customer:
         return self._get_customer_or_404(id)
-    
+
     @staticmethod
-    def configure_associations_response(customer: Customer, associations: List[str]) -> dict:
+    def configure_associations_response(
+        customer: Customer, associations: List[str]
+    ) -> dict:
         def _load_molds():
-            return [
-                MoldResponse.model_validate(c.to_dict())
-                for c in customer.molds
-            ]
+            return [MoldResponse.model_validate(c.to_dict()) for c in customer.molds]
 
         loaders = {
             'molds': _load_molds,

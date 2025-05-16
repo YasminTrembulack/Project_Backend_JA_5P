@@ -1,4 +1,5 @@
 from typing import List, Literal
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -65,7 +66,7 @@ def get_all_customers(
         order_by=query.order_by,
         desc_order=query.desc_order,
     )
-    
+
     customer_response = []
     print(associations)
     for c in customers:
@@ -78,7 +79,7 @@ def get_all_customers(
     return GetAllResponse(
         message='Customers found successfully.',
         data=customer_response,
-        metadata=meta
+        metadata=meta,
     )
 
 
