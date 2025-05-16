@@ -1,10 +1,12 @@
+from typing import Literal
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.part_service import PartService
-from app.types.schemas import (
+from app.types import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
@@ -40,11 +42,14 @@ def create_part(
     status_code=status.HTTP_200_OK,
     response_model=GetAllResponse[PartResponse],
 )
-def get_all_parts(
+def get_all_parts(  # noqa: PLR0913, PLR0917
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=50),
     order_by: str = Query('created_at'),
     desc_order: bool = Query(False),
+    associations: list[
+        Literal['mold', 'operation_associations', 'material_associations']
+    ] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
@@ -61,9 +66,18 @@ def get_all_parts(
         order_by=order_by,
         desc_order=desc_order,
     )
-    parts = [PartResponse.model_validate(m.to_dict()) for m in parts]
+
+    parst_reponse = []
+
+    for p in parts:
+        part_dict = p.to_dict()
+        associations_dict = service.configure_associations_response(p, associations)
+        combined_dict = {**part_dict, **associations_dict}
+
+        parst_reponse.append(PartResponse.model_validate(combined_dict))
+
     return GetAllResponse(
-        message='Parts found successfully.', data=parts, metadata=meta
+        message='Parts found successfully.', data=parst_reponse, metadata=meta
     )
 
 

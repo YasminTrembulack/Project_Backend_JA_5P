@@ -1,10 +1,12 @@
+from typing import Literal
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.operation_service import OperationService
-from app.types.schemas import (
+from app.types import (
+    CustomerResponse,
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
@@ -45,6 +47,9 @@ def get_all_operations(
     limit: int = Query(10, ge=1, le=50),
     order_by: str = Query('created_at'),
     desc_order: bool = Query(False),
+    associations: list[
+        Literal['machine']
+    ] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
@@ -63,9 +68,19 @@ def get_all_operations(
         order_by=order_by,
         desc_order=desc_order,
     )
-    operations = [OperationResponse.model_validate(m.to_dict()) for m in operations]
+    
+    operations_response = []
+
+    for op in operations:
+        operations_dict = op.to_dict()
+        associations_dict = service.configure_associations_response(op, associations)
+        combined_dict = {**operations_dict, **associations_dict}
+        print(combined_dict)
+
+        operations_response.append(OperationResponse.model_validate(combined_dict))
+        
     return GetAllResponse(
-        message='Operations found successfully.', data=operations, metadata=meta
+        message='Operations found successfully.', data=operations_response, metadata=meta
     )
 
 
