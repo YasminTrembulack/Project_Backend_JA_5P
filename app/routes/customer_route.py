@@ -68,7 +68,7 @@ def get_all_customers(
     )
 
     customer_response = []
-    print(associations)
+
     for c in customers:
         customer_dict = c.to_dict()
         associations_dict = service.configure_associations_response(c, associations)

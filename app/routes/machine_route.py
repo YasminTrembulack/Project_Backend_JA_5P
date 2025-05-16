@@ -1,3 +1,5 @@
+from typing import List, Literal
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -12,6 +14,7 @@ from app.types.base import (
 )
 from app.types.machine import (
     MachinePayload,
+    MachineQueryParams,
     MachineResponse,
     MachineUpdatePayload,
 )
@@ -43,31 +46,38 @@ def create_machine(
     response_model=GetAllResponse[MachineResponse],
 )
 def get_all_machines(
-    page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=50),
-    order_by: str = Query('created_at'),
-    desc_order: bool = Query(False),
+    query: MachineQueryParams = Depends(),
+    associations: List[Literal['operations']] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = MachineService(session)
     machines, total_machines = service.get_all_machines(
-        page, limit, order_by, desc_order
+        query.page, query.limit, query.order_by, query.desc_order
     )
-    total_pages = (total_machines + limit - 1) // limit
+    total_pages = (total_machines + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_machines,
-        limit=limit,
-        page=page,
+        limit=query.limit,
+        page=query.page,
         total_pages=total_pages,
-        has_next=page < total_pages,
-        has_previous=page > 1,
-        order_by=order_by,
-        desc_order=desc_order,
+        has_next=query.page < total_pages,
+        has_previous=query.page > 1,
+        order_by=query.order_by,
+        desc_order=query.desc_order,
     )
-    machines = [MachineResponse.model_validate(m.to_dict()) for m in machines]
+
+    machine_response = []
+    
+    for m in machines:
+        machine_dict = m.to_dict()
+        associations_dict = service.configure_associations_response(m, associations)
+        combined_dict = {**machine_dict, **associations_dict}
+
+        machine_response.append(MachineResponse.model_validate(combined_dict))
+
     return GetAllResponse(
-        message='Machines found successfully.', data=machines, metadata=meta
+        message='Machines found successfully.', data=machine_response, metadata=meta
     )
 
 

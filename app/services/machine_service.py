@@ -16,6 +16,7 @@ from app.types.machine import (
     MachinePayload,
     MachineUpdatePayload,
 )
+from app.types.operation import OperationResponse
 
 
 class MachineService:
@@ -70,6 +71,26 @@ class MachineService:
         if not machine:
             raise NotFoundError('Machine not found')
         return machine
+
+    @staticmethod
+    def configure_associations_response(
+        machine: Machine, associations: List[str]
+    ) -> dict:
+        def _load_operations():
+            return [
+                OperationResponse.model_validate(op.to_dict())
+                for op in machine.operations
+            ]
+
+        loaders = {
+            'operations': _load_operations,
+        }
+
+        return {
+            key: loaders[key]()
+            for key in associations
+            if key in loaders and getattr(machine, key, None) is not None
+        }
 
     @staticmethod
     def _update_machine_fields(payload: MachineBase, target: Machine) -> Machine:
