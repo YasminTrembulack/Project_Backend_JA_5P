@@ -1,28 +1,29 @@
 from datetime import date, datetime
-
+from loguru import logger
 from app.models.material import MaterialPart
 from app.models.mold import Mold
 from app.models.operation import OperationAssociation
 from app.models.part import Part
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
-from app.types.enums import (
+from app.types import (
     ItemStatusEnum,
     MaterialStatusEnum,
     OpStatusEnum,
     PriorityEnum,
     SimpleStatusEnum,
 )
-from app.types.exceptions import NotFoundError
+from app.types import NotFoundError
 
 COMPLETED_PERCENTAGE = 100
-URGENT_DAYS_THRESHOLD = 3
-HIGH_DAYS_THRESHOLD = 7
-MEDIUM_DAYS_THRESHOLD = 15
 
-URGENT_PRIORITY_THRESHOLD = 80
-HIGH_PRIORITY_THRESHOLD = 60
-MEDIUM_PRIORITY_THRESHOLD = 40
+URGENT_DAYS_THRESHOLD = 5     # urgência se a entrega for em até 5 dias
+HIGH_DAYS_THRESHOLD = 15      # alta prioridade até 15 dias
+MEDIUM_DAYS_THRESHOLD = 45    # prioridade média até 45 dias
+
+URGENT_PRIORITY_THRESHOLD = 120  # ex: (100 - 0) * 1.2 = 120
+HIGH_PRIORITY_THRESHOLD = 75     # ex: (100 - 0) * 0.8 = 80
+MEDIUM_PRIORITY_THRESHOLD = 35
 
 
 class ProgressService:
@@ -44,10 +45,10 @@ class ProgressService:
 
         part.progress_percentage = progress_percentage
         part.status = self._define_status(progress_percentage)
-
+        print(progress_percentage)
         self.part_repo.update_part(part)
 
-        self.update_mold_progress(part.mold_id)
+        self._update_mold_progress(part.mold_id)
 
     @staticmethod
     def calculate_priority(
@@ -57,16 +58,21 @@ class ProgressService:
         days_until_delivery = max((delivery_date - now).days, 0)
 
         if days_until_delivery <= URGENT_DAYS_THRESHOLD:
-            progress_weight = 1.0
+            progress_weight = 1.8
         elif days_until_delivery <= HIGH_DAYS_THRESHOLD:
-            progress_weight = 0.8
+            progress_weight = 1.3
         elif days_until_delivery <= MEDIUM_DAYS_THRESHOLD:
-            progress_weight = 0.5
+            progress_weight = 0.8
         else:
             progress_weight = 0.3
 
         priority_score = (100 - progress_percentage) * progress_weight
-
+        
+        logger.info(f"DAYS: {days_until_delivery}")
+        logger.info(f"WEIGHT: {progress_weight}")
+        logger.info(f"PROGRESS: {progress_percentage}")
+        logger.info(f"PRIORITY SCORE: {priority_score}\n")
+        
         if priority_score >= URGENT_PRIORITY_THRESHOLD:
             return PriorityEnum.URGENT
         elif priority_score >= HIGH_PRIORITY_THRESHOLD:
@@ -124,7 +130,7 @@ class ProgressService:
         )
         return round((done / total) * 100, 2) if total > 0 else 0
 
-    def _define_status(progress_percentage: float) -> ItemStatusEnum:
+    def _define_status(self, progress_percentage: float) -> ItemStatusEnum:
         return (
             ItemStatusEnum.COMPLETED
             if progress_percentage == COMPLETED_PERCENTAGE
