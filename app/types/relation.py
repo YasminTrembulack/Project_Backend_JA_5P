@@ -1,7 +1,10 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING, List, Optional
 
+from pydantic import BaseModel
+
 if TYPE_CHECKING:
-    from app.types.reponse import (
+    from app.types.response import (
         CustomerResponse,
         MachineResponse,
         MaterialPartResponse,
@@ -14,11 +17,11 @@ if TYPE_CHECKING:
     )
 
 
-class CustomerRelation:
+class CustomerRelation(BaseModel):
     molds: Optional[List['MoldResponse']] = []
 
 
-class MachineRelation:
+class MachineRelation(BaseModel):
     operations: Optional[List['OperationResponse']] = []
 
 
@@ -27,25 +30,19 @@ class MaterialPartRelation:
     part: Optional['PartResponse'] = None
 
 
-class MoldRelation:
+class MoldRelation(BaseModel):
     customer: Optional['CustomerResponse'] = None
     created_by: Optional['UserResponse'] = None
     mold_parts: Optional[List['PartResponse']] = []
     operation_associations: Optional[List['OperationAssociationResponse']] = []
 
 
-class OperationRelation:
+class OperationRelation(BaseModel):
     machine: Optional['MachineResponse'] = None
 
 
-class PartRelation:
+class PartRelation(BaseModel):
     material_associations: Optional[List['MaterialPartResponse']] = []
     operation_associations: Optional[List['OperationAssociationResponse']] = []
     mold: Optional['MoldResponse'] = None
 
-
-CustomerRelation.model_rebuild()
-MachineRelation.model_rebuild()
-MaterialPartRelation.model_rebuild()
-MoldRelation.model_rebuild()
-PartRelation.model_rebuild()

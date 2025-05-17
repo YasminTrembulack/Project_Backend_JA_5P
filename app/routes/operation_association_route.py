@@ -4,15 +4,15 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.operation_association_service import OperationAssociationService
-from app.types.base import (
+from app.types.base import Metadata
+from app.types.response import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
-    Metadata,
-)
-from app.types.operation_association import (
-    OperationAssociationPayload,
     OperationAssociationResponse,
+)
+from app.types.payload import (
+    OperationAssociationPayload,
     OperationAssociationUpdatePayload,
 )
 

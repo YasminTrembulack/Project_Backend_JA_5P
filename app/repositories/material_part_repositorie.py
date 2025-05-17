@@ -9,7 +9,7 @@ from app.interfaces.material_part_repository_interface import (
 )
 from app.models.material_part import MaterialPart
 from app.types.exceptions import InvalidFieldError
-from app.types.material_part import MaterialPartPayload
+from app.types.payload import MaterialPartPayload
 
 
 class MaterialPartRepository(IMaterialPartRepository):

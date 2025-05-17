@@ -13,9 +13,9 @@ from app.types.exceptions import (
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.machine import MachineResponse
-from app.types.operation import (
-    OperationBase,
+from app.types.response import MachineResponse
+from app.types.base import OperationBase
+from app.types.payload import (
     OperationPayload,
     OperationUpdatePayload,
 )

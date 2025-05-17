@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import EmailStr
+from pydantic import BaseModel, EmailStr
 
 from app.types.base import (
     BaseQueryParams,
@@ -24,8 +24,15 @@ from app.types.enums import (
     SimpleStatusEnum,
 )
 
-# --- CUSTOMER CLASSES --- #
 
+# --- AUTHENTICATION CLASSES --- #
+
+class LoginPayload(BaseModel):
+    email: EmailStr
+    password: str
+
+
+# --- CUSTOMER CLASSES --- #
 
 class CustomerPayload(CustomerBase):
     full_name: str

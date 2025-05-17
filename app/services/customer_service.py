@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 from app.models.customer import Customer
 from app.repositories.customer_repositorie import CustomerRepository
-from app.types.customer import (
-    CustomerBase,
+from app.types.base import CustomerBase
+from app.types.payload import (
     CustomerPayload,
     CustomerUpdatePayload,
 )
@@ -15,7 +15,7 @@ from app.types.exceptions import (
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.mold import MoldResponse
+from app.types.response import MoldResponse
 
 
 class CustomerService:

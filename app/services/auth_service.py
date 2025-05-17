@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import security
 from app.repositories.user_repositorie import UserRepository
-from app.types.auth import LoginPayload
+from app.types.payload import LoginPayload
 from app.types.exceptions import InvalidCredentialsError, InvalidTokenError
 
 

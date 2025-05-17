@@ -14,11 +14,13 @@ from app.types.exceptions import (
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.material_part import MaterialPartResponse
-from app.types.mold import MoldResponse
-from app.types.operation_association import OperationAssociationResponse
-from app.types.part import (
-    PartBase,
+from app.types.response import (
+    OperationAssociationResponse,
+    MaterialPartResponse,
+    MoldResponse,
+)
+from app.types.base import PartBase
+from app.types.payload import (
     PartPayload,
     PartUpdatePayload,
 )

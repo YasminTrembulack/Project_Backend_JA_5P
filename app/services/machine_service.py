@@ -11,12 +11,12 @@ from app.types.exceptions import (
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.machine import (
-    MachineBase,
+from app.types.payload import (
     MachinePayload,
     MachineUpdatePayload,
 )
-from app.types.operation import OperationResponse
+from app.types.response import OperationResponse
+from app.types.base import MachineBase
 
 
 class MachineService:

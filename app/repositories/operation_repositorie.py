@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.interfaces.operation_repository_interface import IOperationRepository
 from app.models.operation import Operation
 from app.types.exceptions import InvalidFieldError
-from app.types.operation import OperationPayload
+from app.types.payload import OperationPayload
 
 
 class OperationRepository(IOperationRepository):

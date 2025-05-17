@@ -6,16 +6,16 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.customer_service import CustomerService
-from app.types.base import (
+from app.types.base import Metadata
+from app.types.response import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
-    Metadata,
+    CustomerResponse,
 )
-from app.types.customer import (
+from app.types.payload import (
     CustomerPayload,
     CustomerQueryParams,
-    CustomerResponse,
     CustomerUpdatePayload,
 )
 

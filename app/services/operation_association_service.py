@@ -27,8 +27,8 @@ from app.types.exceptions import (
     MaterialNotAvailableError,
     NotFoundError,
 )
-from app.types.operation_association import (
-    OperationAssociationBase,
+from app.types.base import OperationAssociationBase
+from app.types.payload import (
     OperationAssociationPayload,
     OperationAssociationUpdatePayload,
 )

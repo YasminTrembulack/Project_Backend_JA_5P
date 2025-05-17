@@ -11,20 +11,22 @@ from app.repositories.customer_repositorie import CustomerRepository
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
-from app.types.customer import CustomerResponse
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.mold import (
-    MoldBase,
+from app.types.base import MoldBase
+from app.types.payload import (
     MoldPayload,
     MoldUpdatePayload,
 )
-from app.types.operation_association import OperationAssociationResponse
-from app.types.part import PartResponse
-from app.types.user import UserResponse
+from app.types.response import (
+    OperationAssociationResponse,
+    CustomerResponse,
+    PartResponse,
+    UserResponse,
+)
 
 
 class MoldService:

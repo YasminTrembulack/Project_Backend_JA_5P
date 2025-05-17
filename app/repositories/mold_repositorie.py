@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.interfaces.mold_repository_interface import IMoldRepository
 from app.models.mold import Mold
 from app.types.exceptions import InvalidFieldError
-from app.types.mold import MoldPayload
+from app.types.payload import MoldPayload
 
 
 class MoldRepository(IMoldRepository):

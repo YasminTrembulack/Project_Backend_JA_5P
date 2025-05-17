@@ -9,7 +9,7 @@ from app.interfaces.operation_association_repository_interface import (
 )
 from app.models.operation_association import OperationAssociation
 from app.types.exceptions import InvalidFieldError
-from app.types.operation_association import OperationAssociationPayload
+from app.types.payload import OperationAssociationPayload
 
 
 class OperationAssociationRepository(IOperationAssociationRepository):

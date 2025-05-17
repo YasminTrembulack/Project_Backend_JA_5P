@@ -6,16 +6,16 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.machine_service import MachineService
-from app.types.base import (
+from app.types.base import Metadata
+from app.types.response import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
-    Metadata,
+    MachineResponse,
 )
-from app.types.machine import (
+from app.types.payload import (
     MachinePayload,
     MachineQueryParams,
-    MachineResponse,
     MachineUpdatePayload,
 )
 
@@ -68,7 +68,7 @@ def get_all_machines(
     )
 
     machine_response = []
-    
+
     for m in machines:
         machine_dict = m.to_dict()
         associations_dict = service.configure_associations_response(m, associations)

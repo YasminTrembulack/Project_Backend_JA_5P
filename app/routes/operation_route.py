@@ -6,16 +6,16 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.operation_service import OperationService
-from app.types.base import (
+from app.types.base import Metadata
+from app.types.response import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
-    Metadata,
+    OperationResponse,
 )
-from app.types.operation import (
+from app.types.payload import (
     OperationPayload,
     OperationQueryParams,
-    OperationResponse,
     OperationUpdatePayload,
 )
 

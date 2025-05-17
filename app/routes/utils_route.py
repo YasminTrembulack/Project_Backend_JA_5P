@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status
 
-from app.types.base import CountyResponse, TimeUnitResponse
+from app.types.response import CountyResponse, TimeUnitResponse
 from app.types.enums import CountryEnum, TimeUnitEnum
 
 router = APIRouter(prefix='/utils')

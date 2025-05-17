@@ -14,11 +14,11 @@ from app.types.exceptions import (
     InvalidLeadTimeError,
     NotFoundError,
 )
-from app.types.material import (
-    MaterialBase,
+from app.types.payload import (
     MaterialPayload,
     MaterialUpdatePayload,
 )
+from app.types.base import MaterialBase
 
 
 class MaterialService:

@@ -13,8 +13,8 @@ from app.types.exceptions import (
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.user import (
-    UserBase,
+from app.types.base import UserBase
+from app.types.payload import (
     UserPayload,
     UserUpdatePayload,
 )

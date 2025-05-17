@@ -134,3 +134,13 @@ class UserResponse(ResponseBase, BaseModel):
     email: str
     registration_number: str
     role: str
+
+
+class LoginResponse(BaseModel):
+    message: str
+    user: UserResponse
+    access_token: str
+
+class RefreshTokenResponse(BaseModel):
+    message: str
+    access_token: str

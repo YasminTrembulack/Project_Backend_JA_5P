@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.interfaces.user_repository_interface import IUserRepository
 from app.models.user import User
 from app.types.exceptions import InvalidFieldError
-from app.types.user import UserPayload
+from app.types.payload import UserPayload
 
 
 class UserRepository(IUserRepository):
