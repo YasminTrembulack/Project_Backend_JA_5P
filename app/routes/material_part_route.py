@@ -1,18 +1,21 @@
+from typing import List, Literal
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.material_part_service import MaterialPartService
-from app.types.base import (
+from app.types.base import Metadata
+from app.types.response import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
-    Metadata,
-)
-from app.types.material_part import (
-    MaterialPartPayload,
     MaterialPartResponse,
+)
+from app.types.payload import (
+    MaterialPartPayload,
+    MaterialPartQueryParams,
     MaterialPartUpdatePayload,
 )
 
@@ -46,34 +49,41 @@ def create_material_part(
     response_model=GetAllResponse[MaterialPartResponse],
 )
 def get_all_material_part(
-    page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=50),
-    order_by: str = Query('created_at'),
-    desc_order: bool = Query(False),
+    query: MaterialPartQueryParams = Depends(),
+    associations: List[Literal['material', 'part']] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = MaterialPartService(session)
     material_parts, total_material_parts = service.get_all_material_parts(
-        page, limit, order_by, desc_order
+        query.page, query.limit, query.order_by, query.desc_order
     )
-    total_pages = (total_material_parts + limit - 1) // limit
+    total_pages = (total_material_parts + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_material_parts,
-        limit=limit,
-        page=page,
+        limit=query.limit,
+        page=query.page,
         total_pages=total_pages,
-        has_next=page < total_pages,
-        has_previous=page > 1,
-        order_by=order_by,
-        desc_order=desc_order,
+        has_next=query.page < total_pages,
+        has_previous=query.page > 1,
+        order_by=query.order_by,
+        desc_order=query.desc_order,
     )
-    material_parts = [
-        MaterialPartResponse.model_validate(m.to_dict()) for m in material_parts
-    ]
+
+    material_parts_response = []
+
+    for mp in material_parts:
+        material_part_dict = mp.to_dict()
+        associations_dict = service.configure_associations_response(mp, associations)
+        combined_dict = {**material_part_dict, **associations_dict}
+
+        material_parts_response.append(
+            MaterialPartResponse.model_validate(combined_dict)
+        )
+
     return GetAllResponse(
         message='Material Part found successfully.',
-        data=material_parts,
+        data=material_parts_response,
         metadata=meta,
     )
 

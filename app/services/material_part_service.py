@@ -19,11 +19,13 @@ from app.types.exceptions import (
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.material_part import (
-    MaterialPartBase,
+from app.types.payload import (
     MaterialPartPayload,
     MaterialPartUpdatePayload,
 )
+from app.types.response import PartResponse, MaterialResponse
+from app.types.base import MaterialPartBase
+
 
 
 class MaterialPartService:
@@ -133,6 +135,27 @@ class MaterialPartService:
         if not material:
             raise NotFoundError('Material not found')
         return material
+
+    @staticmethod
+    def configure_associations_response(
+        material_part: MaterialPart, associations: List[str]
+    ) -> dict:
+        def _load_part():
+            return PartResponse.model_validate(material_part.part.to_dict())
+
+        def _load_material():
+            return MaterialResponse.model_validate(material_part.material.to_dict())
+
+        loaders = {
+            'part': _load_part,
+            'material': _load_material,
+        }
+
+        return {
+            key: loaders[key]()
+            for key in associations
+            if key in loaders and getattr(material_part, key, None) is not None
+        }
 
     @staticmethod
     def _update_material_part_fields(
