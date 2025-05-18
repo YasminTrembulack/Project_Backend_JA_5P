@@ -25,11 +25,11 @@ class MachineRelation(BaseModel):
     operations: Optional[List['OperationResponse']] = []
 
 
-class MaterialPartRelation:
+class MaterialPartRelation(BaseModel):
     material: Optional['MaterialResponse'] = None
     part: Optional['PartResponse'] = None
 
-class MaterialRelation:
+class MaterialRelation(BaseModel):
     part_associations: List[Optional['MaterialPartResponse']] = []
     parts: List[Optional['PartResponse']] = []
 
