@@ -29,6 +29,9 @@ class MaterialPartRelation:
     material: Optional['MaterialResponse'] = None
     part: Optional['PartResponse'] = None
 
+class MaterialRelation:
+    part_associations: List[Optional['MaterialPartResponse']] = []
+    parts: List[Optional['PartResponse']] = []
 
 class MoldRelation(BaseModel):
     customer: Optional['CustomerResponse'] = None

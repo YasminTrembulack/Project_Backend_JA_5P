@@ -19,6 +19,7 @@ from app.types.payload import (
     MaterialUpdatePayload,
 )
 from app.types.base import MaterialBase
+from app.types.response import MaterialPartResponse, PartResponse
 
 
 class MaterialService:
@@ -91,6 +92,33 @@ class MaterialService:
             'name', name, exclude_id=exclude_id
         ):
             raise DataConflictError(f"A material with name '{name}' already exists.")
+        
+    @staticmethod
+    def configure_associations_response(
+        material: Material, associations: List[str]
+    ) -> dict:
+        def _load_parts():
+            return [
+                PartResponse.model_validate(p.to_dict())
+                for p in material.parts
+            ]
+
+        def _load_part_associations():
+            return [
+                MaterialPartResponse.model_validate(mp.to_dict())
+                for mp in material.part_associations
+            ]
+
+        loaders = {
+            'parts': _load_parts,
+            'part_associations': _load_part_associations,
+        }
+
+        return {
+            key: loaders[key]()
+            for key in associations
+            if key in loaders and getattr(material, key, None) is not None
+        }
 
     @staticmethod
     def _validate_lead_time(lead_time: str) -> bool:

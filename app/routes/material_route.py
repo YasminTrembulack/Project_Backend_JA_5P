@@ -1,3 +1,4 @@
+from typing import List, Literal
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -13,6 +14,7 @@ from app.types.response import (
 )
 from app.types.payload import (
     MaterialPayload,
+    MaterialQueryParams,
     MaterialUpdatePayload,
 )
 
@@ -43,31 +45,43 @@ def create_material(
     response_model=GetAllResponse[MaterialResponse],
 )
 def get_all_materials(
-    page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=50),
-    order_by: str = Query('created_at'),
-    desc_order: bool = Query(False),
+    query: MaterialQueryParams = Depends(),
+    associations: List[Literal['parts', 'part_associations']] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = MaterialService(session)
     materials, total_materials = service.get_all_materials(
-        page, limit, order_by, desc_order
+        query.page, query.limit, query.order_by, query.desc_order
     )
-    total_pages = (total_materials + limit - 1) // limit
+    total_pages = (total_materials + query.limit - 1) // query.limit    
+    
     meta = Metadata(
         total=total_materials,
-        limit=limit,
-        page=page,
+        limit=query.limit,
+        page=query.page,
         total_pages=total_pages,
-        has_next=page < total_pages,
-        has_previous=page > 1,
-        order_by=order_by,
-        desc_order=desc_order,
+        has_next=query.page < total_pages,
+        has_previous=query.page > 1,
+        order_by=query.order_by,
+        desc_order=query.desc_order,
     )
-    materials = [MaterialResponse.model_validate(m.to_dict()) for m in materials]
+
+    materials_response = []
+
+    for m in materials:
+        material_part_dict = m.to_dict()
+        associations_dict = service.configure_associations_response(m, associations)
+        combined_dict = {**material_part_dict, **associations_dict}
+
+        materials_response.append(
+            MaterialResponse.model_validate(combined_dict)
+        )
+
     return GetAllResponse(
-        message='Materials found successfully.', data=materials, metadata=meta
+        message='Materials found successfully.',
+        data=materials_response,
+        metadata=meta
     )
 
 

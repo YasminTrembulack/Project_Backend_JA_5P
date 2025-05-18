@@ -89,7 +89,10 @@ class MaterialPayload(MaterialBase):
 
 class MaterialUpdatePayload(MaterialBase):
     stock_quantity: Optional[float] = None
+    
 
+class MaterialQueryParams(BaseQueryParams):
+    order_by: str = 'created_at'
 
 # --- MOLD CLASSES --- #
 

@@ -26,6 +26,7 @@ from app.types.relation import (
     CustomerRelation,
     MachineRelation,
     MaterialPartRelation,
+    MaterialRelation,
     MoldRelation,
     OperationRelation,
     PartRelation,
@@ -82,7 +83,7 @@ class MaterialPartResponse(ResponseBase, MaterialPartBase, MaterialPartRelation)
     expected_delivery_date: datetime | None
 
 
-class MaterialResponse(ResponseBase, MaterialBase):  # MaterialRelation
+class MaterialResponse(ResponseBase, MaterialBase, MaterialRelation):
     name: str
     description: str
     stock_quantity: float
