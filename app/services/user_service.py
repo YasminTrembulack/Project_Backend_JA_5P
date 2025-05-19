@@ -18,6 +18,7 @@ from app.types.payload import (
     UserPayload,
     UserUpdatePayload,
 )
+from app.types.response import MoldResponse
 
 
 class UserService:
@@ -74,6 +75,24 @@ class UserService:
     def get_user(self, id: str) -> User:
         return self._get_user_or_404(id)
 
+    @staticmethod
+    def configure_associations_response(user: User, associations: List[str]) -> dict:
+        def _load_molds_created():
+            return [
+                MoldResponse.model_validate(op.to_dict())
+                for op in user.molds_created
+            ]
+
+        loaders = {
+            'molds_created': _load_molds_created,
+        }
+
+        return {
+            key: loaders[key]()
+            for key in associations
+            if key in loaders and getattr(user, key, None) is not None
+        }
+    
     def _validate_user_uniqueness(
         self, email: str, reg_number: str, exclude_id: str = None
     ) -> None:

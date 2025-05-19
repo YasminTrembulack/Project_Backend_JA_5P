@@ -14,6 +14,7 @@ from app.types.base import (
     OperationBase,
     PartBase,
     ResponseBase,
+    UserBase,
 )
 from app.types.enums import (
     ItemStatusEnum,
@@ -30,6 +31,7 @@ from app.types.relation import (
     MoldRelation,
     OperationRelation,
     PartRelation,
+    UserRelation,
 )
 
 T = TypeVar('T')
@@ -129,8 +131,7 @@ class PartResponse(ResponseBase, PartBase, PartRelation):
     mold_id: str
 
 
-class UserResponse(ResponseBase, BaseModel):
-    # UserRelation
+class UserResponse(ResponseBase, UserBase, UserRelation):
     full_name: str
     email: str
     registration_number: str
@@ -141,6 +142,7 @@ class LoginResponse(BaseModel):
     message: str
     user: UserResponse
     access_token: str
+
 
 class RefreshTokenResponse(BaseModel):
     message: str

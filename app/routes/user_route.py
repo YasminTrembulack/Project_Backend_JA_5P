@@ -1,3 +1,4 @@
+from typing import List, Literal
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -13,6 +14,7 @@ from app.types.response import (
 )
 from app.types.payload import (
     UserPayload,
+    UserQueryParams,
     UserUpdatePayload,
 )
 
@@ -41,29 +43,39 @@ def create_user(
     response_model=GetAllResponse[UserResponse],
 )
 def get_all_users(
-    page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=50),
-    order_by: str = Query('full_name'),
-    desc_order: bool = Query(False),
+    query: UserQueryParams = Depends(),
+    associations: List[Literal['molds_created']] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = UserService(session)
-    users, total_users = service.get_all_users(page, limit, order_by, desc_order)
-    total_pages = (total_users + limit - 1) // limit
+    users, total_users = service.get_all_users(
+        query.page, query.limit, query.order_by, query.desc_order
+    )
+    total_pages = (total_users + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_users,
-        limit=limit,
-        page=page,
+        limit=query.limit,
+        page=query.page,
         total_pages=total_pages,
-        has_next=page < total_pages,
-        has_previous=page > 1,
-        order_by=order_by,
-        desc_order=desc_order,
+        has_next=query.page < total_pages,
+        has_previous=query.page > 1,
+        order_by=query.order_by,
+        desc_order=query.desc_order,
     )
-    users = [UserResponse.model_validate(user.to_dict()) for user in users]
+    
+    
+    user_reponse = []
+
+    for u in users:
+        user_dict = u.to_dict()
+        associations_dict = service.configure_associations_response(u, associations)
+        combined_dict = {**user_dict, **associations_dict}
+
+        user_reponse.append(UserResponse.model_validate(combined_dict))
+
     return GetAllResponse(
-        message='Users found successfully.', data=users, metadata=meta
+        message='Users found successfully.', data=user_reponse, metadata=meta
     )
 
 

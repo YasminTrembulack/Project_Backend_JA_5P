@@ -29,9 +29,11 @@ class MaterialPartRelation(BaseModel):
     material: Optional['MaterialResponse'] = None
     part: Optional['PartResponse'] = None
 
+
 class MaterialRelation(BaseModel):
     part_associations: List[Optional['MaterialPartResponse']] = []
     parts: List[Optional['PartResponse']] = []
+
 
 class MoldRelation(BaseModel):
     customer: Optional['CustomerResponse'] = None
@@ -49,3 +51,6 @@ class PartRelation(BaseModel):
     operation_associations: Optional[List['OperationAssociationResponse']] = []
     mold: Optional['MoldResponse'] = None
 
+
+class UserRelation(BaseModel):
+    molds_created: Optional[List['MoldResponse']] = []

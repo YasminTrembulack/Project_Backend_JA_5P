@@ -172,3 +172,6 @@ class UserPayload(UserBase):
 
 class UserUpdatePayload(UserBase):
     pass
+
+class UserQueryParams(BaseQueryParams):
+    order_by: str = 'full_name'
