@@ -69,17 +69,17 @@ def get_all_parts(
         desc_order=query.desc_order,
     )
 
-    parst_reponse = []
+    parts_reponse = []
 
     for p in parts:
         part_dict = p.to_dict()
         associations_dict = service.configure_associations_response(p, associations)
         combined_dict = {**part_dict, **associations_dict}
 
-        parst_reponse.append(PartResponse.model_validate(combined_dict))
+        parts_reponse.append(PartResponse.model_validate(combined_dict))
 
     return GetAllResponse(
-        message='Parts found successfully.', data=parst_reponse, metadata=meta
+        message='Parts found successfully.', data=parts_reponse, metadata=meta
     )
 
 
