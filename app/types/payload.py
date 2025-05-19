@@ -127,6 +127,10 @@ class OperationAssociationUpdatePayload(OperationAssociationBase):
     status: Optional[OpStatusEnum] = None
 
 
+class OperationAssociationQueryParams(BaseQueryParams):
+    order_by: str = 'created_at'
+
+
 # --- OPERATION CLASSES --- #
 
 

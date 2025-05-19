@@ -1,3 +1,4 @@
+from typing import List, Literal
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -7,6 +8,7 @@ from app.services.operation_association_service import OperationAssociationServi
 from app.types.base import Metadata
 from app.types.payload import (
     OperationAssociationPayload,
+    OperationAssociationQueryParams,
     OperationAssociationUpdatePayload,
 )
 from app.types.response import (
@@ -48,35 +50,43 @@ def create_operation_association(
     response_model=GetAllResponse[OperationAssociationResponse],
 )
 def get_all_operation_association(
-    page: int = Query(1, ge=1),
-    limit: int = Query(10, ge=1, le=50),
-    order_by: str = Query('created_at'),
-    desc_order: bool = Query(False),
+    query: OperationAssociationQueryParams = Depends(),
+    associations: List[Literal['operation', 'part', 'model']] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = OperationAssociationService(session)
     operation_associations, total_operation_associations = (
-        service.get_all_operation_associations(page, limit, order_by, desc_order)
+        service.get_all_operation_associations(
+            query.page, query.limit, query.order_by, query.desc_order
+        )
     )
-    total_pages = (total_operation_associations + limit - 1) // limit
+    total_pages = (total_operation_associations + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_operation_associations,
-        limit=limit,
-        page=page,
+        limit=query.limit,
+        page=query.page,
         total_pages=total_pages,
-        has_next=page < total_pages,
-        has_previous=page > 1,
-        order_by=order_by,
-        desc_order=desc_order,
+        has_next=query.page < total_pages,
+        has_previous=query.page > 1,
+        order_by=query.order_by,
+        desc_order=query.desc_order,
     )
-    operation_associations = [
-        OperationAssociationResponse.model_validate(m.to_dict())
-        for m in operation_associations
-    ]
+
+    operation_associations_response = []
+
+    for oa in operation_associations:
+        operation_associations_dict = oa.to_dict()
+        associations_dict = service.configure_associations_response(oa, associations)
+        combined_dict = {**operation_associations_dict, **associations_dict}
+
+        operation_associations_response.append(
+            OperationAssociationResponse.model_validate(combined_dict)
+        )
+        
     return GetAllResponse(
         message='Operation Associations found successfully.',
-        data=operation_associations,
+        data=operation_associations_response,
         metadata=meta,
     )
 

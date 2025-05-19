@@ -29,6 +29,7 @@ from app.types.relation import (
     MaterialPartRelation,
     MaterialRelation,
     MoldRelation,
+    OperationAssociationRelation,
     OperationRelation,
     PartRelation,
     UserRelation,
@@ -105,8 +106,9 @@ class MoldResponse(ResponseBase, MoldBase, MoldRelation):
     customer_id: str
 
 
-class OperationAssociationResponse(ResponseBase, OperationAssociationBase):
-    # OperationAssociationRelation
+class OperationAssociationResponse(
+    ResponseBase, OperationAssociationBase, OperationAssociationRelation
+):
     status: OpStatusEnum
     item_type: str
     item_id: str
