@@ -1,4 +1,5 @@
 from typing import List, Literal
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -6,16 +7,16 @@ from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.user_service import UserService
 from app.types.base import Metadata
+from app.types.payload import (
+    UserPayload,
+    UserQueryParams,
+    UserUpdatePayload,
+)
 from app.types.response import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     UserResponse,
-)
-from app.types.payload import (
-    UserPayload,
-    UserQueryParams,
-    UserUpdatePayload,
 )
 
 router = APIRouter(prefix='/user')
@@ -63,8 +64,7 @@ def get_all_users(
         order_by=query.order_by,
         desc_order=query.desc_order,
     )
-    
-    
+
     user_reponse = []
 
     for u in users:

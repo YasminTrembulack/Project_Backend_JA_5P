@@ -8,12 +8,12 @@ from sqlalchemy.orm.attributes import InstrumentedAttribute
 from app.core.security import security
 from app.models.user import User
 from app.repositories.user_repositorie import UserRepository
+from app.types.base import UserBase
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.base import UserBase
 from app.types.payload import (
     UserPayload,
     UserUpdatePayload,
@@ -92,7 +92,7 @@ class UserService:
             for key in associations
             if key in loaders and getattr(user, key, None) is not None
         }
-    
+
     def _validate_user_uniqueness(
         self, email: str, reg_number: str, exclude_id: str = None
     ) -> None:

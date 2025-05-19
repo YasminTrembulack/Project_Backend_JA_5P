@@ -9,20 +9,20 @@ from app.models.part import Part
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
+from app.types.base import PartBase
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.response import (
-    OperationAssociationResponse,
-    MaterialPartResponse,
-    MoldResponse,
-)
-from app.types.base import PartBase
 from app.types.payload import (
     PartPayload,
     PartUpdatePayload,
+)
+from app.types.response import (
+    MaterialPartResponse,
+    MoldResponse,
+    OperationAssociationResponse,
 )
 
 

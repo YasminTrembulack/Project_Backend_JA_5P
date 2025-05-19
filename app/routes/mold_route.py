@@ -7,16 +7,16 @@ from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.mold_service import MoldService
 from app.types.base import Metadata
+from app.types.payload import (
+    MoldPayload,
+    MoldQueryParams,
+    MoldUpdatePayload,
+)
 from app.types.response import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     MoldResponse,
-)
-from app.types.payload import (
-    MoldPayload,
-    MoldQueryParams,
-    MoldUpdatePayload,
 )
 
 router = APIRouter(prefix='/mold')

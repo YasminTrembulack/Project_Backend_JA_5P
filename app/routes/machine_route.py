@@ -7,16 +7,16 @@ from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.machine_service import MachineService
 from app.types.base import Metadata
+from app.types.payload import (
+    MachinePayload,
+    MachineQueryParams,
+    MachineUpdatePayload,
+)
 from app.types.response import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     MachineResponse,
-)
-from app.types.payload import (
-    MachinePayload,
-    MachineQueryParams,
-    MachineUpdatePayload,
 )
 
 router = APIRouter(prefix='/machine')

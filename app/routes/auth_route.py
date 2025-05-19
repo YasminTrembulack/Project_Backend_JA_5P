@@ -5,7 +5,7 @@ from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.auth_service import AuthService
 from app.types.payload import LoginPayload
-from app.types.response import UserResponse, LoginResponse, RefreshTokenResponse
+from app.types.response import LoginResponse, RefreshTokenResponse, UserResponse
 
 router = APIRouter()
 

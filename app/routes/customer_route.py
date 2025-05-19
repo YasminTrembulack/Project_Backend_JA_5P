@@ -7,16 +7,16 @@ from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.customer_service import CustomerService
 from app.types.base import Metadata
-from app.types.response import (
-    DeleteResponse,
-    EntityResponse,
-    GetAllResponse,
-    CustomerResponse,
-)
 from app.types.payload import (
     CustomerPayload,
     CustomerQueryParams,
     CustomerUpdatePayload,
+)
+from app.types.response import (
+    CustomerResponse,
+    DeleteResponse,
+    EntityResponse,
+    GetAllResponse,
 )
 
 router = APIRouter(prefix='/customer')

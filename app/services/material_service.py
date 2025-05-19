@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.models.material import Material
 from app.repositories.material_repositorie import MaterialRepository
+from app.types.base import MaterialBase
 from app.types.enums import TimeUnitEnum
 from app.types.exceptions import (
     DataConflictError,
@@ -18,7 +19,6 @@ from app.types.payload import (
     MaterialPayload,
     MaterialUpdatePayload,
 )
-from app.types.base import MaterialBase
 from app.types.response import MaterialPartResponse, PartResponse
 
 
@@ -92,16 +92,13 @@ class MaterialService:
             'name', name, exclude_id=exclude_id
         ):
             raise DataConflictError(f"A material with name '{name}' already exists.")
-        
+
     @staticmethod
     def configure_associations_response(
         material: Material, associations: List[str]
     ) -> dict:
         def _load_parts():
-            return [
-                PartResponse.model_validate(p.to_dict())
-                for p in material.parts
-            ]
+            return [PartResponse.model_validate(p.to_dict()) for p in material.parts]
 
         def _load_part_associations():
             return [

@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import BaseModel

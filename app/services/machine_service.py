@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.models.machine import Machine
 from app.repositories.machine_repositorie import MachineRepository
+from app.types.base import MachineBase
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
@@ -16,7 +17,6 @@ from app.types.payload import (
     MachineUpdatePayload,
 )
 from app.types.response import OperationResponse
-from app.types.base import MachineBase
 
 
 class MachineService:

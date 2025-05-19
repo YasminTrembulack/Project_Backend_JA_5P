@@ -13,6 +13,7 @@ from app.repositories.material_repositorie import MaterialRepository
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
+from app.types.base import MaterialPartBase
 from app.types.enums import MaterialStatusEnum, TimeUnitEnum
 from app.types.exceptions import (
     DataConflictError,
@@ -23,9 +24,7 @@ from app.types.payload import (
     MaterialPartPayload,
     MaterialPartUpdatePayload,
 )
-from app.types.response import PartResponse, MaterialResponse
-from app.types.base import MaterialPartBase
-
+from app.types.response import MaterialResponse, PartResponse
 
 
 class MaterialPartService:

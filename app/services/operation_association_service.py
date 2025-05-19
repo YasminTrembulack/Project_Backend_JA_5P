@@ -15,6 +15,7 @@ from app.repositories.operation_association_repositorie import (
 from app.repositories.operation_repositorie import OperationRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.progress_service import ProgressService
+from app.types.base import OperationAssociationBase
 from app.types.enums import (
     MachineStatusEnum,
     MaterialStatusEnum,
@@ -27,7 +28,6 @@ from app.types.exceptions import (
     MaterialNotAvailableError,
     NotFoundError,
 )
-from app.types.base import OperationAssociationBase
 from app.types.payload import (
     OperationAssociationPayload,
     OperationAssociationUpdatePayload,

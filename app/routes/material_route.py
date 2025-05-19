@@ -1,4 +1,5 @@
 from typing import List, Literal
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -6,16 +7,16 @@ from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.material_service import MaterialService
 from app.types.base import Metadata
+from app.types.payload import (
+    MaterialPayload,
+    MaterialQueryParams,
+    MaterialUpdatePayload,
+)
 from app.types.response import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     MaterialResponse,
-)
-from app.types.payload import (
-    MaterialPayload,
-    MaterialQueryParams,
-    MaterialUpdatePayload,
 )
 
 router = APIRouter(prefix='/material')
@@ -54,8 +55,8 @@ def get_all_materials(
     materials, total_materials = service.get_all_materials(
         query.page, query.limit, query.order_by, query.desc_order
     )
-    total_pages = (total_materials + query.limit - 1) // query.limit    
-    
+    total_pages = (total_materials + query.limit - 1) // query.limit
+
     meta = Metadata(
         total=total_materials,
         limit=query.limit,
@@ -74,14 +75,12 @@ def get_all_materials(
         associations_dict = service.configure_associations_response(m, associations)
         combined_dict = {**material_part_dict, **associations_dict}
 
-        materials_response.append(
-            MaterialResponse.model_validate(combined_dict)
-        )
+        materials_response.append(MaterialResponse.model_validate(combined_dict))
 
     return GetAllResponse(
         message='Materials found successfully.',
         data=materials_response,
-        metadata=meta
+        metadata=meta,
     )
 
 

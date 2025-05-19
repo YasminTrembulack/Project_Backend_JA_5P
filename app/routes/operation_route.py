@@ -7,16 +7,16 @@ from app.db.database import get_session
 from app.middlewares.check_roles import check_roles
 from app.services.operation_service import OperationService
 from app.types.base import Metadata
+from app.types.payload import (
+    OperationPayload,
+    OperationQueryParams,
+    OperationUpdatePayload,
+)
 from app.types.response import (
     DeleteResponse,
     EntityResponse,
     GetAllResponse,
     OperationResponse,
-)
-from app.types.payload import (
-    OperationPayload,
-    OperationQueryParams,
-    OperationUpdatePayload,
 )
 
 router = APIRouter(prefix='/operation')

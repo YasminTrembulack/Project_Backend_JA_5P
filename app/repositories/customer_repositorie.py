@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.interfaces.customer_repository_interface import ICustomerRepository
 from app.models.customer import Customer
-from app.types.payload import CustomerPayload
 from app.types.exceptions import InvalidFieldError
+from app.types.payload import CustomerPayload
 
 
 class CustomerRepository(ICustomerRepository):

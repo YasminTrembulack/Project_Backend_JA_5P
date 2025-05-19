@@ -24,8 +24,8 @@ from app.types.enums import (
     SimpleStatusEnum,
 )
 
-
 # --- AUTHENTICATION CLASSES --- #
+
 
 class LoginPayload(BaseModel):
     email: EmailStr
@@ -33,6 +33,7 @@ class LoginPayload(BaseModel):
 
 
 # --- CUSTOMER CLASSES --- #
+
 
 class CustomerPayload(CustomerBase):
     full_name: str
@@ -89,10 +90,11 @@ class MaterialPayload(MaterialBase):
 
 class MaterialUpdatePayload(MaterialBase):
     stock_quantity: Optional[float] = None
-    
+
 
 class MaterialQueryParams(BaseQueryParams):
     order_by: str = 'created_at'
+
 
 # --- MOLD CLASSES --- #
 
@@ -172,6 +174,7 @@ class UserPayload(UserBase):
 
 class UserUpdatePayload(UserBase):
     pass
+
 
 class UserQueryParams(BaseQueryParams):
     order_by: str = 'full_name'

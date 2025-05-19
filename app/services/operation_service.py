@@ -8,17 +8,17 @@ from app.models.machine import Machine
 from app.models.operation import Operation
 from app.repositories.machine_repositorie import MachineRepository
 from app.repositories.operation_repositorie import OperationRepository
+from app.types.base import OperationBase
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
     NotFoundError,
 )
-from app.types.response import MachineResponse
-from app.types.base import OperationBase
 from app.types.payload import (
     OperationPayload,
     OperationUpdatePayload,
 )
+from app.types.response import MachineResponse
 
 
 class OperationService:
