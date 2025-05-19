@@ -150,15 +150,19 @@ class OperationAssociationService:
 
     def get_operation_association(self, id: str) -> OperationAssociation:
         return self._get_operation_association_or_404(id)
-    
+
     @staticmethod
     def configure_associations_response(
         operation_association: OperationAssociation, associations: List[str]
     ) -> dict:
         def _load_part():
             return PartResponse.model_validate(operation_association.part.to_dict())
+
         def _load_operation():
-            return OperationResponse.model_validate(operation_association.operation.to_dict())
+            return OperationResponse.model_validate(
+                operation_association.operation.to_dict()
+            )
+
         def _load_mold():
             return MoldResponse.model_validate(operation_association.mold.to_dict())
 
@@ -170,8 +174,8 @@ class OperationAssociationService:
         return {
             key: loaders[key]()
             for key in associations
-            if key in loaders and 
-            getattr(operation_association, key, None) is not None
+            if key in loaders
+            and getattr(operation_association, key, None) is not None
         }
 
     def _get_operation_association_or_404(self, id: str) -> OperationAssociation:

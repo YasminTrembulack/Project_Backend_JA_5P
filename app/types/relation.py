@@ -51,7 +51,7 @@ class OperationAssociationRelation(BaseModel):
     operation: Optional['OperationResponse'] = None
     part: Optional['PartResponse'] = None
     mold: Optional['MoldResponse'] = None
-    
+
 
 class PartRelation(BaseModel):
     material_associations: Optional[List['MaterialPartResponse']] = []

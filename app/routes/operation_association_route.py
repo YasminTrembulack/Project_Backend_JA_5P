@@ -1,4 +1,5 @@
 from typing import List, Literal
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
@@ -83,7 +84,7 @@ def get_all_operation_association(
         operation_associations_response.append(
             OperationAssociationResponse.model_validate(combined_dict)
         )
-        
+
     return GetAllResponse(
         message='Operation Associations found successfully.',
         data=operation_associations_response,
