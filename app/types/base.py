@@ -23,6 +23,8 @@ class BaseQueryParams(BaseModel):
     page: int = 1
     limit: int = 10
     desc_order: bool = False
+    field: str | None = None
+    value: str | None = None
 
 
 # --- METADATA CLASS --- #
@@ -103,35 +105,35 @@ class MoldBase(BaseModel):
     created_by_id: Optional[str] = None
     customer_id: Optional[str] = None
 
-    @field_validator('delivery_date', mode='before')
-    @classmethod
-    def validate_delivery_date(cls, value):
-        if value is None:
-            return value
+    # @field_validator('delivery_date', mode='before')
+    # @classmethod
+    # def validate_delivery_date(cls, value):
+    #     if value is None:
+    #         return value
 
-        timezone = pytz.timezone(Settings().TZ)
-        current_time = datetime.now(timezone)
+    #     timezone = pytz.timezone(Settings().TZ)
+    #     current_time = datetime.now(timezone)
 
-        if isinstance(value, str):
-            try:
-                value = parser.parse(value)
-            except (ValueError, TypeError):
-                raise InvalidFieldError('Invalid date format. Use YYYY-MM-DD.')
+    #     if isinstance(value, str):
+    #         try:
+    #             value = parser.parse(value)
+    #         except (ValueError, TypeError):
+    #             raise InvalidFieldError('Invalid date format. Use YYYY-MM-DD.')
 
-        if isinstance(value, date) and not isinstance(value, datetime):
-            value_naive = datetime.combine(value, time(23, 59, 59))
-            value = timezone.localize(value_naive)
+    #     if isinstance(value, date) and not isinstance(value, datetime):
+    #         value_naive = datetime.combine(value, time(23, 59, 59))
+    #         value = timezone.localize(value_naive)
 
-        elif isinstance(value, datetime) and value.tzinfo is None:
-            value = timezone.localize(value)
+    #     elif isinstance(value, datetime) and value.tzinfo is None:
+    #         value = timezone.localize(value)
 
-        elif isinstance(value, datetime) and value.tzinfo is not None:
-            value = value.astimezone(timezone)
+    #     elif isinstance(value, datetime) and value.tzinfo is not None:
+    #         value = value.astimezone(timezone)
 
-        if value < current_time:
-            raise InvalidFieldError('Delivery date must be in the future.')
+    #     if value < current_time:
+    #         raise InvalidFieldError('Delivery date must be in the future.')
 
-        return value
+    #     return value
 
 
 class OperationAssociationBase(BaseModel):
