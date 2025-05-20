@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
-from sqlalchemy import UnaryExpression
+from sqlalchemy import BinaryExpression, UnaryExpression
 from sqlalchemy.orm import Session
 
 from app.interfaces.customer_repository_interface import ICustomerRepository
@@ -49,12 +49,20 @@ class CustomerRepository(ICustomerRepository):
         offset: int,
         limit: int,
         order: UnaryExpression,
+        filters: Optional[BinaryExpression] = None,
+        joins: Optional[List] = [],
         include_inactive: Optional[bool] = False,
     ) -> Tuple[List[Customer], int]:
         query = self.db.query(Customer)
 
         if not include_inactive:
             query = query.filter(Customer.is_active.is_(True))
+           
+        for join in joins:
+            query = query.join(join)
+            
+        if filters is not None:
+            query = query.filter(filters)
 
         customers = query.order_by(order).offset(offset).limit(limit).all()
         total_customers = query.count()

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.models.customer import Customer
 from app.repositories.customer_repositorie import CustomerRepository
+from app.services.filter_service import FilterService
 from app.types.base import CustomerBase
 from app.types.exceptions import (
     DataConflictError,
@@ -21,6 +22,7 @@ from app.types.response import MoldResponse
 class CustomerService:
     def __init__(self, db: Session):
         self.customer_repo = CustomerRepository(db)
+        self.filter_service = FilterService()
 
     def customer_register(self, payload: CustomerPayload) -> Customer:
         inactive_duplicate = self._get_or_validate_customer_uniqueness(
@@ -32,7 +34,7 @@ class CustomerService:
         return self.customer_repo.restore_customer(update_customer)
 
     def get_all_customers(
-        self, page: int, limit: int, order_by: str, desc_order: bool
+        self, page: int, limit: int, order_by: str, desc_order: bool, field: str, value: str
     ) -> Tuple[List[Customer], int]:
         if not hasattr(Customer, order_by):
             raise InvalidFieldError(
@@ -44,7 +46,11 @@ class CustomerService:
             if desc_order
             else getattr(Customer, order_by)
         )
-        return self.customer_repo.get_all_customers_paginated(offset, limit, order)
+        filters, joins = self.filter_service.build_filter('customer', field, value)
+
+        return self.customer_repo.get_all_customers_paginated(
+            offset, limit, order, filters, joins
+        )
 
     def delete_customer(self, id: str) -> None:
         customer = self._get_customer_or_404(id)
