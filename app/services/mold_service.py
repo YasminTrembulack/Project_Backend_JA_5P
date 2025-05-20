@@ -1,10 +1,13 @@
-from datetime import date
+from datetime import date, datetime, time
 from typing import List, Tuple
+import pytz
+from dateutil import parser
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 
+from app.core.settings import Settings
 from app.models.customer import Customer
 from app.models.mold import Mold
 from app.repositories.customer_repositorie import CustomerRepository
@@ -38,6 +41,7 @@ class MoldService:
 
     def mold_register(self, payload: MoldPayload) -> Mold:
         self._get_customer_or_404(payload.customer_id)
+        payload.delivery_date = self._validate_delivery_date(payload.delivery_date)
         if payload.name:
             self._validate_name_uniqueness(payload.name)
         else:
@@ -88,10 +92,13 @@ class MoldService:
         updated_data = payload.model_dump(exclude_unset=True)
 
         new_name = updated_data.get('name', mold.name)
+        new_delivery_date = updated_data.get('delivery_date', mold.delivery_date)
         self._validate_name_uniqueness(new_name, mold.id)
 
         its_a_new_delivery_date = True if 'delivery_date' in updated_data else False
 
+        if its_a_new_delivery_date:
+            payload.delivery_date = self._validate_delivery_date(new_delivery_date)
         updated_mold = self._update_mold_fields(payload, mold)
 
         if its_a_new_delivery_date:
@@ -161,3 +168,31 @@ class MoldService:
             if hasattr(target, key):
                 setattr(target, key, value)
         return target
+
+    def _validate_delivery_date(self, value):
+        if value is None:
+            return value
+
+        timezone = pytz.timezone(Settings().TZ)
+        current_time = datetime.now(timezone)
+
+        if isinstance(value, str):
+            try:
+                value = parser.parse(value)
+            except (ValueError, TypeError):
+                raise InvalidFieldError('Invalid date format. Use YYYY-MM-DD.')
+
+        if isinstance(value, date) and not isinstance(value, datetime):
+            value_naive = datetime.combine(value, time(23, 59, 59))
+            value = timezone.localize(value_naive)
+
+        elif isinstance(value, datetime) and value.tzinfo is None:
+            value = timezone.localize(value)
+
+        elif isinstance(value, datetime) and value.tzinfo is not None:
+            value = value.astimezone(timezone)
+
+        if value < current_time:
+            raise InvalidFieldError('Delivery date must be in the future.')
+
+        return value
