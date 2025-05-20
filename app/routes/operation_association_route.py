@@ -52,7 +52,7 @@ def create_operation_association(
 )
 def get_all_operation_association(
     query: OperationAssociationQueryParams = Depends(),
-    associations: List[Literal['operation', 'part', 'model']] = Query([]),
+    associations: List[Literal['operation', 'part', 'mold']] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
