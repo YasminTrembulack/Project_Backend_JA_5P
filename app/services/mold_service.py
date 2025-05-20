@@ -1,8 +1,8 @@
 from datetime import date, datetime, time
 from typing import List, Tuple
+
 import pytz
 from dateutil import parser
-
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import InstrumentedAttribute
@@ -169,30 +169,31 @@ class MoldService:
                 setattr(target, key, value)
         return target
 
-    def _validate_delivery_date(self, value):
-        if value is None:
-            return value
+    @staticmethod
+    def _validate_delivery_date(dd):
+        if dd is None:
+            return dd
 
         timezone = pytz.timezone(Settings().TZ)
         current_time = datetime.now(timezone)
 
-        if isinstance(value, str):
+        if isinstance(dd, str):
             try:
-                value = parser.parse(value)
+                dd = parser.parse(dd)
             except (ValueError, TypeError):
                 raise InvalidFieldError('Invalid date format. Use YYYY-MM-DD.')
 
-        if isinstance(value, date) and not isinstance(value, datetime):
-            value_naive = datetime.combine(value, time(23, 59, 59))
-            value = timezone.localize(value_naive)
+        if isinstance(dd, date) and not isinstance(dd, datetime):
+            value_naive = datetime.combine(dd, time(23, 59, 59))
+            dd = timezone.localize(value_naive)
 
-        elif isinstance(value, datetime) and value.tzinfo is None:
-            value = timezone.localize(value)
+        elif isinstance(dd, datetime) and dd.tzinfo is None:
+            dd = timezone.localize(dd)
 
-        elif isinstance(value, datetime) and value.tzinfo is not None:
-            value = value.astimezone(timezone)
+        elif isinstance(dd, datetime) and dd.tzinfo is not None:
+            dd = dd.astimezone(timezone)
 
-        if value < current_time:
+        if dd < current_time:
             raise InvalidFieldError('Delivery date must be in the future.')
 
-        return value
+        return dd

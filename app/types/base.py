@@ -1,12 +1,9 @@
-from datetime import date, datetime, time
+from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-import pytz
-from dateutil import parser
 from pydantic import BaseModel, EmailStr, computed_field, field_validator
 
-from app.core.settings import Settings
 from app.types.enums import (
     CountryEnum,
     ItemStatusEnum,
@@ -16,7 +13,7 @@ from app.types.enums import (
     PriorityEnum,
     SimpleStatusEnum,
 )
-from app.types.exceptions import InvalidCountryError, InvalidFieldError
+from app.types.exceptions import InvalidCountryError
 
 
 class BaseQueryParams(BaseModel):

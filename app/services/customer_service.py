@@ -2,11 +2,12 @@ from typing import List, Tuple
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 from app.models.customer import Customer
 from app.repositories.customer_repositorie import CustomerRepository
 from app.services.filter_service import FilterService
-from app.types.base import CustomerBase
+from app.types.base import BaseQueryParams, CustomerBase
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
@@ -15,6 +16,7 @@ from app.types.exceptions import (
 from app.types.payload import (
     CustomerPayload,
     CustomerUpdatePayload,
+    PaginationParams,
 )
 from app.types.response import MoldResponse
 
@@ -34,22 +36,28 @@ class CustomerService:
         return self.customer_repo.restore_customer(update_customer)
 
     def get_all_customers(
-        self, page: int, limit: int, order_by: str, desc_order: bool, field: str, value: str
+        self, query: BaseQueryParams
     ) -> Tuple[List[Customer], int]:
-        if not hasattr(Customer, order_by):
+        order_attr = getattr(Customer, query.order_by, None)
+
+        if not isinstance(order_attr, InstrumentedAttribute):
             raise InvalidFieldError(
-                f'Field {order_by} does not exist on Customer model'
+                f'Field {query.order_by} does not exist or is not sortable.'
             )
-        offset = (page - 1) * limit
-        order = (
-            desc(getattr(Customer, order_by))
-            if desc_order
-            else getattr(Customer, order_by)
+
+        offset = (query.page - 1) * query.limit
+        order = desc(order_attr) if query.desc_order else order_attr
+
+        pagination_params = PaginationParams(
+            offset=offset,
+            limit=query.limit,
         )
-        filters, joins = self.filter_service.build_filter('customer', field, value)
+        filters, joins = self.filter_service.build_filter(
+            'customer', query.field, query.value
+        )
 
         return self.customer_repo.get_all_customers_paginated(
-            offset, limit, order, filters, joins
+            pagination_params, order, filters, joins
         )
 
     def delete_customer(self, id: str) -> None:

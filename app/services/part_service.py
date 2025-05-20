@@ -10,13 +10,14 @@ from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
 from app.services.filter_service import FilterService
 from app.services.progress_service import ProgressService
-from app.types.base import PartBase
+from app.types.base import BaseQueryParams, PartBase
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
     NotFoundError,
 )
 from app.types.payload import (
+    PaginationParams,
     PartPayload,
     PartUpdatePayload,
 )
@@ -43,23 +44,28 @@ class PartService:
             payload.name = str(new_name)
         return self.part_repo.create_part(payload)
 
-    def get_all_parts(
-        self, page: int, limit: int, order_by: str, desc_order: bool, field: str, value: str
-    ) -> Tuple[List[Part], int]:
-        order_attr = getattr(Part, order_by, None)
+    def get_all_parts(self, query: BaseQueryParams) -> Tuple[List[Part], int]:
+        order_attr = getattr(Part, query.order_by, None)
 
         if not isinstance(order_attr, InstrumentedAttribute):
             raise InvalidFieldError(
-                f'Field {order_by} does not exist or is not sortable.'
+                f'Field {query.order_by} does not exist or is not sortable.'
             )
-        offset = (page - 1) * limit
-        order = (
-            desc(getattr(Part, order_by)) if desc_order else getattr(Part, order_by)
+
+        offset = (query.page - 1) * query.limit
+        order = desc(order_attr) if query.desc_order else order_attr
+
+        pagination_params = PaginationParams(
+            offset=offset,
+            limit=query.limit,
         )
-        filters, joins = self.filter_service.build_filter('part', field, value)
-        
+
+        filters, joins = self.filter_service.build_filter(
+            'part', query.field, query.value
+        )
+
         return self.part_repo.get_all_parts_paginated(
-            offset, limit, order, filters, joins
+            pagination_params, order, filters, joins
         )
 
     @staticmethod

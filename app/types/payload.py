@@ -182,3 +182,9 @@ class UserUpdatePayload(UserBase):
 
 class UserQueryParams(BaseQueryParams):
     order_by: str = 'full_name'
+
+
+class PaginationParams(BaseModel):
+    offset: int = 0
+    limit: int = 10
+    include_inactive: bool = False

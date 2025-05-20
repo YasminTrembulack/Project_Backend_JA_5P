@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.interfaces.customer_repository_interface import ICustomerRepository
 from app.models.customer import Customer
 from app.types.exceptions import InvalidFieldError
-from app.types.payload import CustomerPayload
+from app.types.payload import CustomerPayload, PaginationParams
 
 
 class CustomerRepository(ICustomerRepository):
@@ -46,26 +46,28 @@ class CustomerRepository(ICustomerRepository):
 
     def get_all_customers_paginated(
         self,
-        offset: int,
-        limit: int,
+        pagination: PaginationParams,
         order: UnaryExpression,
         filters: Optional[BinaryExpression] = None,
         joins: Optional[List] = [],
-        include_inactive: Optional[bool] = False,
     ) -> Tuple[List[Customer], int]:
         query = self.db.query(Customer)
 
-        if not include_inactive:
+        if not pagination.include_inactive:
             query = query.filter(Customer.is_active.is_(True))
-           
-        for join in joins:
-            query = query.join(join)
-            
+
         if filters is not None:
+            for join in joins:
+                query = query.join(join)
             query = query.filter(filters)
 
-        customers = query.order_by(order).offset(offset).limit(limit).all()
         total_customers = query.count()
+        customers = (
+            query.order_by(order)
+            .offset(pagination.offset)
+            .limit(pagination.limit)
+            .all()
+        )
 
         return customers, total_customers
 

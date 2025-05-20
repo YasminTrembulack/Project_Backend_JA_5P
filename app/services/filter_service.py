@@ -1,3 +1,6 @@
+from typing import List, Optional, Tuple
+
+from sqlalchemy.sql.elements import BinaryExpression
 
 from app.models.customer import Customer
 from app.models.machine import Machine
@@ -8,10 +11,6 @@ from app.models.operation import Operation
 from app.models.operation_association import OperationAssociation
 from app.models.part import Part
 from app.models.user import User
-
-from typing import List, Optional, Tuple
-from sqlalchemy.sql.elements import BinaryExpression
-
 
 ALLOWED_FIELDS = {
     'customer': {
@@ -78,40 +77,48 @@ ALLOWED_FIELDS = {
         'registration_number': User.registration_number,
         'role': User.role,
         'mold': User.molds_created,
-    }
-} 
+    },
+}
+
 
 class FilterService:
     def __init__(self):
         self.allowed_fields = ALLOWED_FIELDS
-    
+
     def _validate_field(self, entity: str, attr: str):
         if entity not in self.allowed_fields:
             raise ValueError(f"Entidade '{entity}' não é permitida para filtro")
         if attr not in self.allowed_fields[entity]:
-            raise ValueError(f"O campo '{attr}' não é permitido para a entidade '{entity}'")
+            raise ValueError(
+                f"O campo '{attr}' não é permitido para a entidade '{entity}'"
+            )
 
     def build_filter(
-        self, main_model: str, field: str, value: str
+        self,
+        main_model: str,
+        field: Optional[str] = None,
+        value: Optional[str] = None,
     ) -> Tuple[Optional[BinaryExpression], List]:
         if not field or not value:
             return None, []
         if '.' not in field:
-            raise ValueError("O campo deve estar no formato entidade.campo (ex: customer.name)")
+            raise ValueError(
+                'O campo deve estar no formato entidade.campo (ex: customer.name)'
+            )
 
         entity, attr = field.split('.', 1)
         self._validate_field(entity, attr)
 
         column = self.allowed_fields[entity][attr]
-        filter_condition = column.ilike(f"%{value}%")
-        print(column)
-        print(filter_condition)
+        filter_condition = column.ilike(f'%{value}%')
 
         joins = []
         if entity != main_model:
             rel = self.allowed_fields[main_model].get(entity)
             if rel is None:
-                raise ValueError(f"Relacionamento '{entity}' não encontrado em '{main_model}'")
+                raise ValueError(
+                    f"Relacionamento '{entity}' não encontrado em '{main_model}'"
+                )
             joins.append(rel)
 
         return filter_condition, joins

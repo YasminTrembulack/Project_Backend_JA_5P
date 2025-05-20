@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.interfaces.part_repository_interface import IPartRepository
 from app.models.part import Part
 from app.types.exceptions import InvalidFieldError
-from app.types.payload import PartPayload
+from app.types.payload import PaginationParams, PartPayload
 
 COMPLETED_PERCENTAGE = 100
 
@@ -53,26 +53,28 @@ class PartRepository(IPartRepository):
 
     def get_all_parts_paginated(
         self,
-        offset: int,
-        limit: int,
+        pagination: PaginationParams,
         order: UnaryExpression,
         filters: Optional[BinaryExpression] = None,
         joins: Optional[List] = [],
-        include_inactive: Optional[bool] = False,
     ) -> Tuple[List[Part], int]:
         query = self.db.query(Part)
 
-        if not include_inactive:
+        if not pagination.include_inactive:
             query = query.filter(Part.is_active.is_(True))
-            
-        for join in joins:
-            query = query.join(join)
-            
+
         if filters is not None:
+            for join in joins:
+                query = query.join(join)
             query = query.filter(filters)
 
-        parts = query.order_by(order).offset(offset).limit(limit).all()
         total_parts = query.count()
+        parts = (
+            query.order_by(order)
+            .offset(pagination.offset)
+            .limit(pagination.limit)
+            .all()
+        )
 
         return parts, total_parts
 

@@ -46,25 +46,23 @@ def create_customer(
     response_model=GetAllResponse[CustomerResponse],
 )
 def get_all_customers(
-    q: CustomerQueryParams = Depends(),
+    query: CustomerQueryParams = Depends(),
     associations: List[Literal['molds']] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = CustomerService(session)
-    customers, total_customers = service.get_all_customers(
-        q.page, q.limit, q.order_by, q.desc_order, q.field, q.value
-    )
-    total_pages = (total_customers + q.limit - 1) // q.limit
+    customers, total_customers = service.get_all_customers(query)
+    total_pages = (total_customers + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_customers,
-        limit=q.limit,
-        page=q.page,
+        limit=query.limit,
+        page=query.page,
         total_pages=total_pages,
-        has_next=q.page < total_pages,
-        has_previous=q.page > 1,
-        order_by=q.order_by,
-        desc_order=q.desc_order,
+        has_next=query.page < total_pages,
+        has_previous=query.page > 1,
+        order_by=query.order_by,
+        desc_order=query.desc_order,
     )
 
     customer_response = []
