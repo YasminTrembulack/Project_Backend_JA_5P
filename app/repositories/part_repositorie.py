@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
-from sqlalchemy import UnaryExpression
+from sqlalchemy import BinaryExpression, UnaryExpression
 from sqlalchemy.orm import Session
 
 from app.interfaces.part_repository_interface import IPartRepository
@@ -56,12 +56,20 @@ class PartRepository(IPartRepository):
         offset: int,
         limit: int,
         order: UnaryExpression,
+        filters: Optional[BinaryExpression] = None,
+        joins: Optional[List] = [],
         include_inactive: Optional[bool] = False,
     ) -> Tuple[List[Part], int]:
         query = self.db.query(Part)
 
         if not include_inactive:
             query = query.filter(Part.is_active.is_(True))
+            
+        for join in joins:
+            query = query.join(join)
+            
+        if filters is not None:
+            query = query.filter(filters)
 
         parts = query.order_by(order).offset(offset).limit(limit).all()
         total_parts = query.count()

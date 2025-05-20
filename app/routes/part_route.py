@@ -46,7 +46,7 @@ def create_part(
     response_model=GetAllResponse[PartResponse],
 )
 def get_all_parts(
-    query: PartQueryParams = Depends(),
+    q: PartQueryParams = Depends(),
     associations: List[
         Literal['mold', 'operation_associations', 'material_associations']
     ] = Query([]),
@@ -55,18 +55,18 @@ def get_all_parts(
 ):
     service = PartService(session)
     parts, total_parts = service.get_all_parts(
-        query.page, query.limit, query.order_by, query.desc_order
+        q.page, q.limit, q.order_by, q.desc_order, q.field, q.value
     )
-    total_pages = (total_parts + query.limit - 1) // query.limit
+    total_pages = (total_parts + q.limit - 1) // q.limit
     meta = Metadata(
         total=total_parts,
-        limit=query.limit,
-        page=query.page,
+        limit=q.limit,
+        page=q.page,
         total_pages=total_pages,
-        has_next=query.page < total_pages,
-        has_previous=query.page > 1,
-        order_by=query.order_by,
-        desc_order=query.desc_order,
+        has_next=q.page < total_pages,
+        has_previous=q.page > 1,
+        order_by=q.order_by,
+        desc_order=q.desc_order,
     )
 
     parts_reponse = []

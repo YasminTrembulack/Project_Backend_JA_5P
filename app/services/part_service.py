@@ -8,6 +8,7 @@ from app.models.mold import Mold
 from app.models.part import Part
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
+from app.services.filter_service import FilterService
 from app.services.progress_service import ProgressService
 from app.types.base import PartBase
 from app.types.exceptions import (
@@ -30,6 +31,7 @@ class PartService:
     def __init__(self, db: Session):
         self.part_repo = PartRepository(db)
         self.mold_repo = MoldRepository(db)
+        self.filter_service = FilterService()
         self.progress_service = ProgressService(self.mold_repo, self.part_repo)
 
     def part_register(self, payload: PartPayload) -> Part:  # ! OK
@@ -42,7 +44,7 @@ class PartService:
         return self.part_repo.create_part(payload)
 
     def get_all_parts(
-        self, page: int, limit: int, order_by: str, desc_order: bool
+        self, page: int, limit: int, order_by: str, desc_order: bool, field: str, value: str
     ) -> Tuple[List[Part], int]:
         order_attr = getattr(Part, order_by, None)
 
@@ -54,8 +56,11 @@ class PartService:
         order = (
             desc(getattr(Part, order_by)) if desc_order else getattr(Part, order_by)
         )
-        # options = self._configure_associations_options(associations)
-        return self.part_repo.get_all_parts_paginated(offset, limit, order)
+        filters, joins = self.filter_service.build_filter('part', field, value)
+        
+        return self.part_repo.get_all_parts_paginated(
+            offset, limit, order, filters, joins
+        )
 
     @staticmethod
     def configure_associations_response(part: Part, associations: List[str]) -> dict:
