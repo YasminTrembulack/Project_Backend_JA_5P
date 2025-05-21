@@ -13,7 +13,6 @@ from app.types.enums import (
     MaterialStatusEnum,
     OpStatusEnum,
     PriorityEnum,
-    SimpleStatusEnum,
 )
 from app.types.exceptions import NotFoundError
 
@@ -40,9 +39,10 @@ class ProgressService:
         active_operations = [
             oa for oa in part.operation_associations if oa.is_active
         ]
-
+        model_3d = part.model_3d_id != None
+        nc_program = part.nc_program_id != None
         progress_percentage = self._calculate_part_progress_percentage(
-            active_operations, active_material, part.model_3d, part.nc_program
+            active_operations, active_material, model_3d, nc_program
         )
 
         part.progress_percentage = progress_percentage
@@ -116,8 +116,8 @@ class ProgressService:
     def _calculate_part_progress_percentage(
         active_operations: list[OperationAssociation],
         active_material: list[MaterialPart],
-        model_3d: SimpleStatusEnum,
-        nc_program: SimpleStatusEnum,
+        model_3d: bool,
+        nc_program: bool,
     ) -> float:
         total = len(active_operations) + len(active_material) + 2
         done = (
@@ -127,8 +127,8 @@ class ProgressService:
                 for m in active_material
                 if m.status == MaterialStatusEnum.AVAILABLE
             )
-            + (1 if model_3d == SimpleStatusEnum.APPROVED else 0)
-            + (1 if nc_program == SimpleStatusEnum.APPROVED else 0)
+            + (1 if model_3d else 0)
+            + (1 if nc_program else 0)
         )
         return round((done / total) * 100, 2) if total > 0 else 0
 
