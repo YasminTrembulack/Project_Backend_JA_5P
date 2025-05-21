@@ -40,12 +40,6 @@ class ItemStatusEnum(str, Enum):
     IN_PROGRESS = 'In Progress'
     COMPLETED = 'Completed'
 
-
-class SimpleStatusEnum(str, Enum):
-    PENDING = 'Pending'
-    APPROVED = 'Approved'
-
-
 class MachineStatusEnum(str, Enum):
     AVAILABLE = 'Available'
     UNDER_MAINTENANCE = 'Under Maintenance'
