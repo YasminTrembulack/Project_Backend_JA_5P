@@ -11,7 +11,12 @@ class InvalidTokenError(APIException):
 
     def __init__(self):
         super().__init__('Invalid token, please re-authenticate again.')
-
+        
+class InvalidExcelFileError(APIException):
+    """Raised when the uploaded file is not a valid Excel file (.xls or .xlsx)"""
+    
+    def __init__(self):
+        super().__init__('The file must be of type .xls, .xlsx. or .xlsm')
 
 class PermissionDeniedError(APIException):
     pass
