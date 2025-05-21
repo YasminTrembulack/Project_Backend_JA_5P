@@ -9,7 +9,9 @@ from app.types.base import (
     MaterialBase,
     MaterialPartBase,
     Metadata,
+    Model3DBase,
     MoldBase,
+    NcProgramBase,
     OperationAssociationBase,
     OperationBase,
     PartBase,
@@ -21,14 +23,15 @@ from app.types.enums import (
     MachineStatusEnum,
     OpStatusEnum,
     PriorityEnum,
-    SimpleStatusEnum,
 )
 from app.types.relation import (
     CustomerRelation,
     MachineRelation,
     MaterialPartRelation,
     MaterialRelation,
+    Model3DRelation,
     MoldRelation,
+    NcProgramRelation,
     OperationAssociationRelation,
     OperationRelation,
     PartRelation,
@@ -94,6 +97,10 @@ class MaterialResponse(ResponseBase, MaterialBase, MaterialRelation):
     lead_time: str
 
 
+class Model3DResponse(ResponseBase, Model3DBase, Model3DRelation):
+    name: str | None
+
+
 class MoldResponse(ResponseBase, MoldBase, MoldRelation):
     name: str
     delivery_date: datetime
@@ -103,8 +110,10 @@ class MoldResponse(ResponseBase, MoldBase, MoldRelation):
     status: ItemStatusEnum
     dimensions: str | None
     created_by_id: str
-    customer_id: str
+    customer_id: str | None
 
+class NcProgramResponse(ResponseBase, NcProgramBase, NcProgramRelation):
+    name: str | None
 
 class OperationAssociationResponse(
     ResponseBase, OperationAssociationBase, OperationAssociationRelation
@@ -127,8 +136,8 @@ class PartResponse(ResponseBase, PartBase, PartRelation):
     quantity: int
     progress_percentage: float
     status: ItemStatusEnum
-    model_3d: SimpleStatusEnum
-    nc_program: SimpleStatusEnum
+    model_3d_id: str | None
+    nc_program_id: str | None
     mold: Optional[MoldResponse] = None
     mold_id: str
 
