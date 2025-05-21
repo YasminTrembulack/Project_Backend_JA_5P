@@ -11,7 +11,6 @@ from app.types.enums import (
     MaterialStatusEnum,
     OpStatusEnum,
     PriorityEnum,
-    SimpleStatusEnum,
 )
 from app.types.exceptions import InvalidCountryError
 
@@ -67,7 +66,10 @@ class CustomerBase(BaseModel):
             if self.country_name
             else None
         )
-
+class FileEntityBase(BaseModel):
+    name: Optional[str] = None
+    responsible: Optional[str] = None
+    path: Optional[str] = None
 
 class MachineBase(BaseModel):
     name: Optional[str] = None
@@ -90,6 +92,9 @@ class MaterialBase(BaseModel):
     lead_time: Optional[str] = None
     unit_of_measure: Optional[str] = None
 
+
+class Model3DBase(FileEntityBase):
+    pass
 
 class MoldBase(BaseModel):
     name: Optional[str] = None
@@ -133,6 +138,9 @@ class MoldBase(BaseModel):
     #     return value
 
 
+class NcProgramBase(FileEntityBase):
+    pass
+
 class OperationAssociationBase(BaseModel):
     status: Optional[OpStatusEnum] = OpStatusEnum.PENDING
     item_type: Optional[str] = None
@@ -152,8 +160,8 @@ class PartBase(BaseModel):
     quantity: Optional[int] = 1
     progress_percentage: Optional[float] = 0.0
     status: Optional[ItemStatusEnum] = ItemStatusEnum.PENDING
-    model_3d: Optional[SimpleStatusEnum] = SimpleStatusEnum.PENDING
-    nc_program: Optional[SimpleStatusEnum] = SimpleStatusEnum.PENDING
+    model_3d_id: Optional[str] = None
+    nc_program_id: Optional[str] = None
     mold_id: Optional[str] = None
 
 
