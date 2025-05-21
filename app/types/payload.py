@@ -9,7 +9,9 @@ from app.types.base import (
     MachineBase,
     MaterialBase,
     MaterialPartBase,
+    Model3DBase,
     MoldBase,
+    NcProgramBase,
     OperationAssociationBase,
     OperationBase,
     PartBase,
@@ -21,7 +23,6 @@ from app.types.enums import (
     MaterialStatusEnum,
     OpStatusEnum,
     PriorityEnum,
-    SimpleStatusEnum,
 )
 
 # --- AUTHENTICATION CLASSES --- #
@@ -96,12 +97,24 @@ class MaterialQueryParams(BaseQueryParams):
     order_by: str = 'created_at'
 
 
+# --- MODEL 3D CLASSES --- #
+
+class Model3DPayload(Model3DBase):
+    name: str
+
+class Model3DUpdatePayload(Model3DBase):
+    pass
+
+class Model3DQueryParams(BaseQueryParams):
+    order_by: str = 'created_at'
+
+
 # --- MOLD CLASSES --- #
 
 
 class MoldPayload(MoldBase):
     delivery_date: datetime
-    customer_id: str
+    # customer_id: str
 
 
 class MoldUpdatePayload(MoldBase):
@@ -114,6 +127,16 @@ class MoldUpdatePayload(MoldBase):
 class MoldQueryParams(BaseQueryParams):
     order_by: str = 'created_at'
 
+# --- NC PROGRAM CLASSES --- #
+
+class NcProgramPayload(NcProgramBase):
+    name: str
+
+class NcProgramUpdatePayload(NcProgramBase):
+    pass
+
+class NcProgramQueryParams(BaseQueryParams):
+    order_by: str = 'created_at'
 
 # --- OPERATION ASSOCIATION CLASSES --- #
 
@@ -157,8 +180,6 @@ class PartUpdatePayload(PartBase):
     quantity: Optional[int] = None
     progress_percentage: Optional[float] = None
     status: Optional[ItemStatusEnum] = None
-    model_3d: Optional[SimpleStatusEnum] = None
-    nc_program: Optional[SimpleStatusEnum] = None
 
 
 class PartQueryParams(BaseQueryParams):
