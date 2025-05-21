@@ -114,3 +114,13 @@ class MoldRepository(IMoldRepository):
         if not include_inactive:
             query = query.filter(Mold.is_active.is_(True))
         return query.count()
+
+    def delete_mold_by_name(self, name: str) -> bool: #TODO Remover depois!!!!
+        mold = self.db.query(Mold).filter(Mold.name == name).first()
+
+        if mold is None:
+            return False  # Não encontrado
+
+        self.db.delete(mold)
+        self.db.commit()
+        return True
