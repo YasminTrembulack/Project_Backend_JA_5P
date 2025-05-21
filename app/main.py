@@ -9,6 +9,7 @@ from app.middlewares.authentication import AuthenticationMiddleware
 from app.middlewares.erro_handling import create_exception_handler
 from app.routes.auth_route import router as auth_router
 from app.routes.customer_route import router as customer_router
+from app.routes.data_route import router as data_router
 from app.routes.machine_route import router as machine_router
 from app.routes.material_part_route import router as material_part_router
 from app.routes.material_route import router as material_router
@@ -28,6 +29,7 @@ from app.types.exceptions import (
     ExpiredSignatureError,
     InvalidCountryError,
     InvalidCredentialsError,
+    InvalidExcelFileError,
     InvalidFieldError,
     InvalidLeadTimeError,
     InvalidMachineStateError,
@@ -67,6 +69,7 @@ app.add_middleware(AuthenticationMiddleware)
 routers = [
     auth_router,
     customer_router,
+    data_router,
     machine_router,
     material_part_router,
     material_router,
@@ -180,5 +183,12 @@ app.add_exception_handler(
     exc_class_or_status_code=MaterialNotAvailableError,
     handler=create_exception_handler(
         status.HTTP_400_BAD_REQUEST, 'Material not available'
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=InvalidExcelFileError,
+    handler=create_exception_handler(
+        status.HTTP_400_BAD_REQUEST, 'The file must be of type .xls, .xlsx. or .xlsm'
     ),
 )
