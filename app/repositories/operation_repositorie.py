@@ -1,13 +1,13 @@
 from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
-from sqlalchemy import UnaryExpression
+from sqlalchemy import UnaryExpression, BinaryExpression
 from sqlalchemy.orm import Session, joinedload
 
 from app.interfaces.operation_repository_interface import IOperationRepository
 from app.models.operation import Operation
 from app.types.exceptions import InvalidFieldError
-from app.types.payload import OperationPayload
+from app.types.payload import OperationPayload, PaginationParams
 
 
 class OperationRepository(IOperationRepository):
@@ -53,18 +53,28 @@ class OperationRepository(IOperationRepository):
 
     def get_all_operations_paginated(
         self,
-        offset: int,
-        limit: int,
+        pagination: PaginationParams,
         order: UnaryExpression,
-        include_inactive: Optional[bool] = False,
+        filters: Optional[BinaryExpression] = None,
+        joins: Optional[List] = [],
     ) -> Tuple[List[Operation], int]:
         query = self.db.query(Operation)
 
-        if not include_inactive:
+        if not pagination.include_inactive:
             query = query.filter(Operation.is_active.is_(True))
+        
+        if filters is not None:
+            for join in joins:
+                query = query.join(join)
+            query = query.filter(filters)
 
-        operations = query.order_by(order).offset(offset).limit(limit).all()
         total_operations = query.count()
+        operations = (
+            query.order_by(order)
+            .offset(pagination.offset)
+            .limit(pagination.limit)
+            .all()
+        )
 
         return operations, total_operations
 

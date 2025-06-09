@@ -3,12 +3,14 @@ from typing import List, Tuple
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 from app.models.machine import Machine
 from app.models.operation import Operation
 from app.repositories.machine_repositorie import MachineRepository
 from app.repositories.operation_repositorie import OperationRepository
-from app.types.base import OperationBase
+from app.services.filter_service import FilterService
+from app.types.base import BaseQueryParams, OperationBase
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
@@ -17,14 +19,16 @@ from app.types.exceptions import (
 from app.types.payload import (
     OperationPayload,
     OperationUpdatePayload,
+    PaginationParams,
 )
 from app.types.response import MachineResponse
 
 
 class OperationService:
     def __init__(self, db: Session):
-        self.operation_repo = OperationRepository(db)
+        self.filter_service = FilterService()
         self.machine_repo = MachineRepository(db)
+        self.operation_repo = OperationRepository(db)
 
     def operation_register(self, payload: OperationPayload) -> Operation:
         if payload.machine_id:
@@ -37,19 +41,29 @@ class OperationService:
         return self.operation_repo.create_operation(payload)
 
     def get_all_operations(
-        self, page: int, limit: int, order_by: str, desc_order: bool
+        self, query: BaseQueryParams
     ) -> Tuple[List[Operation], int]:
-        if not hasattr(Operation, order_by):
+        order_attr = getattr(Operation, query.order_by, None)
+        
+        if not isinstance(order_attr, InstrumentedAttribute):
             raise InvalidFieldError(
-                f'Field {order_by} does not exist on Operation model'
+                f'Field {query.order_by} does not exist on Operation model'
             )
-        offset = (page - 1) * limit
-        order = (
-            desc(getattr(Operation, order_by))
-            if desc_order
-            else getattr(Operation, order_by)
+        offset = (query.page - 1) * query.limit
+        order = desc(order_attr) if query.desc_order else order_attr
+        
+        pagination_params = PaginationParams(
+            offset=offset,
+            limit=query.limit,
         )
-        return self.operation_repo.get_all_operations_paginated(offset, limit, order)
+
+        filters, joins = self.filter_service.build_filter(
+            'operation', query.field, query.value
+        )
+        
+        return self.operation_repo.get_all_operations_paginated(
+            pagination_params, order, filters, joins
+        )
 
     @staticmethod
     def configure_associations_response(

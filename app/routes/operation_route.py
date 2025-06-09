@@ -52,9 +52,7 @@ def get_all_operations(
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = OperationService(session)
-    operations, total_operations = service.get_all_operations(
-        query.page, query.limit, query.order_by, query.desc_order
-    )
+    operations, total_operations = service.get_all_operations(query)
     total_pages = (total_operations + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_operations,
