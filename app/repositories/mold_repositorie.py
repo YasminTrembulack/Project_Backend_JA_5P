@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
 from sqlalchemy import UnaryExpression, BinaryExpression
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 
 from app.interfaces.mold_repository_interface import IMoldRepository
 from app.models.mold import Mold
