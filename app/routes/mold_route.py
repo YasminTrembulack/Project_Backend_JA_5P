@@ -55,9 +55,7 @@ def get_all_molds(
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = MoldService(session)
-    molds, total_molds = service.get_all_molds(
-        query.page, query.limit, query.order_by, query.desc_order
-    )
+    molds, total_molds = service.get_all_molds(query)
     total_pages = (total_molds + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_molds,
@@ -68,6 +66,8 @@ def get_all_molds(
         has_previous=query.page > 1,
         order_by=query.order_by,
         desc_order=query.desc_order,
+        value=query.value,
+        field=query.field
     )
 
     molds_response = []
