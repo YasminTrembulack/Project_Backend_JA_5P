@@ -23,7 +23,9 @@ from app.types.payload import (
 )
 from app.types.response import (
     MaterialPartResponse,
+    Model3DResponse,
     MoldResponse,
+    NcProgramResponse,
     OperationAssociationResponse,
 )
 
@@ -84,11 +86,19 @@ class PartService:
                 MaterialPartResponse.model_validate(mat.to_dict())
                 for mat in part.material_associations
             ]
+        
+        def _load_nc_program():
+            return NcProgramResponse.model_validate(part.nc_program.to_dict())
+        
+        def _load_model_3d():
+            return Model3DResponse.model_validate(part.model_3d.to_dict())
 
         loaders = {
             'mold': _load_mold,
             'operation_associations': _load_operation_associations,
             'material_associations': _load_material_associations,
+            'nc_program': _load_nc_program,
+            'model_3d': _load_model_3d,
         }
 
         return {
@@ -119,13 +129,13 @@ class PartService:
         new_mold_id = updated_data.get('mold_id', part.mold_id)
         self._get_mold_or_404(new_mold_id)
 
-        its_a_new_3d = True if 'model_3d' in updated_data else False
-        its_a_new_nc = True if 'nc_program' in updated_data else False
-
         updated_part = self._update_part_fields(payload, part)
         new_part = self.part_repo.update_part(updated_part)
 
-        if its_a_new_3d or its_a_new_nc:
+        new_3d = new_part.model_3d_id != payload.model_3d_id
+        new_nc = new_part.nc_program_id != payload.nc_program_id
+        
+        if new_3d or new_nc:
             self.progress_service.update_part_progress(new_part.id)
 
         return new_part
