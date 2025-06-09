@@ -9,8 +9,6 @@ from app.models.part import Part
 from app.types.exceptions import InvalidFieldError
 from app.types.payload import PaginationParams, PartPayload
 
-COMPLETED_PERCENTAGE = 100
-
 
 class PartRepository(IPartRepository):
     def __init__(self, db: Session):
@@ -19,8 +17,8 @@ class PartRepository(IPartRepository):
     def create_part(self, part: PartPayload) -> Part:
         db_part = Part(
             name=part.name,
-            model_3d=part.model_3d,
-            nc_program=part.nc_program,
+            model_3d_id=part.model_3d_id,
+            nc_program_id=part.nc_program_id,
             mold_id=part.mold_id,
             status=part.status,
             quantity=part.quantity,
