@@ -1,5 +1,3 @@
-
-from io import BytesIO
 from fastapi import APIRouter, Depends, File, UploadFile, status
 from sqlalchemy.orm import Session
 

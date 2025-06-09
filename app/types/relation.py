@@ -4,8 +4,6 @@ from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import BaseModel
 
-from app.types.response import Model3DResponse, NcProgramResponse
-
 if TYPE_CHECKING:
     from app.types.response import (
         CustomerResponse,
@@ -17,6 +15,8 @@ if TYPE_CHECKING:
         OperationResponse,
         PartResponse,
         UserResponse,
+        Model3DResponse,
+        NcProgramResponse
     )
 
 
@@ -63,8 +63,8 @@ class PartRelation(BaseModel):
     material_associations: Optional[List['MaterialPartResponse']] = []
     operation_associations: Optional[List['OperationAssociationResponse']] = []
     mold: Optional['MoldResponse'] = None
-    model_3d: List[Optional['Model3DResponse']] = []
-    nc_program: List[Optional['NcProgramResponse']] = []
+    model_3d: Optional['Model3DResponse'] = None
+    nc_program: Optional['NcProgramResponse'] = None
 
 
 class UserRelation(BaseModel):
