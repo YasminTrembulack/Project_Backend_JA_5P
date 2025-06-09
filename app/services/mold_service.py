@@ -68,7 +68,7 @@ class MoldService:
         )
 
         filters, joins = self.filter_service.build_filter(
-            'part', query.field, query.value
+            'mold', query.field, query.value
         )
         
         molds, total_molds = self.mold_repo.get_all_molds_paginated(
