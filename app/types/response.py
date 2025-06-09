@@ -69,6 +69,8 @@ class CountyResponse(BaseModel):
 class TimeUnitResponse(BaseModel):
     time_unit: List[str]
 
+class FilterFieldsResponse(BaseModel):
+    filter_fields: List[str]
 
 class CustomerResponse(ResponseBase, CustomerBase, CustomerRelation):
     full_name: str
