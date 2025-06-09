@@ -53,6 +53,8 @@ def import_models():
         operation_association,
         part,
         user,
+        model_3d,
+        nc_program
     )
 
 

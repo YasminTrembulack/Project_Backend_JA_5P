@@ -16,6 +16,8 @@ from app.models.operation_association import OperationAssociation
 from app.models.machine import Machine
 from app.models.material import Material
 from app.models.material_part import MaterialPart
+from app.models.nc_program import NcProgram
+from app.models.model_3d import Model3D
 
 
 config = context.config
