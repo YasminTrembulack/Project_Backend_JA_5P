@@ -1,13 +1,13 @@
 from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
-from sqlalchemy import UnaryExpression
+from sqlalchemy import UnaryExpression, BinaryExpression
 from sqlalchemy.orm import Session, joinedload
 
 from app.interfaces.mold_repository_interface import IMoldRepository
 from app.models.mold import Mold
 from app.types.exceptions import InvalidFieldError
-from app.types.payload import MoldPayload
+from app.types.payload import MoldPayload, PaginationParams
 
 
 class MoldRepository(IMoldRepository):
@@ -52,26 +52,28 @@ class MoldRepository(IMoldRepository):
 
     def get_all_molds_paginated(
         self,
-        offset: int,
-        limit: int,
+        pagination: PaginationParams,
         order: UnaryExpression,
-        parts: Optional[bool] = False,
-        include_inactive: Optional[bool] = False,
+        filters: Optional[BinaryExpression] = None,
+        joins: Optional[List] = [],
     ) -> Tuple[List[Mold], int]:
         query = self.db.query(Mold)
-        options = [
-            joinedload(Mold.created_by),
-            joinedload(Mold.customer),
-        ]
-        if parts:
-            options.append(joinedload(Mold.mold_parts))
 
-        query = query.options(*options)
-        if not include_inactive:
+        if not pagination.include_inactive:
             query = query.filter(Mold.is_active.is_(True))
 
-        molds = query.order_by(order).offset(offset).limit(limit).all()
+        if filters is not None:
+            for join in joins:
+                query = query.join(join)
+            query = query.filter(filters)
+        
         total_molds = query.count()
+        molds = (
+            query.order_by(order)
+            .offset(pagination.offset)
+            .limit(pagination.limit)
+            .all()
+        )
 
         return molds, total_molds
 
@@ -81,7 +83,7 @@ class MoldRepository(IMoldRepository):
         mold.is_active = False
         mold.disabled_at = now
 
-        for part in mold.parts:
+        for part in mold.mold_parts:
             part.is_active = False
             part.disabled_at = now
 
