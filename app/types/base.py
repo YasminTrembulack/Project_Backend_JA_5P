@@ -35,6 +35,8 @@ class Metadata(BaseModel):
     has_previous: bool  # Se existe uma página anterior
     order_by: str
     desc_order: bool
+    value: Optional[str] = None
+    field: Optional[str] = None
 
 
 # --- MODELS CLASS --- #
