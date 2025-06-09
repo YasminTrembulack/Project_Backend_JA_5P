@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set, Tuple
 
 from sqlalchemy.sql.elements import BinaryExpression
 
@@ -6,7 +6,9 @@ from app.models.customer import Customer
 from app.models.machine import Machine
 from app.models.material import Material
 from app.models.material_part import MaterialPart
+from app.models.model_3d import Model3D
 from app.models.mold import Mold
+from app.models.nc_program import NcProgram
 from app.models.operation import Operation
 from app.models.operation_association import OperationAssociation
 from app.models.part import Part
@@ -78,6 +80,16 @@ ALLOWED_FIELDS = {
         'role': User.role,
         'mold': User.molds_created,
     },
+    'nc_program': {
+        'name': NcProgram.name,
+        'responsible': NcProgram.responsible,
+        'path': NcProgram.path
+    },
+    'model_3d': {
+        'name': Model3D.name,
+        'responsible': Model3D.responsible,
+        'path': Model3D.path
+    }
 }
 
 
@@ -122,3 +134,22 @@ class FilterService:
             joins.append(rel)
 
         return filter_condition, joins
+    
+    def get_filter_fields(self, base_model: str) -> List[str]:
+        collected_fields: Set[str] = set()
+        max_depth = 0
+
+        def collect(model: str, current_depth: int, prefix: str = ""):
+            if current_depth > max_depth:
+                return
+            fields = self.allowed_fields.get(model, {})
+            for field in fields:
+                field_path = f"{prefix}.{field}" if prefix else field
+                if field in self.allowed_fields:
+                    collect(field, current_depth + 1, field_path)
+                else:
+                    collected_fields.add(field_path)
+
+        collect(base_model, 0)
+        return list(collected_fields)
+
