@@ -13,8 +13,9 @@ from app.models.mold import Mold
 from app.repositories.customer_repositorie import CustomerRepository
 from app.repositories.mold_repositorie import MoldRepository
 from app.repositories.part_repositorie import PartRepository
+from app.services.filter_service import FilterService
 from app.services.progress_service import ProgressService
-from app.types.base import MoldBase
+from app.types.base import BaseQueryParams, MoldBase
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
@@ -23,6 +24,7 @@ from app.types.exceptions import (
 from app.types.payload import (
     MoldPayload,
     MoldUpdatePayload,
+    PaginationParams,
 )
 from app.types.response import (
     CustomerResponse,
@@ -37,6 +39,7 @@ class MoldService:
         self.customer_repo = CustomerRepository(db)
         self.mold_repo = MoldRepository(db)
         self.part_repo = PartRepository(db)
+        self.filter_service = FilterService()
         self.progress_service = ProgressService(self.mold_repo, self.part_repo)
 
     def mold_register(self, payload: MoldPayload) -> Mold:
@@ -49,22 +52,27 @@ class MoldService:
             payload.name = str(new_name)
         return self.mold_repo.create_mold(payload)
 
-    def get_all_molds(
-        self, page: int, limit: int, order_by: str, desc_order: bool
-    ) -> Tuple[List[Mold], int]:
-        order_attr = getattr(Mold, order_by, None)
+    def get_all_molds(self,  query: BaseQueryParams) -> Tuple[List[Mold], int]:
+        order_attr = getattr(Mold, query.order_by, None)
 
         if not isinstance(order_attr, InstrumentedAttribute):
             raise InvalidFieldError(
-                f'Field {order_by} does not exist or is not sortable.'
+                f'Field {query.order_by} does not exist or is not sortable.'
             )
-        offset = (page - 1) * limit
+        offset = (query.page - 1) * query.limit
+        order = desc(order_attr) if query.desc_order else order_attr
+        
+        pagination_params = PaginationParams(
+            offset=offset,
+            limit=query.limit,
+        )
 
-        order_attr = getattr(Mold, order_by)
-        order = desc(order_attr) if desc_order else order_attr
-
+        filters, joins = self.filter_service.build_filter(
+            'part', query.field, query.value
+        )
+        
         molds, total_molds = self.mold_repo.get_all_molds_paginated(
-            offset, limit, order
+            pagination_params, order, filters, joins
         )
         return [self._calculate_priority(m) for m in molds], total_molds
 
