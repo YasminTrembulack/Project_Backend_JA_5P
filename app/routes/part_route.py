@@ -48,7 +48,7 @@ def create_part(
 def get_all_parts(
     query: PartQueryParams = Depends(),
     associations: List[
-        Literal['mold', 'operation_associations', 'material_associations']
+        Literal['mold', 'operation_associations', 'material_associations', 'model_3d', 'nc_program']
     ] = Query([]),
     session: Session = Depends(get_session),
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
@@ -65,6 +65,8 @@ def get_all_parts(
         has_previous=query.page > 1,
         order_by=query.order_by,
         desc_order=query.desc_order,
+        value=query.value,
+        field=query.field
     )
 
     parts_reponse = []
