@@ -52,11 +52,8 @@ def get_all_materials(
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = MaterialService(session)
-    materials, total_materials = service.get_all_materials(
-        query.page, query.limit, query.order_by, query.desc_order
-    )
+    materials, total_materials = service.get_all_materials(query)
     total_pages = (total_materials + query.limit - 1) // query.limit
-
     meta = Metadata(
         total=total_materials,
         limit=query.limit,
@@ -66,6 +63,8 @@ def get_all_materials(
         has_previous=query.page > 1,
         order_by=query.order_by,
         desc_order=query.desc_order,
+        value=query.value,
+        field=query.field
     )
 
     materials_response = []

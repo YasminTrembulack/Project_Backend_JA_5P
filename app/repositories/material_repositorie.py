@@ -1,13 +1,13 @@
 from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
-from sqlalchemy import UnaryExpression
+from sqlalchemy import UnaryExpression, BinaryExpression
 from sqlalchemy.orm import Session
 
 from app.interfaces.material_repository_interface import IMaterialRepository
 from app.models.material import Material
 from app.types.exceptions import InvalidFieldError
-from app.types.payload import MaterialPayload
+from app.types.payload import MaterialPayload, PaginationParams
 
 
 class MaterialRepository(IMaterialRepository):
@@ -48,18 +48,28 @@ class MaterialRepository(IMaterialRepository):
 
     def get_all_materials_paginated(
         self,
-        offset: int,
-        limit: int,
+        pagination: PaginationParams,
         order: UnaryExpression,
-        include_inactive: Optional[bool] = False,
+        filters: Optional[BinaryExpression] = None,
+        joins: Optional[List] = [],
     ) -> Tuple[List[Material], int]:
         query = self.db.query(Material)
 
-        if not include_inactive:
+        if not pagination.include_inactive:
             query = query.filter(Material.is_active.is_(True))
+            
+        if filters is not None:
+            for join in joins:
+                query = query.join(join)
+            query = query.filter(filters)
 
-        materials = query.order_by(order).offset(offset).limit(limit).all()
         total_materials = query.count()
+        materials =(
+            query.order_by(order)
+            .offset(pagination.offset)
+            .limit(pagination.limit)
+            .all()
+        )
 
         return materials, total_materials
 

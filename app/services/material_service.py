@@ -4,10 +4,12 @@ from typing import List, Tuple
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 from app.models.material import Material
 from app.repositories.material_repositorie import MaterialRepository
-from app.types.base import MaterialBase
+from app.services.filter_service import FilterService
+from app.types.base import BaseQueryParams, MaterialBase
 from app.types.enums import TimeUnitEnum
 from app.types.exceptions import (
     DataConflictError,
@@ -18,6 +20,7 @@ from app.types.exceptions import (
 from app.types.payload import (
     MaterialPayload,
     MaterialUpdatePayload,
+    PaginationParams,
 )
 from app.types.response import MaterialPartResponse, PartResponse
 
@@ -25,6 +28,7 @@ from app.types.response import MaterialPartResponse, PartResponse
 class MaterialService:
     def __init__(self, db: Session):
         self.material_repo = MaterialRepository(db)
+        self.filter_service = FilterService()
 
     def material_register(self, payload: MaterialPayload) -> Material:
         if payload.name:
@@ -39,20 +43,28 @@ class MaterialService:
 
         return self.material_repo.create_material(payload)
 
-    def get_all_materials(
-        self, page: int, limit: int, order_by: str, desc_order: bool
-    ) -> Tuple[List[Material], int]:
-        if not hasattr(Material, order_by):
+    def get_all_materials(self,  query: BaseQueryParams) -> Tuple[List[Material], int]:
+        order_attr = getattr(Material, query.order_by, None)
+        
+        if not isinstance(order_attr, InstrumentedAttribute):
             raise InvalidFieldError(
-                f'Field {order_by} does not exist on Material model'
+                f'Field {query.order_by} does not exist on Material model'
             )
-        offset = (page - 1) * limit
-        order = (
-            desc(getattr(Material, order_by))
-            if desc_order
-            else getattr(Material, order_by)
+        offset = (query.page - 1) * query.limit
+        order = desc(order_attr) if query.desc_order else order_attr
+        
+        pagination_params = PaginationParams(
+            offset=offset,
+            limit=query.limit,
         )
-        return self.material_repo.get_all_materials_paginated(offset, limit, order)
+
+        filters, joins = self.filter_service.build_filter(
+            'material', query.field, query.value
+        )
+        
+        return self.material_repo.get_all_materials_paginated(
+            pagination_params, order, filters, joins
+        )
 
     def delete_material(self, id: str) -> None:
         material = self._get_material_or_404(id)
