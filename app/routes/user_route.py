@@ -50,9 +50,7 @@ def get_all_users(
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = UserService(session)
-    users, total_users = service.get_all_users(
-        query.page, query.limit, query.order_by, query.desc_order
-    )
+    users, total_users = service.get_all_users(query)
     total_pages = (total_users + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_users,

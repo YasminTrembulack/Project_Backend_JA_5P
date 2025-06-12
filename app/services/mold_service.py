@@ -52,7 +52,7 @@ class MoldService:
             payload.name = str(new_name)
         return self.mold_repo.create_mold(payload)
 
-    def get_all_molds(self,  query: BaseQueryParams) -> Tuple[List[Mold], int]:
+    def get_all_molds(self, query: BaseQueryParams) -> Tuple[List[Mold], int]:
         order_attr = getattr(Mold, query.order_by, None)
 
         if not isinstance(order_attr, InstrumentedAttribute):

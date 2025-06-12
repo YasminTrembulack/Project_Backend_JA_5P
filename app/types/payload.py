@@ -85,7 +85,7 @@ class MaterialPartQueryParams(BaseQueryParams):
 
 
 class MaterialPayload(MaterialBase):
-    stock_quantity: float
+    # stock_quantity: float
     lead_time: str
 
 
@@ -125,7 +125,7 @@ class MoldUpdatePayload(MoldBase):
 
 
 class MoldQueryParams(BaseQueryParams):
-    order_by: str = 'created_at'
+    order_by: str = 'delivery_date'
 
 # --- NC PROGRAM CLASSES --- #
 

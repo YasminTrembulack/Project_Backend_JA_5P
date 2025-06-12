@@ -3,10 +3,12 @@ from typing import List, Tuple
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 from app.models.machine import Machine
 from app.repositories.machine_repositorie import MachineRepository
-from app.types.base import MachineBase
+from app.services.filter_service import FilterService
+from app.types.base import BaseQueryParams, MachineBase
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
@@ -15,6 +17,7 @@ from app.types.exceptions import (
 from app.types.payload import (
     MachinePayload,
     MachineUpdatePayload,
+    PaginationParams,
 )
 from app.types.response import OperationResponse
 
@@ -22,6 +25,7 @@ from app.types.response import OperationResponse
 class MachineService:
     def __init__(self, db: Session):
         self.machine_repo = MachineRepository(db)
+        self.filter_service = FilterService()
 
     def machine_register(self, payload: MachinePayload) -> Machine:
         if payload.name:
@@ -31,20 +35,28 @@ class MachineService:
             payload.name = str(new_name)
         return self.machine_repo.create_machine(payload)
 
-    def get_all_machines(
-        self, page: int, limit: int, order_by: str, desc_order: bool
-    ) -> Tuple[List[Machine], int]:
-        if not hasattr(Machine, order_by):
+    def get_all_machines(self,  query: BaseQueryParams) -> Tuple[List[Machine], int]:
+        order_attr = getattr(Machine, query.order_by, None)
+
+        if not isinstance(order_attr, InstrumentedAttribute):
             raise InvalidFieldError(
-                f'Field {order_by} does not exist on Machine model'
+                f'Field {query.order_by} does not exist on Machine model'
             )
-        offset = (page - 1) * limit
-        order = (
-            desc(getattr(Machine, order_by))
-            if desc_order
-            else getattr(Machine, order_by)
+        offset = (query.page - 1) * query.limit
+        order = desc(order_attr) if query.desc_order else order_attr
+        
+        pagination_params = PaginationParams(
+            offset=offset,
+            limit=query.limit,
         )
-        return self.machine_repo.get_all_machines_paginated(offset, limit, order)
+
+        filters, joins = self.filter_service.build_filter(
+            'machine', query.field, query.value
+        )
+        
+        return self.machine_repo.get_all_machines_paginated(
+            pagination_params, order, filters, joins
+        )
 
     def delete_machine(self, id: str) -> None:
         machine = self._get_machine_or_404(id)

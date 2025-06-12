@@ -52,9 +52,7 @@ def get_all_machines(
     _: None = Depends(check_roles(['Admin', 'User', 'Editor'])),
 ):
     service = MachineService(session)
-    machines, total_machines = service.get_all_machines(
-        query.page, query.limit, query.order_by, query.desc_order
-    )
+    machines, total_machines = service.get_all_machines(query)
     total_pages = (total_machines + query.limit - 1) // query.limit
     meta = Metadata(
         total=total_machines,

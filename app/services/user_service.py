@@ -8,13 +8,15 @@ from sqlalchemy.orm.attributes import InstrumentedAttribute
 from app.core.security import security
 from app.models.user import User
 from app.repositories.user_repositorie import UserRepository
-from app.types.base import UserBase
+from app.services.filter_service import FilterService
+from app.types.base import BaseQueryParams, UserBase
 from app.types.exceptions import (
     DataConflictError,
     InvalidFieldError,
     NotFoundError,
 )
 from app.types.payload import (
+    PaginationParams,
     UserPayload,
     UserUpdatePayload,
 )
@@ -24,26 +26,35 @@ from app.types.response import MoldResponse
 class UserService:
     def __init__(self, db: Session):
         self.user_repo = UserRepository(db)
+        self.filter_service = FilterService()
 
     def user_register(self, payload: UserPayload) -> User:
         self._validate_user_uniqueness(payload.email, payload.registration_number)
         payload.password = security.hash_password(payload.password)
         return self.user_repo.create_user(payload)
 
-    def get_all_users(
-        self, page: int, limit: int, order_by: str, desc_order: bool
-    ) -> Tuple[List[User], int]:
-        order_attr = getattr(User, order_by, None)
+    def get_all_users(self, query: BaseQueryParams) -> Tuple[List[User], int]:
+        order_attr = getattr(User, query.order_by, None)
 
         if not isinstance(order_attr, InstrumentedAttribute):
             raise InvalidFieldError(
-                f'Field {order_by} does not exist or is not sortable.'
+                f'Field {query.order_by} does not exist or is not sortable.'
             )
-        offset = (page - 1) * limit
-        order = (
-            desc(getattr(User, order_by)) if desc_order else getattr(User, order_by)
+        offset = (query.page - 1) * query.limit
+        order = desc(order_attr) if query.desc_order else order_attr
+        
+        pagination_params = PaginationParams(
+            offset=offset,
+            limit=query.limit,
         )
-        return self.user_repo.get_all_users_paginated(offset, limit, order)
+
+        filters, joins = self.filter_service.build_filter(
+            'user', query.field, query.value
+        )
+        
+        return self.user_repo.get_all_users_paginated(
+            pagination_params, order, filters, joins
+        )
 
     def delete_user(self, id: str) -> None:
         user = self._get_user_or_404(id)
@@ -61,7 +72,7 @@ class UserService:
             'registration_number', user.registration_number
         )
 
-        if new_email or new_registration_number:
+        if updated_data.get('email') or updated_data.get('registration_number'):
             self._validate_user_uniqueness(
                 new_email, new_registration_number, user.id
             )
