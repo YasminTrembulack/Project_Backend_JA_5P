@@ -1,0 +1,100 @@
+from datetime import datetime, timezone
+from typing import List, Optional, Tuple
+
+from sqlalchemy import UnaryExpression, BinaryExpression
+from sqlalchemy.orm import Session
+
+from app.interfaces.material_repository_interface import IMaterialRepository
+from app.models.material import Material
+from app.types.exceptions import InvalidFieldError
+from app.types.payload import MaterialPayload, PaginationParams
+
+
+class MaterialRepository(IMaterialRepository):
+    def __init__(self, db: Session):
+        self.db = db
+
+    def create_material(self, material: MaterialPayload) -> Material:
+        db_material = Material(
+            name=material.name,
+            description=material.description,
+            unit_of_measure=material.unit_of_measure,
+            stock_quantity=material.stock_quantity,
+            lead_time=material.lead_time,
+        )
+        self.db.add(db_material)
+        self.db.commit()
+        self.db.refresh(db_material)
+        return db_material
+
+    def get_material_by_field(
+        self,
+        field_name: str,
+        value: str,
+        include_inactive: Optional[bool] = False,
+        exclude_id: Optional[str] = None,
+    ) -> Optional[Material]:
+        material_field = getattr(Material, field_name, None)
+        if not material_field:
+            raise InvalidFieldError(
+                f'Field {field_name} does not exist on Material model'
+            )
+        query = self.db.query(Material).filter(material_field == value)
+        if not include_inactive:
+            query = query.filter(Material.is_active.is_(True))
+        if exclude_id:
+            query = query.filter(Material.id != exclude_id)
+        return query.first()
+
+    def get_all_materials_paginated(
+        self,
+        pagination: PaginationParams,
+        order: UnaryExpression,
+        filters: Optional[BinaryExpression] = None,
+        joins: Optional[List] = [],
+    ) -> Tuple[List[Material], int]:
+        query = self.db.query(Material)
+
+        if not pagination.include_inactive:
+            query = query.filter(Material.is_active.is_(True))
+            
+        if filters is not None:
+            for join in joins:
+                query = query.join(join)
+            query = query.filter(filters)
+
+        total_materials = query.count()
+        materials =(
+            query.order_by(order)
+            .offset(pagination.offset)
+            .limit(pagination.limit)
+            .all()
+        )
+
+        return materials, total_materials
+
+    def delete_material(self, material: Material) -> None:
+        material.is_active = False
+        material.disabled_at = datetime.now(timezone.utc)
+        self.db.commit()
+
+    def update_material(self, material: Material) -> Material:
+        self.db.commit()
+        self.db.refresh(material)
+        return material
+
+    def restore_material(self, material: Material) -> Material:
+        material.is_active = True
+        material.archived_at = None
+        self.db.commit()
+        self.db.refresh(material)
+        return material
+
+    def total_material(
+        self,
+        include_inactive: Optional[bool] = False,
+    ) -> int:
+        query = self.db.query(Material)
+        if not include_inactive:
+            query = query.filter(Material.is_active.is_(True))
+        return query.count()

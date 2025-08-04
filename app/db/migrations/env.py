@@ -7,7 +7,18 @@ from alembic import context
 
 from app.core.settings import Settings
 from app.models.base_model import BaseModel
+from app.models.customer import Customer
+from app.models.mold import Mold
+from app.models.part import Part
 from app.models.user import User
+from app.models.operation import Operation
+from app.models.operation_association import OperationAssociation
+from app.models.machine import Machine
+from app.models.material import Material
+from app.models.material_part import MaterialPart
+from app.models.nc_program import NcProgram
+from app.models.model_3d import Model3D
+
 
 config = context.config
 config.set_main_option('sqlalchemy.url', Settings().DATABASE_URL)

@@ -1,0 +1,110 @@
+from datetime import datetime, timezone
+from typing import List, Optional, Tuple
+
+from sqlalchemy import BinaryExpression, UnaryExpression
+from sqlalchemy.orm import Session
+
+from app.interfaces.part_repository_interface import IPartRepository
+from app.models.part import Part
+from app.types.exceptions import InvalidFieldError
+from app.types.payload import PaginationParams, PartPayload
+
+
+class PartRepository(IPartRepository):
+    def __init__(self, db: Session):
+        self.db = db
+
+    def create_part(self, part: PartPayload) -> Part:
+        db_part = Part(
+            name=part.name,
+            model_3d_id=part.model_3d_id,
+            nc_program_id=part.nc_program_id,
+            mold_id=part.mold_id,
+            status=part.status,
+            quantity=part.quantity,
+            description=part.description,
+            progress_percentage=part.progress_percentage,
+        )
+        self.db.add(db_part)
+        self.db.commit()
+        self.db.refresh(db_part)
+        return db_part
+
+    def get_part_by_field(
+        self,
+        field_name: str,
+        value: str,
+        include_inactive: Optional[bool] = False,
+        exclude_id: Optional[str] = None,
+    ) -> Optional[Part]:
+        part_field = getattr(Part, field_name, None)
+        if not part_field:
+            raise InvalidFieldError(
+                f'Field {field_name} does not exist on Part model'
+            )
+        query = self.db.query(Part).filter(part_field == value)
+        if not include_inactive:
+            query = query.filter(Part.is_active.is_(True))
+        if exclude_id:
+            query = query.filter(Part.id != exclude_id)
+        return query.first()
+
+    def get_all_parts_paginated(
+        self,
+        pagination: PaginationParams,
+        order: UnaryExpression,
+        filters: Optional[BinaryExpression] = None,
+        joins: Optional[List] = [],
+    ) -> Tuple[List[Part], int]:
+        query = self.db.query(Part)
+
+        if not pagination.include_inactive:
+            query = query.filter(Part.is_active.is_(True))
+
+        if filters is not None:
+            for join in joins:
+                query = query.join(join)
+            query = query.filter(filters)
+
+        total_parts = query.count()
+        parts = (
+            query.order_by(order)
+            .offset(pagination.offset)
+            .limit(pagination.limit)
+            .all()
+        )
+
+        return parts, total_parts
+
+    def delete_part(self, part: Part) -> None:
+        part.is_active = False
+        part.disabled_at = datetime.now(timezone.utc)
+        for oa in part.operation_associations:
+            oa.is_active = False
+            oa.disabled_at = datetime.now(timezone.utc)
+
+        for ma in part.material_associations:
+            ma.is_active = False
+            ma.disabled_at = datetime.now(timezone.utc)
+        self.db.commit()
+
+    def update_part(self, part: Part) -> Part:
+        self.db.commit()
+        self.db.refresh(part)
+        return part
+
+    def restore_part(self, part: Part) -> Part:
+        part.is_active = True
+        part.archived_at = None
+        self.db.commit()
+        self.db.refresh(part)
+        return part
+
+    def total_parts(
+        self,
+        include_inactive: Optional[bool] = False,
+    ) -> int:
+        query = self.db.query(Part)
+        if not include_inactive:
+            query = query.filter(Part.is_active.is_(True))
+        return query.count()

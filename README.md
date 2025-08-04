@@ -24,12 +24,13 @@ Antes de rodar o projeto, você precisa instalar o MySQL no seu ambiente local.
 > [!IMPORTANT]
 > Caso uma migration já tenha sido iniciada apenas APLIQUE as migrações.
 
-1.  Iniciar migrações: `alembic init migrations`
-2.  Gerar migrações: `alembic revision --autogenerate -m "first migration"`
-3.  Aplicar migrações: `alembic upgrade head`
+1.  Verificar migrações: `alembic check`
+2.  Iniciar migrações: `alembic init migrations`
+3.  Gerar migrações: `alembic revision --autogenerate -m "first migration"`
+4.  Aplicar migrações: `alembic upgrade head`
 
 > Sempre que uma mudança relacionada ao banco de dados for realizada é necessario realizar as migrações.
-
+amo yas
 ## Tasks
 Para rodar o comando basta colocar task a seguir o comando. Exemplo `task run`.
 * **lint:** Verifica a qualidade do código usando o Ruff, analisando erros de estilo e boas práticas.
@@ -39,3 +40,8 @@ Para rodar o comando basta colocar task a seguir o comando. Exemplo `task run`.
 * **pre_test:** Garante que o código passou pelo processo de linting antes de rodar os testes.
 * **test:** Executa os testes com Pytest, medindo a cobertura de código e exibindo detalhes extras.
 * **post_test:** Gera um relatório em HTML com a cobertura de código após a execução dos testes.
+
+
+# TODO: criar um metodo dentro de mold service, que quando chamado atualize as prioridades dos moldes, alem disso adicionar um atributo em parts que seja a porcetagem de conclusao da peça, facilitando na hora da conta, apos isso atualizar os metodos que calcular a prioridade ou a conclusao em %
+
+# TODO: adicionar um campo com chave e valor para fazer um filtro

@@ -1,9 +1,13 @@
+from datetime import datetime, timezone
+from typing import List, Optional, Tuple
+
+from sqlalchemy import UnaryExpression, BinaryExpression
 from sqlalchemy.orm import Session
 
-from app.core.security import security
 from app.interfaces.user_repository_interface import IUserRepository
 from app.models.user import User
-from app.types.schemas import UserPayload
+from app.types.exceptions import InvalidFieldError
+from app.types.payload import PaginationParams, UserPayload
 
 
 class UserRepository(IUserRepository):
@@ -11,10 +15,9 @@ class UserRepository(IUserRepository):
         self.db = db
 
     def create_user(self, user: UserPayload) -> User:
-        hashed_password = security.hash_password(user.password)
         db_user = User(
             full_name=user.full_name,
-            password=hashed_password,
+            password=user.password,
             email=user.email,
             registration_number=user.registration_number,
             role=user.role,
@@ -24,11 +27,65 @@ class UserRepository(IUserRepository):
         self.db.refresh(db_user)
         return db_user
 
-    def get_user_by_email(self, email: str) -> User | None:
-        return self.db.query(User).filter(User.email == email).first()
+    def get_user_by_field(
+        self,
+        field_name: str,
+        value: str,
+        include_inactive: Optional[bool] = False,
+        exclude_id: Optional[str] = None,
+    ) -> Optional[User]:
+        user_field = getattr(User, field_name, None)
+        if not user_field:
+            raise InvalidFieldError(
+                f'Field {field_name} does not exist on User model'
+            )
+        query = self.db.query(User).filter(user_field == value)
+        if not include_inactive:
+            query = query.filter(User.is_active.is_(True))
+        if exclude_id:
+            query = query.filter(User.id != exclude_id)
+        return query.first()
 
-    def get_user_by_registration_number(self, re: str) -> User | None:
-        return self.db.query(User).filter(User.registration_number == re).first()
+    def get_all_users_paginated(
+        self,
+        pagination: PaginationParams,
+        order: UnaryExpression,
+        filters: Optional[BinaryExpression] = None,
+        joins: Optional[List] = [],
+    ) -> Tuple[List[User], int]:
+        query = self.db.query(User)
 
-    def get_user_by_id(self, user_id: str) -> User | None:
-        return self.db.query(User).filter(User.id == user_id).first()
+        if not pagination.include_inactive:
+            query = query.filter(User.is_active.is_(True))
+            
+        if filters is not None:
+            for join in joins:
+                query = query.join(join)
+            query = query.filter(filters)
+
+        total_users = query.count()
+        users = (
+            query.order_by(order)
+            .offset(pagination.offset)
+            .limit(pagination.limit)
+            .all()
+        )
+
+        return users, total_users
+
+    def delete_user(self, user: User) -> None:
+        user.is_active = False
+        user.disabled_at = datetime.now(timezone.utc)
+        self.db.commit()
+
+    def update_user(self, user: User) -> User:
+        self.db.commit()
+        self.db.refresh(user)
+        return user
+
+    def restore_user(self, user: User) -> User:
+        user.is_active = True
+        user.archived_at = None
+        self.db.commit()
+        self.db.refresh(user)
+        return user

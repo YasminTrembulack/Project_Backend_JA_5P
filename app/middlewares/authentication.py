@@ -17,22 +17,35 @@ from app.types.exceptions import (
 class AuthenticationMiddleware(BaseHTTPMiddleware):
     @staticmethod
     async def dispatch(request, call_next):
-        if request.url.path.startswith('/api/login'):
+        if request.method == 'OPTIONS' or request.url.path.startswith('/api/login'):
             return await call_next(request)
         try:
             auth_header = request.headers.get('Authorization')
-            if not auth_header or not auth_header.startswith('Bearer '):
-                raise AuthTokenMissingError('Authentication token is missing')
+            access_token = None
+            refresh_token = None
 
-            token = auth_header.split(' ')[1].strip()
+            if auth_header and auth_header.startswith('Bearer '):
+                access_token = auth_header.split(' ')[1].strip()
+            else:
+                refresh_token = request.cookies.get('refresh_token')
+                print(f'REFRESH TOKEN: {refresh_token}')
+                if not refresh_token:
+                    raise AuthTokenMissingError('Authentication token is missing')
 
-            payload = security.verify_access_token(token)
-            user_id = payload.get('user_id')
+            if refresh_token:
+                payload = security.verify_refresh_token(refresh_token)
+            else:
+                payload = security.verify_access_token(access_token)
 
-            session: Session = next(get_session())
+            user_id = payload.get('id')
+
+            if not user_id:
+                raise InvalidTokenError('User ID not found in token.')
+
+            session: Session = next(get_session())  # Criar a sessão
             try:
                 repo = UserRepository(session)
-                user = repo.get_user_by_id(user_id)
+                user = repo.get_user_by_field('id', user_id)
             finally:
                 session.close()
 
@@ -47,7 +60,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                 content={'detail': f'{e.message}'},
             )
         except Exception as e:
-            logger.error(f'{e.__class__.__name__}: {e.message}')
+            logger.error(f'{e.__class__.__name__}: {str(e)}')
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={'detail': 'Unexpected error while verifying token.'},

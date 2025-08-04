@@ -1,3 +1,18 @@
+[tool.coverage.run]
+omit = [
+    "**/interfaces/*",
+    "app/models/customer.py",
+    "app/models/machine.py",
+    "app/models/material.py",
+    "app/models/mold.py",
+    "app/models/operation.py",
+    "app/models/part.py",
+    "app/models/user.py",
+    "**/services/*",
+    "**/repositories/*",
+    "**/routes/*",
+]
+
 [tool.ruff]
 line-length = 85
 extend-exclude = ['migrations']

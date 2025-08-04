@@ -1,12 +1,16 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from datetime import datetime
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from sqlalchemy import Enum, String, func
-from sqlalchemy.dialects.mysql import CHAR
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import CHAR, Enum, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base_model import BaseModel
+
+if TYPE_CHECKING:
+    from app.models.mold import Mold
 
 
 @dataclass
@@ -21,7 +25,7 @@ class User(BaseModel):
     role: Mapped[str] = mapped_column(
         Enum('User', 'Editor', 'Admin', name='user_roles'), default='User'
     )
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(
-        server_default=func.now(), onupdate=func.now()
+
+    molds_created: Mapped[list['Mold']] = relationship(
+        'Mold', back_populates='created_by', passive_deletes=True
     )

@@ -43,6 +43,25 @@ def run_migrations():
         engine.dispose()
 
 
+def import_models():
+    from app.models import (  # noqa: F401, PLC0415
+        customer,
+        machine,
+        material,
+        mold,
+        operation,
+        operation_association,
+        part,
+        user,
+        model_3d,
+        nc_program
+    )
+
+
 def get_session():
-    with SessionLocal() as session:
+    import_models()
+    session = SessionLocal()
+    try:
         yield session
+    finally:
+        session.close()
