@@ -43,7 +43,8 @@ class MoldService:
         self.progress_service = ProgressService(self.mold_repo, self.part_repo)
 
     def mold_register(self, payload: MoldPayload) -> Mold:
-        self._get_customer_or_404(payload.customer_id)
+        if payload.customer_id:
+            self._get_customer_or_404(payload.customer_id)
         payload.delivery_date = self._validate_delivery_date(payload.delivery_date)
         if payload.name:
             self._validate_name_uniqueness(payload.name)

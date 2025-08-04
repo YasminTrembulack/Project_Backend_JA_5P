@@ -93,9 +93,9 @@ class MaterialPartResponse(ResponseBase, MaterialPartBase, MaterialPartRelation)
 
 class MaterialResponse(ResponseBase, MaterialBase, MaterialRelation):
     name: str
-    description: str
+    description: str | None
     stock_quantity: float
-    unit_of_measure: str
+    unit_of_measure: str | None
     lead_time: str
 
 

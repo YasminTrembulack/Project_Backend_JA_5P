@@ -32,7 +32,7 @@ class OperationService:
 
     def operation_register(self, payload: OperationPayload) -> Operation:
         if payload.machine_id:
-            self._get_machine_or_404()
+            self._get_machine_or_404(payload.machine_id)
         if payload.name:
             self._validate_name_uniqueness(payload.name)
         else:

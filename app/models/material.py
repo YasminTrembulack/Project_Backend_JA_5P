@@ -20,7 +20,7 @@ class Material(BaseModel):
 
     id: Mapped[UUID] = mapped_column(CHAR(36), primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(255), unique=True)
-    description: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str] = mapped_column(String(255), nullable=True)
     unit_of_measure: Mapped[str] = mapped_column(String(20), nullable=True)
     stock_quantity: Mapped[float] = mapped_column(Float, nullable=False)
     lead_time: Mapped[str] = mapped_column(String(10))

@@ -30,7 +30,7 @@ Antes de rodar o projeto, você precisa instalar o MySQL no seu ambiente local.
 4.  Aplicar migrações: `alembic upgrade head`
 
 > Sempre que uma mudança relacionada ao banco de dados for realizada é necessario realizar as migrações.
-
+amo yas
 ## Tasks
 Para rodar o comando basta colocar task a seguir o comando. Exemplo `task run`.
 * **lint:** Verifica a qualidade do código usando o Ruff, analisando erros de estilo e boas práticas.

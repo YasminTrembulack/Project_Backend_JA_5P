@@ -45,8 +45,8 @@ from app.types.exceptions import (
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     test_connection()
-    if not Settings().LOCAL_ENV:
-        run_migrations()
+    # if not Settings().LOCAL_ENV:
+    run_migrations()
     yield
 
 
